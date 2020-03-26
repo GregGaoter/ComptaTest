@@ -52,7 +52,7 @@ public class BusinessProxyImpl implements BusinessProxy {
     }
 
     /**
-     * Constructeur.
+     * Constructeur par defaut.
      */
     protected BusinessProxyImpl() {
         super();

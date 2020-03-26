@@ -37,7 +37,7 @@ public interface ComptabiliteManager {
     List<EcritureComptable> getListEcritureComptable();
 
     /**
-     * Ajoute une référence à l'écriture comptable.
+     * Ajoute une référence à l'écriture comptable.<br>
      *
      * <strong>RG_Compta_5 : </strong>
      * La référence d'une écriture comptable est composée du code du journal dans lequel figure l'écriture
@@ -48,23 +48,23 @@ public interface ComptabiliteManager {
      * <pre>BQ-2016/00001</pre>
      *
      * <p><strong>Attention :</strong> l'écriture n'est pas enregistrée en persistance</p>
-     * @param pEcritureComptable L'écriture comptable concernée
+     * @param pEcritureComptable - L'écriture comptable sur laquelle ajouter une référence.
      */
     void addReference(EcritureComptable pEcritureComptable);
 
     /**
-     * Vérifie que l'Ecriture comptable respecte les règles de gestion.
+     * Vérifie que l'écriture comptable respecte les règles de gestion.
      *
-     * @param pEcritureComptable -
-     * @throws FunctionalException Si l'Ecriture comptable ne respecte pas les règles de gestion
+     * @param pEcritureComptable - L'écriture comptable sur laquelle vérifier les règles de gestion.
+     * @throws FunctionalException Si l'écriture comptable ne respecte pas les règles de gestion
      */
     void checkEcritureComptable(EcritureComptable pEcritureComptable) throws FunctionalException;
 
     /**
-     * Insert une nouvelle écriture comptable.
+     * Insert une nouvelle écriture comptable à la liste des écritures comptables.
      *
-     * @param pEcritureComptable -
-     * @throws FunctionalException Si l'Ecriture comptable ne respecte pas les règles de gestion
+     * @param pEcritureComptable - L'écriture comptable à insérer.
+     * @throws FunctionalException Si l'ecriture comptable ne respecte pas les règles de gestion
      */
     void insertEcritureComptable(EcritureComptable pEcritureComptable) throws FunctionalException;
 
