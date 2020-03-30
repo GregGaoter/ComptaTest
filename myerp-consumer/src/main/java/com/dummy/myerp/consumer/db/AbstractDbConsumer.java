@@ -2,13 +2,17 @@ package com.dummy.myerp.consumer.db;
 
 import java.util.HashMap;
 import java.util.Map;
+
 import javax.sql.DataSource;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.springframework.jdbc.core.JdbcTemplate;
+
 import com.dummy.myerp.consumer.ConsumerHelper;
 import com.dummy.myerp.consumer.dao.contrat.DaoProxy;
+import com.dummy.myerp.technical.log.message.EntreeMessage;
+import com.dummy.myerp.technical.log.message.SortieMessage;
 
 /**
  * <p>
@@ -17,9 +21,10 @@ import com.dummy.myerp.consumer.dao.contrat.DaoProxy;
  */
 public abstract class AbstractDbConsumer {
 
-// ==================== Attributs Static ====================
 	/** Logger Log4j pour la classe */
 	private static final Logger LOGGER = LogManager.getLogger(AbstractDbConsumer.class);
+
+// ==================== Attributs Static ====================
 
 	/** Map des DataSources */
 	private static Map<DataSourcesEnum, DataSource> mapDataSource;
@@ -51,10 +56,12 @@ public abstract class AbstractDbConsumer {
 	 * @return {@link DataSource}
 	 */
 	protected DataSource getDataSource(DataSourcesEnum pDataSourceId) {
+		LOGGER.trace(new EntreeMessage());
 		DataSource vRetour = AbstractDbConsumer.mapDataSource.get(pDataSourceId);
 		if (vRetour == null) {
 			throw new UnsatisfiedLinkError("La DataSource suivante n'a pas été initialisée : " + pDataSourceId);
 		}
+		LOGGER.trace(new SortieMessage());
 		return vRetour;
 	}
 
@@ -74,11 +81,11 @@ public abstract class AbstractDbConsumer {
 	 */
 	protected <T> T queryGetSequenceValuePostgreSQL(DataSourcesEnum pDataSourcesId, String pSeqName,
 			Class<T> pSeqValueClass) {
-
+		LOGGER.trace(new EntreeMessage());
 		JdbcTemplate vJdbcTemplate = new JdbcTemplate(getDataSource(pDataSourcesId));
 		String vSeqSQL = "SELECT last_value FROM " + pSeqName;
 		T vSeqValue = vJdbcTemplate.queryForObject(vSeqSQL, pSeqValueClass);
-
+		LOGGER.trace(new SortieMessage());
 		return vSeqValue;
 	}
 
@@ -89,6 +96,7 @@ public abstract class AbstractDbConsumer {
 	 * @param pMapDataSource - Map des DataSource à configurer
 	 */
 	public static void configure(Map<DataSourcesEnum, DataSource> pMapDataSource) {
+		LOGGER.trace(new EntreeMessage());
 		// On pilote l'ajout avec l'Enum et on ne rajoute pas tout à l'aveuglette...
 		// ( pas de AbstractDbDao.mapDataSource.putAll(...) )
 		Map<DataSourcesEnum, DataSource> vMapDataSource = new HashMap<>(DataSourcesEnum.values().length);
@@ -107,5 +115,6 @@ public abstract class AbstractDbConsumer {
 			}
 		}
 		mapDataSource = vMapDataSource;
+		LOGGER.trace(new SortieMessage());
 	}
 }

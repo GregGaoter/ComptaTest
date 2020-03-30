@@ -2,13 +2,21 @@ package com.dummy.myerp.consumer.dao.impl.cache;
 
 import java.util.List;
 
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+
 import com.dummy.myerp.consumer.ConsumerHelper;
 import com.dummy.myerp.model.bean.comptabilite.CompteComptable;
+import com.dummy.myerp.technical.log.message.EntreeMessage;
+import com.dummy.myerp.technical.log.message.SortieMessage;
 
 /**
  * Cache DAO de {@link CompteComptable}
  */
 public class CompteComptableDaoCache {
+
+	/** Logger Log4j pour la classe */
+	private static final Logger LOGGER = LogManager.getLogger(CompteComptableDaoCache.class);
 
 	// ==================== Attributs ====================
 	/** La liste des comptes comptables. */
@@ -29,11 +37,12 @@ public class CompteComptableDaoCache {
 	 * @return {@link CompteComptable} ou {@code null}
 	 */
 	public CompteComptable getByNumero(Integer pNumero) {
+		LOGGER.trace(new EntreeMessage());
 		if (listCompteComptable == null) {
 			listCompteComptable = ConsumerHelper.getDaoProxy().getComptabiliteDao().getListCompteComptable();
 		}
-
 		CompteComptable vRetour = CompteComptable.getByNumero(listCompteComptable, pNumero);
+		LOGGER.trace(new SortieMessage());
 		return vRetour;
 	}
 }

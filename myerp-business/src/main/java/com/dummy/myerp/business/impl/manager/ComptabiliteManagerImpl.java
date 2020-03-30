@@ -3,12 +3,16 @@ package com.dummy.myerp.business.impl.manager;
 import java.math.BigDecimal;
 import java.util.List;
 import java.util.Set;
+
 import javax.validation.ConstraintViolation;
 import javax.validation.ConstraintViolationException;
 
 import org.apache.commons.lang3.ObjectUtils;
 import org.apache.commons.lang3.StringUtils;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.springframework.transaction.TransactionStatus;
+
 import com.dummy.myerp.business.contrat.manager.ComptabiliteManager;
 import com.dummy.myerp.business.impl.AbstractBusinessManager;
 import com.dummy.myerp.model.bean.comptabilite.CompteComptable;
@@ -17,6 +21,9 @@ import com.dummy.myerp.model.bean.comptabilite.JournalComptable;
 import com.dummy.myerp.model.bean.comptabilite.LigneEcritureComptable;
 import com.dummy.myerp.technical.exception.FunctionalException;
 import com.dummy.myerp.technical.exception.NotFoundException;
+import com.dummy.myerp.technical.log.message.EntreeMessage;
+import com.dummy.myerp.technical.log.message.ErrorMessage;
+import com.dummy.myerp.technical.log.message.SortieMessage;
 
 /**
  * Comptabilite manager implementation.<br>
@@ -24,6 +31,9 @@ import com.dummy.myerp.technical.exception.NotFoundException;
  * {@link ComptabiliteManager}.
  */
 public class ComptabiliteManagerImpl extends AbstractBusinessManager implements ComptabiliteManager {
+
+	/** Logger Log4j pour la classe */
+	private static final Logger LOGGER = LogManager.getLogger(ComptabiliteManagerImpl.class);
 
 	// ==================== Attributs ====================
 
@@ -33,6 +43,21 @@ public class ComptabiliteManagerImpl extends AbstractBusinessManager implements 
 	 * Instantiates a new Comptabilite manager.
 	 */
 	public ComptabiliteManagerImpl() {
+	}
+
+	public String test() throws FunctionalException {
+		LOGGER.trace(new EntreeMessage());
+		if (true) {
+			try {
+				throw new FunctionalException("L'écriture comptable ne respecte pas les règles de gestion.",
+						new ConstraintViolationException(
+								"L'écriture comptable ne respecte pas les contraintes de validation", null));
+			} catch (FunctionalException e) {
+				LOGGER.error(new ErrorMessage(e));
+			}
+		}
+		LOGGER.trace(new SortieMessage());
+		return null;
 	}
 
 	// ==================== Getters/Setters ====================
@@ -66,6 +91,7 @@ public class ComptabiliteManagerImpl extends AbstractBusinessManager implements 
 	// TODO à tester
 	@Override
 	public synchronized void addReference(EcritureComptable pEcritureComptable) {
+		LOGGER.trace(new EntreeMessage());
 		// TODO à implémenter
 		// Bien se réferer à la JavaDoc de cette méthode !
 		/*
@@ -77,6 +103,7 @@ public class ComptabiliteManagerImpl extends AbstractBusinessManager implements 
 		 * référence calculée (RG_Compta_5) 4. Enregistrer (insert/update) la valeur de
 		 * la séquence en persitance (table sequence_ecriture_comptable)
 		 */
+		LOGGER.trace(new SortieMessage());
 	}
 
 	/**
@@ -85,8 +112,10 @@ public class ComptabiliteManagerImpl extends AbstractBusinessManager implements 
 	// TODO à tester
 	@Override
 	public void checkEcritureComptable(EcritureComptable pEcritureComptable) throws FunctionalException {
+		LOGGER.trace(new EntreeMessage());
 		this.checkEcritureComptableUnit(pEcritureComptable);
 		this.checkEcritureComptableContext(pEcritureComptable);
+		LOGGER.trace(new SortieMessage());
 	}
 
 	/**
@@ -101,18 +130,27 @@ public class ComptabiliteManagerImpl extends AbstractBusinessManager implements 
 	 */
 	// TODO tests à compléter
 	protected void checkEcritureComptableUnit(EcritureComptable pEcritureComptable) throws FunctionalException {
+		LOGGER.trace(new EntreeMessage());
 		// ===== Vérification des contraintes unitaires sur les attributs de l'écriture
 		Set<ConstraintViolation<EcritureComptable>> vViolations = getConstraintValidator().validate(pEcritureComptable);
 		if (!vViolations.isEmpty()) {
-			throw new FunctionalException("L'écriture comptable ne respecte pas les règles de gestion.",
-					new ConstraintViolationException(
-							"L'écriture comptable ne respecte pas les contraintes de validation", vViolations));
+			try {
+				throw new FunctionalException("L'écriture comptable ne respecte pas les règles de gestion.",
+						new ConstraintViolationException(
+								"L'écriture comptable ne respecte pas les contraintes de validation", vViolations));
+			} catch (FunctionalException e) {
+				LOGGER.error(new ErrorMessage(e));
+			}
 		}
 
 		// ===== RG_Compta_2 : Pour qu'une écriture comptable soit valide, elle doit
 		// être équilibrée
 		if (!pEcritureComptable.isEquilibree()) {
-			throw new FunctionalException("L'écriture comptable n'est pas équilibrée.");
+			try {
+				throw new FunctionalException("L'écriture comptable n'est pas équilibrée.");
+			} catch (FunctionalException e) {
+				LOGGER.error(new ErrorMessage(e));
+			}
 		}
 
 		// ===== RG_Compta_3 : une écriture comptable doit avoir au moins 2 lignes
@@ -132,13 +170,18 @@ public class ComptabiliteManagerImpl extends AbstractBusinessManager implements 
 		// On test le nombre de lignes car si l'écriture à une seule ligne
 		// avec un montant au débit et un montant au crédit ce n'est pas valable
 		if (pEcritureComptable.getListLigneEcriture().size() < 2 || vNbrCredit < 1 || vNbrDebit < 1) {
-			throw new FunctionalException(
-					"L'écriture comptable doit avoir au moins deux lignes : une ligne au débit et une ligne au crédit.");
+			try {
+				throw new FunctionalException(
+						"L'écriture comptable doit avoir au moins deux lignes : une ligne au débit et une ligne au crédit.");
+			} catch (FunctionalException e) {
+				LOGGER.error(new ErrorMessage(e));
+			}
 		}
 
 		// TODO ===== RG_Compta_5 : Format et contenu de la référence
 		// vérifier que l'année dans la référence correspond bien à la date de
 		// l'écriture, idem pour le code journal...
+		LOGGER.trace(new SortieMessage());
 	}
 
 	/**
@@ -151,6 +194,7 @@ public class ComptabiliteManagerImpl extends AbstractBusinessManager implements 
 	 *                             règles de gestion liées au contexte
 	 */
 	protected void checkEcritureComptableContext(EcritureComptable pEcritureComptable) throws FunctionalException {
+		LOGGER.trace(new EntreeMessage());
 		// ===== RG_Compta_6 : La référence d'une écriture comptable doit être unique
 		if (StringUtils.isNoneEmpty(pEcritureComptable.getReference())) {
 			try {
@@ -162,13 +206,19 @@ public class ComptabiliteManagerImpl extends AbstractBusinessManager implements 
 				// ou si elle ne correspond pas à l'écriture trouvée (id != idECRef),
 				// c'est qu'il y a déjà une autre écriture avec la même référence
 				if (pEcritureComptable.getId() == null || !pEcritureComptable.getId().equals(vECRef.getId())) {
-					throw new FunctionalException("Une autre écriture comptable existe déjà avec la même référence.");
+					try {
+						throw new FunctionalException(
+								"Une autre écriture comptable existe déjà avec la même référence.");
+					} catch (FunctionalException e) {
+						LOGGER.error(new ErrorMessage(e));
+					}
 				}
 			} catch (NotFoundException vEx) {
 				// Dans ce cas, c'est bon, ça veut dire qu'on n'a aucune autre écriture avec la
 				// même référence.
 			}
 		}
+		LOGGER.trace(new SortieMessage());
 	}
 
 	/**
@@ -176,6 +226,7 @@ public class ComptabiliteManagerImpl extends AbstractBusinessManager implements 
 	 */
 	@Override
 	public void insertEcritureComptable(EcritureComptable pEcritureComptable) throws FunctionalException {
+		LOGGER.trace(new EntreeMessage());
 		this.checkEcritureComptable(pEcritureComptable);
 		TransactionStatus vTS = getTransactionManager().beginTransactionMyERP();
 		try {
@@ -185,6 +236,7 @@ public class ComptabiliteManagerImpl extends AbstractBusinessManager implements 
 		} finally {
 			getTransactionManager().rollbackMyERP(vTS);
 		}
+		LOGGER.trace(new SortieMessage());
 	}
 
 	/**
@@ -192,6 +244,7 @@ public class ComptabiliteManagerImpl extends AbstractBusinessManager implements 
 	 */
 	@Override
 	public void updateEcritureComptable(EcritureComptable pEcritureComptable) throws FunctionalException {
+		LOGGER.trace(new EntreeMessage());
 		TransactionStatus vTS = getTransactionManager().beginTransactionMyERP();
 		try {
 			getDaoProxy().getComptabiliteDao().updateEcritureComptable(pEcritureComptable);
@@ -200,6 +253,7 @@ public class ComptabiliteManagerImpl extends AbstractBusinessManager implements 
 		} finally {
 			getTransactionManager().rollbackMyERP(vTS);
 		}
+		LOGGER.trace(new SortieMessage());
 	}
 
 	/**
@@ -207,6 +261,7 @@ public class ComptabiliteManagerImpl extends AbstractBusinessManager implements 
 	 */
 	@Override
 	public void deleteEcritureComptable(Integer pId) {
+		LOGGER.trace(new EntreeMessage());
 		TransactionStatus vTS = getTransactionManager().beginTransactionMyERP();
 		try {
 			getDaoProxy().getComptabiliteDao().deleteEcritureComptable(pId);
@@ -215,5 +270,6 @@ public class ComptabiliteManagerImpl extends AbstractBusinessManager implements 
 		} finally {
 			getTransactionManager().rollbackMyERP(vTS);
 		}
+		LOGGER.trace(new SortieMessage());
 	}
 }

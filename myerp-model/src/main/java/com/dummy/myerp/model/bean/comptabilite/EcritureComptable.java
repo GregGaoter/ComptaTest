@@ -4,17 +4,26 @@ import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
+
 import javax.validation.Valid;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Pattern;
 import javax.validation.constraints.Size;
 
 import org.apache.commons.lang3.StringUtils;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+
+import com.dummy.myerp.technical.log.message.EntreeMessage;
+import com.dummy.myerp.technical.log.message.SortieMessage;
 
 /**
  * Bean représentant une Écriture Comptable
  */
 public class EcritureComptable {
+
+	/** Logger Log4j pour la classe */
+	private static final Logger LOGGER = LogManager.getLogger(EcritureComptable.class);
 
 	// ==================== Attributs ====================
 	/** L'id de l'écriture comptable */
@@ -146,12 +155,14 @@ public class EcritureComptable {
 	 */
 	// TODO à tester
 	public BigDecimal getTotalDebit() {
+		LOGGER.trace(new EntreeMessage());
 		BigDecimal vRetour = BigDecimal.ZERO;
 		for (LigneEcritureComptable vLigneEcritureComptable : listLigneEcriture) {
 			if (vLigneEcritureComptable.getDebit() != null) {
 				vRetour = vRetour.add(vLigneEcritureComptable.getDebit());
 			}
 		}
+		LOGGER.trace(new SortieMessage());
 		return vRetour;
 	}
 
@@ -162,12 +173,14 @@ public class EcritureComptable {
 	 *         crédit
 	 */
 	public BigDecimal getTotalCredit() {
+		LOGGER.trace(new EntreeMessage());
 		BigDecimal vRetour = BigDecimal.ZERO;
 		for (LigneEcritureComptable vLigneEcritureComptable : listLigneEcriture) {
 			if (vLigneEcritureComptable.getDebit() != null) {
 				vRetour = vRetour.add(vLigneEcritureComptable.getDebit());
 			}
 		}
+		LOGGER.trace(new SortieMessage());
 		return vRetour;
 	}
 
@@ -177,7 +190,9 @@ public class EcritureComptable {
 	 * @return boolean
 	 */
 	public boolean isEquilibree() {
+		LOGGER.trace(new EntreeMessage());
 		boolean vRetour = this.getTotalDebit().equals(getTotalCredit());
+		LOGGER.trace(new SortieMessage());
 		return vRetour;
 	}
 
@@ -190,6 +205,7 @@ public class EcritureComptable {
 	 */
 	@Override
 	public String toString() {
+		LOGGER.trace(new EntreeMessage());
 		final StringBuilder vStB = new StringBuilder(this.getClass().getSimpleName());
 		final String vSEP = ", ";
 		vStB.append("{").append("id=").append(id).append(vSEP).append("journal=").append(journal).append(vSEP)
@@ -198,6 +214,7 @@ public class EcritureComptable {
 				.append(this.getTotalDebit().toPlainString()).append(vSEP).append("totalCredit=")
 				.append(this.getTotalCredit().toPlainString()).append(vSEP).append("listLigneEcriture=[\n")
 				.append(StringUtils.join(listLigneEcriture, "\n")).append("\n]").append("}");
+		LOGGER.trace(new SortieMessage());
 		return vStB.toString();
 	}
 }

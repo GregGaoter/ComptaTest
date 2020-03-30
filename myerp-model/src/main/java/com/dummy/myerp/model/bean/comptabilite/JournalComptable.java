@@ -2,13 +2,23 @@ package com.dummy.myerp.model.bean.comptabilite;
 
 import java.util.List;
 import java.util.Objects;
+
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
+
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+
+import com.dummy.myerp.technical.log.message.EntreeMessage;
+import com.dummy.myerp.technical.log.message.SortieMessage;
 
 /**
  * Bean représentant un Journal Comptable
  */
 public class JournalComptable {
+
+	/** Logger Log4j pour la classe */
+	private static final Logger LOGGER = LogManager.getLogger(JournalComptable.class);
 
 	// ==================== Attributs ====================
 	/** Code du journal comptable */
@@ -84,10 +94,12 @@ public class JournalComptable {
 	 */
 	@Override
 	public String toString() {
+		LOGGER.trace(new EntreeMessage());
 		final StringBuilder vStB = new StringBuilder(this.getClass().getSimpleName());
 		final String vSEP = ", ";
 		vStB.append("{").append("code='").append(code).append('\'').append(vSEP).append("libelle='").append(libelle)
 				.append('\'').append("}");
+		LOGGER.trace(new SortieMessage());
 		return vStB.toString();
 	}
 
@@ -101,6 +113,7 @@ public class JournalComptable {
 	 * @return {@link JournalComptable} ou {@code null}
 	 */
 	public static JournalComptable getByCode(List<? extends JournalComptable> pList, String pCode) {
+		LOGGER.trace(new EntreeMessage());
 		JournalComptable vRetour = null;
 		for (JournalComptable vBean : pList) {
 			if (vBean != null && Objects.equals(vBean.getCode(), pCode)) {
@@ -108,6 +121,7 @@ public class JournalComptable {
 				break;
 			}
 		}
+		LOGGER.trace(new SortieMessage());
 		return vRetour;
 	}
 }

@@ -2,13 +2,24 @@ package com.dummy.myerp.model.bean.comptabilite;
 
 import java.util.List;
 import java.util.Objects;
+
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
+
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+
+import com.dummy.myerp.technical.log.message.EntreeMessage;
+import com.dummy.myerp.technical.log.message.SortieMessage;
 
 /**
  * Bean représentant un Compte Comptable
  */
 public class CompteComptable {
+
+	/** Logger Log4j pour la classe */
+	private static final Logger LOGGER = LogManager.getLogger(CompteComptable.class);
+
 	// ==================== Attributs ====================
 	/** Numéro du compte comptable */
 	@NotNull
@@ -91,10 +102,12 @@ public class CompteComptable {
 	 */
 	@Override
 	public String toString() {
+		LOGGER.trace(new EntreeMessage());
 		final StringBuilder vStB = new StringBuilder(this.getClass().getSimpleName());
 		final String vSEP = ", ";
 		vStB.append("{").append("numero=").append(numero).append(vSEP).append("libelle='").append(libelle).append('\'')
 				.append("}");
+		LOGGER.trace(new SortieMessage());
 		return vStB.toString();
 	}
 
@@ -108,6 +121,7 @@ public class CompteComptable {
 	 * @return {@link CompteComptable} ou {@code null}
 	 */
 	public static CompteComptable getByNumero(List<? extends CompteComptable> pList, Integer pNumero) {
+		LOGGER.trace(new EntreeMessage());
 		CompteComptable vRetour = null;
 		for (CompteComptable vBean : pList) {
 			if (vBean != null && Objects.equals(vBean.getNumero(), pNumero)) {
@@ -115,6 +129,7 @@ public class CompteComptable {
 				break;
 			}
 		}
+		LOGGER.trace(new SortieMessage());
 		return vRetour;
 	}
 }

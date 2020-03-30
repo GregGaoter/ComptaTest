@@ -5,8 +5,13 @@ import javax.validation.Validation;
 import javax.validation.Validator;
 import javax.validation.ValidatorFactory;
 
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+
 import com.dummy.myerp.business.contrat.BusinessProxy;
 import com.dummy.myerp.consumer.dao.contrat.DaoProxy;
+import com.dummy.myerp.technical.log.message.EntreeMessage;
+import com.dummy.myerp.technical.log.message.SortieMessage;
 
 /**
  * <p>
@@ -14,6 +19,9 @@ import com.dummy.myerp.consumer.dao.contrat.DaoProxy;
  * </p>
  */
 public abstract class AbstractBusinessManager {
+
+	/** Logger Log4j pour la classe */
+	private static final Logger LOGGER = LogManager.getLogger(AbstractBusinessManager.class);
 
 	/** Le proxy d'accès à la couche Business */
 	private static BusinessProxy businessProxy;
@@ -37,9 +45,11 @@ public abstract class AbstractBusinessManager {
 	 */
 	public static void configure(BusinessProxy pBusinessProxy, DaoProxy pDaoProxy,
 			TransactionManager pTransactionManager) {
+		LOGGER.trace(new EntreeMessage());
 		businessProxy = pBusinessProxy;
 		daoProxy = pDaoProxy;
 		transactionManager = pTransactionManager;
+		LOGGER.trace(new SortieMessage());
 	}
 
 	// ==================== Getters/Setters ====================
@@ -80,9 +90,11 @@ public abstract class AbstractBusinessManager {
 	 * @see ValidatorFactory
 	 */
 	protected Validator getConstraintValidator() {
+		LOGGER.trace(new EntreeMessage());
 		Configuration<?> vConfiguration = Validation.byDefaultProvider().configure();
 		ValidatorFactory vFactory = vConfiguration.buildValidatorFactory();
 		Validator vValidator = vFactory.getValidator();
+		LOGGER.trace(new SortieMessage());
 		return vValidator;
 	}
 }

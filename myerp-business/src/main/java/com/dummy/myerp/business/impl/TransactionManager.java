@@ -1,9 +1,14 @@
 package com.dummy.myerp.business.impl;
 
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.springframework.transaction.PlatformTransactionManager;
 import org.springframework.transaction.TransactionDefinition;
 import org.springframework.transaction.TransactionStatus;
 import org.springframework.transaction.support.DefaultTransactionDefinition;
+
+import com.dummy.myerp.technical.log.message.EntreeMessage;
+import com.dummy.myerp.technical.log.message.SortieMessage;
 
 /**
  * <p>
@@ -11,6 +16,9 @@ import org.springframework.transaction.support.DefaultTransactionDefinition;
  * </p>
  */
 public class TransactionManager {
+
+	/** Logger Log4j pour la classe */
+	private static final Logger LOGGER = LogManager.getLogger(TransactionManager.class);
 
 	// ==================== Attributs Static ====================
 	/** {@link PlatformTransactionManager} pour le DataSource MyERP */
@@ -64,10 +72,11 @@ public class TransactionManager {
 	 * @see DefaultTransactionDefinition
 	 */
 	public TransactionStatus beginTransactionMyERP() {
+		LOGGER.trace(new EntreeMessage());
 		DefaultTransactionDefinition vTDef = new DefaultTransactionDefinition();
 		vTDef.setName("Transaction_txManagerMyERP");
 		vTDef.setPropagationBehavior(TransactionDefinition.PROPAGATION_REQUIRED);
-
+		LOGGER.trace(new SortieMessage());
 		return ptmMyERP.getTransaction(vTDef);
 	}
 
@@ -77,9 +86,11 @@ public class TransactionManager {
 	 * @param pTStatus retounré par la méthode {@link #beginTransactionMyERP()}
 	 */
 	public void commitMyERP(TransactionStatus pTStatus) {
+		LOGGER.trace(new EntreeMessage());
 		if (pTStatus != null) {
 			ptmMyERP.commit(pTStatus);
 		}
+		LOGGER.trace(new SortieMessage());
 	}
 
 	/**
@@ -88,8 +99,10 @@ public class TransactionManager {
 	 * @param pTStatus retounré par la méthode {@link #beginTransactionMyERP()}
 	 */
 	public void rollbackMyERP(TransactionStatus pTStatus) {
+		LOGGER.trace(new EntreeMessage());
 		if (pTStatus != null) {
 			ptmMyERP.rollback(pTStatus);
 		}
+		LOGGER.trace(new SortieMessage());
 	}
 }

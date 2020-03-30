@@ -1,15 +1,24 @@
 package com.dummy.myerp.model.bean.comptabilite;
 
 import java.math.BigDecimal;
+
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
 
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+
 import com.dummy.myerp.model.validation.constraint.MontantComptable;
+import com.dummy.myerp.technical.log.message.EntreeMessage;
+import com.dummy.myerp.technical.log.message.SortieMessage;
 
 /**
  * Bean représentant une Ligne d'écriture comptable.
  */
 public class LigneEcritureComptable {
+
+	/** Logger Log4j pour la classe */
+	private static final Logger LOGGER = LogManager.getLogger(LigneEcritureComptable.class);
 
 	// ==================== Attributs ====================
 	/** {@link CompteComptable} de la ligne d'écriture comptable */
@@ -132,11 +141,13 @@ public class LigneEcritureComptable {
 	 */
 	@Override
 	public String toString() {
+		LOGGER.trace(new EntreeMessage());
 		final StringBuilder vStB = new StringBuilder(this.getClass().getSimpleName());
 		final String vSEP = ", ";
 		vStB.append("{").append("compteComptable=").append(compteComptable).append(vSEP).append("libelle='")
 				.append(libelle).append('\'').append(vSEP).append("debit=").append(debit).append(vSEP).append("credit=")
 				.append(credit).append("}");
+		LOGGER.trace(new SortieMessage());
 		return vStB.toString();
 	}
 }
