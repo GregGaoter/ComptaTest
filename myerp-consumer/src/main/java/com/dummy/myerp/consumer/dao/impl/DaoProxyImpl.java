@@ -35,6 +35,7 @@ public final class DaoProxyImpl implements DaoProxy {
 	}
 
 	// ==================== Getters/Setters ====================
+	@Override
 	public ComptabiliteDao getComptabiliteDao() {
 		return this.comptabiliteDao;
 	}

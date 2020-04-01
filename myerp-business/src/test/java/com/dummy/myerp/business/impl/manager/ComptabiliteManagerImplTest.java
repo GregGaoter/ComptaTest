@@ -5,23 +5,20 @@ import static org.junit.Assert.assertNull;
 import java.math.BigDecimal;
 import java.util.Date;
 
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
 import org.junit.Test;
+
 import com.dummy.myerp.model.bean.comptabilite.CompteComptable;
 import com.dummy.myerp.model.bean.comptabilite.EcritureComptable;
 import com.dummy.myerp.model.bean.comptabilite.JournalComptable;
 import com.dummy.myerp.model.bean.comptabilite.LigneEcritureComptable;
 import com.dummy.myerp.technical.exception.FunctionalException;
-import com.dummy.myerp.technical.log.message.EntreeMessage;
-import com.dummy.myerp.technical.log.message.SortieMessage;
 
 public class ComptabiliteManagerImplTest {
 
 	private ComptabiliteManagerImpl manager = new ComptabiliteManagerImpl();
 
 	@Test
-	public void test() throws FunctionalException {
+	public void test() {
 		String nulExcpected = manager.test();
 		assertNull(nulExcpected);
 	}

@@ -45,7 +45,7 @@ public class ComptabiliteManagerImpl extends AbstractBusinessManager implements 
 	public ComptabiliteManagerImpl() {
 	}
 
-	public String test() throws FunctionalException {
+	public String test() {
 		LOGGER.trace(new EntreeMessage());
 		if (true) {
 			try {

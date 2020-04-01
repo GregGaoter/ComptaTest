@@ -23,6 +23,7 @@ import com.dummy.myerp.model.bean.comptabilite.JournalComptable;
 import com.dummy.myerp.model.bean.comptabilite.LigneEcritureComptable;
 import com.dummy.myerp.technical.exception.NotFoundException;
 import com.dummy.myerp.technical.log.message.EntreeMessage;
+import com.dummy.myerp.technical.log.message.ErrorMessage;
 import com.dummy.myerp.technical.log.message.SortieMessage;
 
 /**
@@ -154,7 +155,10 @@ public class ComptabiliteDaoImpl extends AbstractDbConsumer implements Comptabil
 		try {
 			vBean = vJdbcTemplate.queryForObject(SQLgetEcritureComptable, vSqlParams, vRM);
 		} catch (EmptyResultDataAccessException vEx) {
-			throw new NotFoundException("EcritureComptable non trouvée : id=" + pId);
+			LOGGER.error(new ErrorMessage(vEx));
+			NotFoundException notFoundException = new NotFoundException("EcritureComptable non trouvée : id=" + pId);
+			LOGGER.error(new ErrorMessage(notFoundException));
+			throw notFoundException;
 		}
 		LOGGER.trace(new SortieMessage());
 		return vBean;
@@ -187,7 +191,11 @@ public class ComptabiliteDaoImpl extends AbstractDbConsumer implements Comptabil
 		try {
 			vBean = vJdbcTemplate.queryForObject(SQLgetEcritureComptableByRef, vSqlParams, vRM);
 		} catch (EmptyResultDataAccessException vEx) {
-			throw new NotFoundException("EcritureComptable non trouvée : reference=" + pReference);
+			LOGGER.error(new ErrorMessage(vEx));
+			NotFoundException notFoundException = new NotFoundException(
+					"EcritureComptable non trouvée : reference=" + pReference);
+			LOGGER.error(new ErrorMessage(notFoundException));
+			throw notFoundException;
 		}
 		LOGGER.trace(new SortieMessage());
 		return vBean;
