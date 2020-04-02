@@ -48,8 +48,16 @@ public class ComptabiliteManagerImpl extends AbstractBusinessManager implements 
 
 	public String test() {
 		LOGGER.trace(new EntreeMessage());
+		LOGGER.trace("Message spécifique");
 		int x = 10;
 		LOGGER.debug(new DebugMessage("x", x));
+		try {
+			throw new FunctionalException("L'écriture comptable ne respecte pas les règles de gestion.",
+					new ConstraintViolationException(
+							"L'écriture comptable ne respecte pas les contraintes de validation", null));
+		} catch (FunctionalException e) {
+			LOGGER.error(new ErrorMessage(e));
+		}
 		LOGGER.trace(new SortieMessage());
 		return null;
 	}

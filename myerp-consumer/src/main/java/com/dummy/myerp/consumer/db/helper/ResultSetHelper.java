@@ -17,6 +17,8 @@ import com.dummy.myerp.technical.log.message.SortieMessage;
  */
 public abstract class ResultSetHelper {
 
+	// TODO Reprendre les logs DEBUG ici.
+
 	/** Logger Log4j pour la classe */
 	private static final Logger LOGGER = LogManager.getLogger(ResultSetHelper.class);
 

@@ -8,6 +8,7 @@ import org.apache.logging.log4j.Logger;
 import org.springframework.jdbc.core.RowMapper;
 
 import com.dummy.myerp.model.bean.comptabilite.CompteComptable;
+import com.dummy.myerp.technical.log.message.DebugMessage;
 import com.dummy.myerp.technical.log.message.EntreeMessage;
 import com.dummy.myerp.technical.log.message.SortieMessage;
 
@@ -23,7 +24,9 @@ public class CompteComptableRM implements RowMapper<CompteComptable> {
 	public CompteComptable mapRow(ResultSet pRS, int pRowNum) throws SQLException {
 		LOGGER.trace(new EntreeMessage());
 		CompteComptable vBean = new CompteComptable();
+		LOGGER.debug(new DebugMessage("(ResultSet) pRS.getInt(\"numero\")", pRS.getInt("numero")));
 		vBean.setNumero(pRS.getInt("numero"));
+		LOGGER.debug(new DebugMessage("(ResultSet) pRS.getString(\"libelle\")", pRS.getString("libelle")));
 		vBean.setLibelle(pRS.getString("libelle"));
 		LOGGER.trace(new SortieMessage());
 		return vBean;
