@@ -27,7 +27,6 @@ public class ErrorMessage extends DefaultMessage {
 	 * @throws NullPointerException si le paramètre est {@code null}
 	 */
 	public <E extends Exception> ErrorMessage(E exception) {
-		super();
 		this.exception = Objects.requireNonNull(exception);
 	}
 

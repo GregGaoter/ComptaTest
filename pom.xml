@@ -54,6 +54,12 @@
 		<!-- ===== Version properties ===== -->
 		<log4j.version>2.8.1</log4j.version>
 		<spring.version>4.3.7.RELEASE</spring.version>
+
+		<!-- ===== SonarCloud ===== -->
+		<sonar.projectKey>GregGaoter_ComptaTest</sonar.projectKey>
+		<sonar.organization>greggaoter</sonar.organization>
+		<sonar.host.url>https://sonarcloud.io</sonar.host.url>
+		<sonar.login>4437aa73886df5bb0389b050542728a79bef8f47</sonar.login>
 	</properties>
 
 
@@ -378,6 +384,27 @@
 					<groupId>org.codehaus.mojo</groupId>
 					<artifactId>build-helper-maven-plugin</artifactId>
 					<version>1.10</version>
+				</plugin>
+
+				<!-- ===== JaCoCo ===== -->
+				<plugin>
+					<groupId>org.jacoco</groupId>
+					<artifactId>jacoco-maven-plugin</artifactId>
+					<version>0.8.5</version>
+					<executions>
+						<execution>
+							<goals>
+								<goal>prepare-agent</goal>
+							</goals>
+						</execution>
+						<execution>
+							<id>report</id>
+							<phase>test</phase>
+							<goals>
+								<goal>report-aggregate</goal>
+							</goals>
+						</execution>
+					</executions>
 				</plugin>
 			</plugins>
 		</pluginManagement>

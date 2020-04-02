@@ -21,6 +21,7 @@ import com.dummy.myerp.model.bean.comptabilite.JournalComptable;
 import com.dummy.myerp.model.bean.comptabilite.LigneEcritureComptable;
 import com.dummy.myerp.technical.exception.FunctionalException;
 import com.dummy.myerp.technical.exception.NotFoundException;
+import com.dummy.myerp.technical.log.message.DebugMessage;
 import com.dummy.myerp.technical.log.message.EntreeMessage;
 import com.dummy.myerp.technical.log.message.ErrorMessage;
 import com.dummy.myerp.technical.log.message.SortieMessage;
@@ -47,15 +48,8 @@ public class ComptabiliteManagerImpl extends AbstractBusinessManager implements 
 
 	public String test() {
 		LOGGER.trace(new EntreeMessage());
-		if (true) {
-			try {
-				throw new FunctionalException("L'écriture comptable ne respecte pas les règles de gestion.",
-						new ConstraintViolationException(
-								"L'écriture comptable ne respecte pas les contraintes de validation", null));
-			} catch (FunctionalException e) {
-				LOGGER.error(new ErrorMessage(e));
-			}
-		}
+		int x = 10;
+		LOGGER.debug(new DebugMessage("x", x));
 		LOGGER.trace(new SortieMessage());
 		return null;
 	}
@@ -167,6 +161,10 @@ public class ComptabiliteManagerImpl extends AbstractBusinessManager implements 
 				vNbrDebit++;
 			}
 		}
+		LOGGER.debug(new DebugMessage("vNbrCredit", vNbrCredit));
+		LOGGER.debug(new DebugMessage("vNbrDebit", vNbrDebit));
+		LOGGER.debug(new DebugMessage("pEcritureComptable.getListLigneEcriture().size()",
+				pEcritureComptable.getListLigneEcriture().size()));
 		// On test le nombre de lignes car si l'écriture à une seule ligne
 		// avec un montant au débit et un montant au crédit ce n'est pas valable
 		if (pEcritureComptable.getListLigneEcriture().size() < 2 || vNbrCredit < 1 || vNbrDebit < 1) {
@@ -196,6 +194,7 @@ public class ComptabiliteManagerImpl extends AbstractBusinessManager implements 
 	protected void checkEcritureComptableContext(EcritureComptable pEcritureComptable) throws FunctionalException {
 		LOGGER.trace(new EntreeMessage());
 		// ===== RG_Compta_6 : La référence d'une écriture comptable doit être unique
+		LOGGER.debug(new DebugMessage("pEcritureComptable.getReference()", pEcritureComptable.getReference()));
 		if (StringUtils.isNoneEmpty(pEcritureComptable.getReference())) {
 			try {
 				// Recherche d'une écriture ayant la même référence
@@ -205,6 +204,8 @@ public class ComptabiliteManagerImpl extends AbstractBusinessManager implements 
 				// Si l'écriture à vérifier est une nouvelle écriture (id == null),
 				// ou si elle ne correspond pas à l'écriture trouvée (id != idECRef),
 				// c'est qu'il y a déjà une autre écriture avec la même référence
+				LOGGER.debug(new DebugMessage("pEcritureComptable.getId()", pEcritureComptable.getId()));
+				LOGGER.debug(new DebugMessage("vECRef.getId()", vECRef.getId()));
 				if (pEcritureComptable.getId() == null || !pEcritureComptable.getId().equals(vECRef.getId())) {
 					try {
 						throw new FunctionalException(
