@@ -20,7 +20,7 @@ public class ComptabiliteManagerImplTest {
 
 	@Test
 	public void test() {
-		String nulExcpected = manager.test();
+		String nulExcpected = manager.test("Texte", 20);
 		assertNull(nulExcpected);
 	}
 

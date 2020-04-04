@@ -1,6 +1,7 @@
 package com.dummy.myerp.model.bean.comptabilite;
 
 import java.util.List;
+import java.util.Map;
 import java.util.Objects;
 
 import javax.validation.constraints.NotNull;
@@ -9,7 +10,9 @@ import javax.validation.constraints.Size;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
+import com.dummy.myerp.technical.log.message.DebugMessage;
 import com.dummy.myerp.technical.log.message.EntreeMessage;
+import com.dummy.myerp.technical.log.message.ParamMessage;
 import com.dummy.myerp.technical.log.message.SortieMessage;
 
 /**
@@ -99,6 +102,7 @@ public class JournalComptable {
 		final String vSEP = ", ";
 		vStB.append("{").append("code='").append(code).append('\'').append(vSEP).append("libelle='").append(libelle)
 				.append('\'').append("}");
+		LOGGER.debug(new DebugMessage("StringBuilder vStB.toString()", vStB.toString()));
 		LOGGER.trace(new SortieMessage());
 		return vStB.toString();
 	}
@@ -114,6 +118,7 @@ public class JournalComptable {
 	 */
 	public static JournalComptable getByCode(List<? extends JournalComptable> pList, String pCode) {
 		LOGGER.trace(new EntreeMessage());
+		LOGGER.debug(new ParamMessage(Map.of("List<? extends CompteComptable> pList", pList, "String pCode", pCode)));
 		JournalComptable vRetour = null;
 		for (JournalComptable vBean : pList) {
 			if (vBean != null && Objects.equals(vBean.getCode(), pCode)) {
@@ -121,6 +126,7 @@ public class JournalComptable {
 				break;
 			}
 		}
+		LOGGER.debug(new DebugMessage("JournalComptable vRetour", vRetour));
 		LOGGER.trace(new SortieMessage());
 		return vRetour;
 	}

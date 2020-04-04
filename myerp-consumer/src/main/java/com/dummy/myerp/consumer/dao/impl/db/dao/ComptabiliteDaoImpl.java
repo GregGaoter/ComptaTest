@@ -2,6 +2,7 @@ package com.dummy.myerp.consumer.dao.impl.db.dao;
 
 import java.sql.Types;
 import java.util.List;
+import java.util.Map;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -25,6 +26,7 @@ import com.dummy.myerp.technical.exception.NotFoundException;
 import com.dummy.myerp.technical.log.message.DebugMessage;
 import com.dummy.myerp.technical.log.message.EntreeMessage;
 import com.dummy.myerp.technical.log.message.ErrorMessage;
+import com.dummy.myerp.technical.log.message.ParamMessage;
 import com.dummy.myerp.technical.log.message.SortieMessage;
 
 /**
@@ -151,6 +153,7 @@ public class ComptabiliteDaoImpl extends AbstractDbConsumer implements Comptabil
 	@Override
 	public EcritureComptable getEcritureComptable(Integer pId) throws NotFoundException {
 		LOGGER.trace(new EntreeMessage());
+		LOGGER.debug(new ParamMessage(Map.of("Integer pId", pId)));
 		NamedParameterJdbcTemplate vJdbcTemplate = new NamedParameterJdbcTemplate(getDataSource(DataSourcesEnum.MYERP));
 		MapSqlParameterSource vSqlParams = new MapSqlParameterSource();
 		vSqlParams.addValue("id", pId);
@@ -188,6 +191,7 @@ public class ComptabiliteDaoImpl extends AbstractDbConsumer implements Comptabil
 	@Override
 	public EcritureComptable getEcritureComptableByRef(String pReference) throws NotFoundException {
 		LOGGER.trace(new EntreeMessage());
+		LOGGER.debug(new ParamMessage(Map.of("String pReference", pReference)));
 		NamedParameterJdbcTemplate vJdbcTemplate = new NamedParameterJdbcTemplate(getDataSource(DataSourcesEnum.MYERP));
 		MapSqlParameterSource vSqlParams = new MapSqlParameterSource();
 		vSqlParams.addValue("reference", pReference);
@@ -231,6 +235,7 @@ public class ComptabiliteDaoImpl extends AbstractDbConsumer implements Comptabil
 	@Override
 	public void loadListLigneEcriture(EcritureComptable pEcritureComptable) {
 		LOGGER.trace(new EntreeMessage());
+		LOGGER.debug(new ParamMessage(Map.of("EcritureComptable pEcritureComptable", pEcritureComptable)));
 		NamedParameterJdbcTemplate vJdbcTemplate = new NamedParameterJdbcTemplate(getDataSource(DataSourcesEnum.MYERP));
 		MapSqlParameterSource vSqlParams = new MapSqlParameterSource();
 		LOGGER.debug(new DebugMessage("pEcritureComptable.getId()", pEcritureComptable.getId()));
@@ -262,6 +267,7 @@ public class ComptabiliteDaoImpl extends AbstractDbConsumer implements Comptabil
 	@Override
 	public void insertEcritureComptable(EcritureComptable pEcritureComptable) {
 		LOGGER.trace(new EntreeMessage());
+		LOGGER.debug(new ParamMessage(Map.of("EcritureComptable pEcritureComptable", pEcritureComptable)));
 		// ===== Ecriture Comptable
 		NamedParameterJdbcTemplate vJdbcTemplate = new NamedParameterJdbcTemplate(getDataSource(DataSourcesEnum.MYERP));
 		MapSqlParameterSource vSqlParams = new MapSqlParameterSource();
@@ -313,6 +319,7 @@ public class ComptabiliteDaoImpl extends AbstractDbConsumer implements Comptabil
 	 */
 	protected void insertListLigneEcritureComptable(EcritureComptable pEcritureComptable) {
 		LOGGER.trace(new EntreeMessage());
+		LOGGER.debug(new ParamMessage(Map.of("EcritureComptable pEcritureComptable", pEcritureComptable)));
 		NamedParameterJdbcTemplate vJdbcTemplate = new NamedParameterJdbcTemplate(getDataSource(DataSourcesEnum.MYERP));
 		MapSqlParameterSource vSqlParams = new MapSqlParameterSource();
 		LOGGER.debug(new DebugMessage("pEcritureComptable.getId()", pEcritureComptable.getId()));
@@ -354,6 +361,7 @@ public class ComptabiliteDaoImpl extends AbstractDbConsumer implements Comptabil
 	@Override
 	public void updateEcritureComptable(EcritureComptable pEcritureComptable) {
 		LOGGER.trace(new EntreeMessage());
+		LOGGER.debug(new ParamMessage(Map.of("EcritureComptable pEcritureComptable", pEcritureComptable)));
 		// ===== Ecriture Comptable
 		NamedParameterJdbcTemplate vJdbcTemplate = new NamedParameterJdbcTemplate(getDataSource(DataSourcesEnum.MYERP));
 		MapSqlParameterSource vSqlParams = new MapSqlParameterSource();
@@ -397,6 +405,7 @@ public class ComptabiliteDaoImpl extends AbstractDbConsumer implements Comptabil
 	@Override
 	public void deleteEcritureComptable(Integer pId) {
 		LOGGER.trace(new EntreeMessage());
+		LOGGER.debug(new ParamMessage(Map.of("Integer pId", pId)));
 		// ===== Suppression des lignes d'écriture
 		this.deleteListLigneEcritureComptable(pId);
 
@@ -428,6 +437,7 @@ public class ComptabiliteDaoImpl extends AbstractDbConsumer implements Comptabil
 	 */
 	protected void deleteListLigneEcritureComptable(Integer pEcritureId) {
 		LOGGER.trace(new EntreeMessage());
+		LOGGER.debug(new ParamMessage(Map.of("Integer pEcritureId", pEcritureId)));
 		NamedParameterJdbcTemplate vJdbcTemplate = new NamedParameterJdbcTemplate(getDataSource(DataSourcesEnum.MYERP));
 		MapSqlParameterSource vSqlParams = new MapSqlParameterSource();
 		vSqlParams.addValue("ecriture_id", pEcritureId);

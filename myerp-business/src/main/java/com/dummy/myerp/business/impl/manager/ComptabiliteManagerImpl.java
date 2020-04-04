@@ -2,6 +2,7 @@ package com.dummy.myerp.business.impl.manager;
 
 import java.math.BigDecimal;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 
 import javax.validation.ConstraintViolation;
@@ -11,6 +12,7 @@ import org.apache.commons.lang3.ObjectUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import org.springframework.stereotype.Service;
 import org.springframework.transaction.TransactionStatus;
 
 import com.dummy.myerp.business.contrat.manager.ComptabiliteManager;
@@ -24,6 +26,7 @@ import com.dummy.myerp.technical.exception.NotFoundException;
 import com.dummy.myerp.technical.log.message.DebugMessage;
 import com.dummy.myerp.technical.log.message.EntreeMessage;
 import com.dummy.myerp.technical.log.message.ErrorMessage;
+import com.dummy.myerp.technical.log.message.ParamMessage;
 import com.dummy.myerp.technical.log.message.SortieMessage;
 
 /**
@@ -31,6 +34,7 @@ import com.dummy.myerp.technical.log.message.SortieMessage;
  * Cette classe hérite de {@link AbstractBusinessManager} et implémente
  * {@link ComptabiliteManager}.
  */
+@Service
 public class ComptabiliteManagerImpl extends AbstractBusinessManager implements ComptabiliteManager {
 
 	/** Logger Log4j pour la classe */
@@ -46,8 +50,9 @@ public class ComptabiliteManagerImpl extends AbstractBusinessManager implements 
 	public ComptabiliteManagerImpl() {
 	}
 
-	public String test() {
+	public String test(String arg1, int arg2) {
 		LOGGER.trace(new EntreeMessage());
+		LOGGER.debug(new ParamMessage(Map.of("String arg1", arg1, "int arg2", arg2)));
 		LOGGER.trace("Message spécifique");
 		int x = 10;
 		LOGGER.debug(new DebugMessage("x", x));
@@ -56,6 +61,11 @@ public class ComptabiliteManagerImpl extends AbstractBusinessManager implements 
 					new ConstraintViolationException(
 							"L'écriture comptable ne respecte pas les contraintes de validation", null));
 		} catch (FunctionalException e) {
+			LOGGER.error(new ErrorMessage(e));
+		}
+		try {
+			throw new UnsatisfiedLinkError("La classe BusinessProxyImpl n'a pas été initialisée.");
+		} catch (UnsatisfiedLinkError e) {
 			LOGGER.error(new ErrorMessage(e));
 		}
 		LOGGER.trace(new SortieMessage());
@@ -94,6 +104,7 @@ public class ComptabiliteManagerImpl extends AbstractBusinessManager implements 
 	@Override
 	public synchronized void addReference(EcritureComptable pEcritureComptable) {
 		LOGGER.trace(new EntreeMessage());
+		LOGGER.debug(new ParamMessage(Map.of("EcritureComptable pEcritureComptable", pEcritureComptable)));
 		// TODO à implémenter
 		// Bien se réferer à la JavaDoc de cette méthode !
 		/*
@@ -115,6 +126,7 @@ public class ComptabiliteManagerImpl extends AbstractBusinessManager implements 
 	@Override
 	public void checkEcritureComptable(EcritureComptable pEcritureComptable) throws FunctionalException {
 		LOGGER.trace(new EntreeMessage());
+		LOGGER.debug(new ParamMessage(Map.of("EcritureComptable pEcritureComptable", pEcritureComptable)));
 		this.checkEcritureComptableUnit(pEcritureComptable);
 		this.checkEcritureComptableContext(pEcritureComptable);
 		LOGGER.trace(new SortieMessage());
@@ -133,6 +145,7 @@ public class ComptabiliteManagerImpl extends AbstractBusinessManager implements 
 	// TODO tests à compléter
 	protected void checkEcritureComptableUnit(EcritureComptable pEcritureComptable) throws FunctionalException {
 		LOGGER.trace(new EntreeMessage());
+		LOGGER.debug(new ParamMessage(Map.of("EcritureComptable pEcritureComptable", pEcritureComptable)));
 		// ===== Vérification des contraintes unitaires sur les attributs de l'écriture
 		Set<ConstraintViolation<EcritureComptable>> vViolations = getConstraintValidator().validate(pEcritureComptable);
 		if (!vViolations.isEmpty()) {
@@ -201,6 +214,7 @@ public class ComptabiliteManagerImpl extends AbstractBusinessManager implements 
 	 */
 	protected void checkEcritureComptableContext(EcritureComptable pEcritureComptable) throws FunctionalException {
 		LOGGER.trace(new EntreeMessage());
+		LOGGER.debug(new ParamMessage(Map.of("EcritureComptable pEcritureComptable", pEcritureComptable)));
 		// ===== RG_Compta_6 : La référence d'une écriture comptable doit être unique
 		LOGGER.debug(new DebugMessage("pEcritureComptable.getReference()", pEcritureComptable.getReference()));
 		if (StringUtils.isNoneEmpty(pEcritureComptable.getReference())) {
@@ -236,6 +250,7 @@ public class ComptabiliteManagerImpl extends AbstractBusinessManager implements 
 	@Override
 	public void insertEcritureComptable(EcritureComptable pEcritureComptable) throws FunctionalException {
 		LOGGER.trace(new EntreeMessage());
+		LOGGER.debug(new ParamMessage(Map.of("EcritureComptable pEcritureComptable", pEcritureComptable)));
 		this.checkEcritureComptable(pEcritureComptable);
 		TransactionStatus vTS = getTransactionManager().beginTransactionMyERP();
 		try {
@@ -254,6 +269,7 @@ public class ComptabiliteManagerImpl extends AbstractBusinessManager implements 
 	@Override
 	public void updateEcritureComptable(EcritureComptable pEcritureComptable) throws FunctionalException {
 		LOGGER.trace(new EntreeMessage());
+		LOGGER.debug(new ParamMessage(Map.of("EcritureComptable pEcritureComptable", pEcritureComptable)));
 		TransactionStatus vTS = getTransactionManager().beginTransactionMyERP();
 		try {
 			getDaoProxy().getComptabiliteDao().updateEcritureComptable(pEcritureComptable);
@@ -271,6 +287,7 @@ public class ComptabiliteManagerImpl extends AbstractBusinessManager implements 
 	@Override
 	public void deleteEcritureComptable(Integer pId) {
 		LOGGER.trace(new EntreeMessage());
+		LOGGER.debug(new ParamMessage(Map.of("Integer pId", pId)));
 		TransactionStatus vTS = getTransactionManager().beginTransactionMyERP();
 		try {
 			getDaoProxy().getComptabiliteDao().deleteEcritureComptable(pId);

@@ -2,6 +2,7 @@ package com.dummy.myerp.consumer.dao.impl.db.rowmapper.comptabilite;
 
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.util.Map;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -12,6 +13,7 @@ import com.dummy.myerp.consumer.dao.impl.cache.JournalComptableDaoCache;
 import com.dummy.myerp.model.bean.comptabilite.EcritureComptable;
 import com.dummy.myerp.technical.log.message.DebugMessage;
 import com.dummy.myerp.technical.log.message.EntreeMessage;
+import com.dummy.myerp.technical.log.message.ParamMessage;
 import com.dummy.myerp.technical.log.message.SortieMessage;
 
 /**
@@ -28,6 +30,7 @@ public class EcritureComptableRM implements RowMapper<EcritureComptable> {
 	@Override
 	public EcritureComptable mapRow(ResultSet pRS, int pRowNum) throws SQLException {
 		LOGGER.trace(new EntreeMessage());
+		LOGGER.debug(new ParamMessage(Map.of("ResultSet pRS", pRS, "int pRowNum", pRowNum)));
 		EcritureComptable vBean = new EcritureComptable();
 		LOGGER.debug(new DebugMessage("(ResultSet) pRS.getInt(\"id\")", pRS.getInt("id")));
 		vBean.setId(pRS.getInt("id"));

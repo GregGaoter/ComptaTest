@@ -1,6 +1,7 @@
 package com.dummy.myerp.model.bean.comptabilite;
 
 import java.util.List;
+import java.util.Map;
 import java.util.Objects;
 
 import javax.validation.constraints.NotNull;
@@ -9,7 +10,9 @@ import javax.validation.constraints.Size;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
+import com.dummy.myerp.technical.log.message.DebugMessage;
 import com.dummy.myerp.technical.log.message.EntreeMessage;
+import com.dummy.myerp.technical.log.message.ParamMessage;
 import com.dummy.myerp.technical.log.message.SortieMessage;
 
 /**
@@ -107,6 +110,7 @@ public class CompteComptable {
 		final String vSEP = ", ";
 		vStB.append("{").append("numero=").append(numero).append(vSEP).append("libelle='").append(libelle).append('\'')
 				.append("}");
+		LOGGER.debug(new DebugMessage("StringBuilder vStB.toString()", vStB.toString()));
 		LOGGER.trace(new SortieMessage());
 		return vStB.toString();
 	}
@@ -122,6 +126,8 @@ public class CompteComptable {
 	 */
 	public static CompteComptable getByNumero(List<? extends CompteComptable> pList, Integer pNumero) {
 		LOGGER.trace(new EntreeMessage());
+		LOGGER.debug(
+				new ParamMessage(Map.of("List<? extends CompteComptable> pList", pList, "Integer pNumero", pNumero)));
 		CompteComptable vRetour = null;
 		for (CompteComptable vBean : pList) {
 			if (vBean != null && Objects.equals(vBean.getNumero(), pNumero)) {
@@ -129,6 +135,7 @@ public class CompteComptable {
 				break;
 			}
 		}
+		LOGGER.debug(new DebugMessage("CompteComptable vRetour", vRetour));
 		LOGGER.trace(new SortieMessage());
 		return vRetour;
 	}

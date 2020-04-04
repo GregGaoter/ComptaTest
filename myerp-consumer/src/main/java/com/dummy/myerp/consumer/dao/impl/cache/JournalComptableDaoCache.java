@@ -1,6 +1,7 @@
 package com.dummy.myerp.consumer.dao.impl.cache;
 
 import java.util.List;
+import java.util.Map;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -8,6 +9,7 @@ import org.apache.logging.log4j.Logger;
 import com.dummy.myerp.consumer.ConsumerHelper;
 import com.dummy.myerp.model.bean.comptabilite.JournalComptable;
 import com.dummy.myerp.technical.log.message.EntreeMessage;
+import com.dummy.myerp.technical.log.message.ParamMessage;
 import com.dummy.myerp.technical.log.message.SortieMessage;
 
 /**
@@ -38,6 +40,7 @@ public class JournalComptableDaoCache {
 	 */
 	public JournalComptable getByCode(String pCode) {
 		LOGGER.trace(new EntreeMessage());
+		LOGGER.debug(new ParamMessage(Map.of("String pCode", pCode)));
 		if (listJournalComptable == null) {
 			listJournalComptable = ConsumerHelper.getDaoProxy().getComptabiliteDao().getListJournalComptable();
 		}

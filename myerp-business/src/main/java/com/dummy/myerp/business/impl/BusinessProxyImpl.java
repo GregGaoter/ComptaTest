@@ -1,5 +1,7 @@
 package com.dummy.myerp.business.impl;
 
+import java.util.Map;
+
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
@@ -8,6 +10,8 @@ import com.dummy.myerp.business.contrat.manager.ComptabiliteManager;
 import com.dummy.myerp.business.impl.manager.ComptabiliteManagerImpl;
 import com.dummy.myerp.consumer.dao.contrat.DaoProxy;
 import com.dummy.myerp.technical.log.message.EntreeMessage;
+import com.dummy.myerp.technical.log.message.ErrorMessage;
+import com.dummy.myerp.technical.log.message.ParamMessage;
 import com.dummy.myerp.technical.log.message.SortieMessage;
 
 /**
@@ -52,7 +56,11 @@ public class BusinessProxyImpl implements BusinessProxy {
 	protected static BusinessProxyImpl getInstance() {
 		LOGGER.trace(new EntreeMessage());
 		if (daoProxy == null) {
-			throw new UnsatisfiedLinkError("La classe BusinessProxyImpl n'a pas été initialisée.");
+			try {
+				throw new UnsatisfiedLinkError("La classe BusinessProxyImpl n'a pas été initialisée.");
+			} catch (UnsatisfiedLinkError e) {
+				LOGGER.error(new ErrorMessage(e));
+			}
 		}
 		LOGGER.trace(new SortieMessage());
 		return BusinessProxyImpl.INSTANCE;
@@ -67,6 +75,8 @@ public class BusinessProxyImpl implements BusinessProxy {
 	 */
 	public static BusinessProxyImpl getInstance(DaoProxy pDaoProxy, TransactionManager pTransactionManager) {
 		LOGGER.trace(new EntreeMessage());
+		LOGGER.debug(new ParamMessage(Map.of("DaoProxy pDaoProxy", pDaoProxy, "TransactionManager pTransactionManager",
+				pTransactionManager)));
 		daoProxy = pDaoProxy;
 		AbstractBusinessManager.configure(BusinessProxyImpl.INSTANCE, pDaoProxy, pTransactionManager);
 		LOGGER.trace(new SortieMessage());

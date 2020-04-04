@@ -9,6 +9,7 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
 import com.dummy.myerp.model.validation.constraint.MontantComptable;
+import com.dummy.myerp.technical.log.message.DebugMessage;
 import com.dummy.myerp.technical.log.message.EntreeMessage;
 import com.dummy.myerp.technical.log.message.SortieMessage;
 
@@ -147,6 +148,7 @@ public class LigneEcritureComptable {
 		vStB.append("{").append("compteComptable=").append(compteComptable).append(vSEP).append("libelle='")
 				.append(libelle).append('\'').append(vSEP).append("debit=").append(debit).append(vSEP).append("credit=")
 				.append(credit).append("}");
+		LOGGER.debug(new DebugMessage("StringBuilder vStB.toString()", vStB.toString()));
 		LOGGER.trace(new SortieMessage());
 		return vStB.toString();
 	}

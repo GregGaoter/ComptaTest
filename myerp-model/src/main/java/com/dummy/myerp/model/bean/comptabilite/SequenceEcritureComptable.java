@@ -3,6 +3,7 @@ package com.dummy.myerp.model.bean.comptabilite;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
+import com.dummy.myerp.technical.log.message.DebugMessage;
 import com.dummy.myerp.technical.log.message.EntreeMessage;
 import com.dummy.myerp.technical.log.message.SortieMessage;
 
@@ -91,6 +92,7 @@ public class SequenceEcritureComptable {
 		final String vSEP = ", ";
 		vStB.append("{").append("annee=").append(annee).append(vSEP).append("derniereValeur=").append(derniereValeur)
 				.append("}");
+		LOGGER.debug(new DebugMessage("StringBuilder vStB.toString()", vStB.toString()));
 		LOGGER.trace(new SortieMessage());
 		return vStB.toString();
 	}

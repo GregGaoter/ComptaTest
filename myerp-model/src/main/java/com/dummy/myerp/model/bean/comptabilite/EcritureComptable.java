@@ -14,6 +14,7 @@ import org.apache.commons.lang3.StringUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
+import com.dummy.myerp.technical.log.message.DebugMessage;
 import com.dummy.myerp.technical.log.message.EntreeMessage;
 import com.dummy.myerp.technical.log.message.SortieMessage;
 
@@ -162,6 +163,7 @@ public class EcritureComptable {
 				vRetour = vRetour.add(vLigneEcritureComptable.getDebit());
 			}
 		}
+		LOGGER.debug(new DebugMessage("BigDecimal getTotalDebit()", vRetour));
 		LOGGER.trace(new SortieMessage());
 		return vRetour;
 	}
@@ -180,6 +182,7 @@ public class EcritureComptable {
 				vRetour = vRetour.add(vLigneEcritureComptable.getDebit());
 			}
 		}
+		LOGGER.debug(new DebugMessage("BigDecimal getTotalCredit()", vRetour));
 		LOGGER.trace(new SortieMessage());
 		return vRetour;
 	}
@@ -192,6 +195,7 @@ public class EcritureComptable {
 	public boolean isEquilibree() {
 		LOGGER.trace(new EntreeMessage());
 		boolean vRetour = this.getTotalDebit().equals(getTotalCredit());
+		LOGGER.debug(new DebugMessage("isEquilibree()", vRetour));
 		LOGGER.trace(new SortieMessage());
 		return vRetour;
 	}
@@ -214,6 +218,7 @@ public class EcritureComptable {
 				.append(this.getTotalDebit().toPlainString()).append(vSEP).append("totalCredit=")
 				.append(this.getTotalCredit().toPlainString()).append(vSEP).append("listLigneEcriture=[\n")
 				.append(StringUtils.join(listLigneEcriture, "\n")).append("\n]").append("}");
+		LOGGER.debug(new DebugMessage("StringBuilder vStB.toString()", vStB.toString()));
 		LOGGER.trace(new SortieMessage());
 		return vStB.toString();
 	}

@@ -16,7 +16,7 @@ public class ErrorMessage extends DefaultMessage {
 	/**
 	 * L'exception levée.
 	 */
-	private final Exception exception;
+	private final Throwable throwable;
 
 	/**
 	 * Constructeur.
@@ -26,8 +26,8 @@ public class ErrorMessage extends DefaultMessage {
 	 * 
 	 * @throws NullPointerException si le paramètre est {@code null}
 	 */
-	public <E extends Exception> ErrorMessage(E exception) {
-		this.exception = Objects.requireNonNull(exception);
+	public <E extends Throwable> ErrorMessage(E throwable) {
+		this.throwable = Objects.requireNonNull(throwable);
 	}
 
 	/**
@@ -37,16 +37,16 @@ public class ErrorMessage extends DefaultMessage {
 	 */
 	@Override
 	public String getFormattedMessage() {
-		StringBuilder stringBuilder = new StringBuilder("Exception levée !");
+		StringBuilder stringBuilder = new StringBuilder("Throwable levée !");
 		String retourligne = System.getProperty("line.separator") + "\t";
 		String separateur2Pts = " : ";
 		String separateurTiret = " - ";
-		if (exception != null) {
-			String exceptionName = exception.getClass().getSimpleName();
-			String exceptionMessage = exception.getMessage();
-			stringBuilder.append(retourligne).append("Exception").append(separateurTiret).append(exceptionName)
+		if (throwable != null) {
+			String exceptionName = throwable.getClass().getSimpleName();
+			String exceptionMessage = throwable.getMessage();
+			stringBuilder.append(retourligne).append("Throwable").append(separateurTiret).append(exceptionName)
 					.append(separateur2Pts).append(exceptionMessage);
-			Throwable cause = exception.getCause();
+			Throwable cause = throwable.getCause();
 			if (cause != null) {
 				String causeName = cause.getClass().getSimpleName();
 				String causeMessage = cause.getMessage();

@@ -1,5 +1,7 @@
 package com.dummy.myerp.business.impl;
 
+import java.util.Map;
+
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.springframework.transaction.PlatformTransactionManager;
@@ -8,6 +10,7 @@ import org.springframework.transaction.TransactionStatus;
 import org.springframework.transaction.support.DefaultTransactionDefinition;
 
 import com.dummy.myerp.technical.log.message.EntreeMessage;
+import com.dummy.myerp.technical.log.message.ParamMessage;
 import com.dummy.myerp.technical.log.message.SortieMessage;
 
 /**
@@ -87,6 +90,7 @@ public class TransactionManager {
 	 */
 	public void commitMyERP(TransactionStatus pTStatus) {
 		LOGGER.trace(new EntreeMessage());
+		LOGGER.debug(new ParamMessage(Map.of("TransactionStatus pTStatus", pTStatus)));
 		if (pTStatus != null) {
 			ptmMyERP.commit(pTStatus);
 		}
@@ -100,6 +104,7 @@ public class TransactionManager {
 	 */
 	public void rollbackMyERP(TransactionStatus pTStatus) {
 		LOGGER.trace(new EntreeMessage());
+		LOGGER.debug(new ParamMessage(Map.of("TransactionStatus pTStatus", pTStatus)));
 		if (pTStatus != null) {
 			ptmMyERP.rollback(pTStatus);
 		}

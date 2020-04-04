@@ -2,6 +2,7 @@ package com.dummy.myerp.consumer.dao.impl.db.rowmapper.comptabilite;
 
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.util.Map;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -10,6 +11,7 @@ import org.springframework.jdbc.core.RowMapper;
 import com.dummy.myerp.model.bean.comptabilite.JournalComptable;
 import com.dummy.myerp.technical.log.message.DebugMessage;
 import com.dummy.myerp.technical.log.message.EntreeMessage;
+import com.dummy.myerp.technical.log.message.ParamMessage;
 import com.dummy.myerp.technical.log.message.SortieMessage;
 
 /**
@@ -23,6 +25,7 @@ public class JournalComptableRM implements RowMapper<JournalComptable> {
 	@Override
 	public JournalComptable mapRow(ResultSet pRS, int pRowNum) throws SQLException {
 		LOGGER.trace(new EntreeMessage());
+		LOGGER.debug(new ParamMessage(Map.of("ResultSet pRS", pRS, "int pRowNum", pRowNum)));
 		JournalComptable vBean = new JournalComptable();
 		LOGGER.debug(new DebugMessage("(ResultSet) pRS.getString(\"code\")", pRS.getString("code")));
 		vBean.setCode(pRS.getString("code"));

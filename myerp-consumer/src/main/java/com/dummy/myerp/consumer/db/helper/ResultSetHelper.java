@@ -4,20 +4,21 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.Calendar;
 import java.util.Date;
+import java.util.Map;
 
 import org.apache.commons.lang3.time.DateUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
+import com.dummy.myerp.technical.log.message.DebugMessage;
 import com.dummy.myerp.technical.log.message.EntreeMessage;
+import com.dummy.myerp.technical.log.message.ParamMessage;
 import com.dummy.myerp.technical.log.message.SortieMessage;
 
 /**
  * Classe utilitaire travaillant sur les ResultSet
  */
 public abstract class ResultSetHelper {
-
-	// TODO Reprendre les logs DEBUG ici.
 
 	/** Logger Log4j pour la classe */
 	private static final Logger LOGGER = LogManager.getLogger(ResultSetHelper.class);
@@ -42,12 +43,15 @@ public abstract class ResultSetHelper {
 	 */
 	public static Integer getInteger(ResultSet pRS, String pColName) throws SQLException {
 		LOGGER.trace(new EntreeMessage());
+		LOGGER.debug(new ParamMessage(Map.of("ResultSet pRS", pRS, "String pColName", pColName)));
 		Integer vRetour = null;
 		int vInt = pRS.getInt(pColName);
+		LOGGER.debug(new DebugMessage("(ResultSet) pRS.getInt(pColName)", pRS.getInt(pColName)));
 		if (!pRS.wasNull()) {
 			// vRetour = new Integer(vInt);
 			vRetour = Integer.valueOf(vInt);
 		}
+		LOGGER.debug(new DebugMessage("vRetour", vRetour));
 		LOGGER.trace(new SortieMessage());
 		return vRetour;
 	}
@@ -63,12 +67,15 @@ public abstract class ResultSetHelper {
 	 */
 	public static Long getLong(ResultSet pRS, String pColName) throws SQLException {
 		LOGGER.trace(new EntreeMessage());
+		LOGGER.debug(new ParamMessage(Map.of("ResultSet pRS", pRS, "String pColName", pColName)));
 		Long vRetour = null;
 		Long vLong = pRS.getLong(pColName);
+		LOGGER.debug(new DebugMessage("(ResultSet) pRS.getLong(pColName)", pRS.getLong(pColName)));
 		if (!pRS.wasNull()) {
 			// vRetour = new Long(vLong);
 			vRetour = vLong;
 		}
+		LOGGER.debug(new DebugMessage("vRetour", vRetour));
 		LOGGER.trace(new SortieMessage());
 		return vRetour;
 	}
@@ -85,10 +92,13 @@ public abstract class ResultSetHelper {
 	 */
 	public static Date getDate(ResultSet pRS, String pColName) throws SQLException {
 		LOGGER.trace(new EntreeMessage());
+		LOGGER.debug(new ParamMessage(Map.of("ResultSet pRS", pRS, "String pColName", pColName)));
 		Date vDate = pRS.getDate(pColName);
+		LOGGER.debug(new DebugMessage("(ResultSet) pRS.getDate(pColName)", pRS.getDate(pColName)));
 		if (vDate != null) {
 			vDate = DateUtils.truncate(vDate, Calendar.DATE);
 		}
+		LOGGER.debug(new DebugMessage("vDate", vDate));
 		LOGGER.trace(new SortieMessage());
 		return vDate;
 	}
