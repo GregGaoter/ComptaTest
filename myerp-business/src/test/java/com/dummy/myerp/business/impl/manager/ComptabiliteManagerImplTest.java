@@ -1,7 +1,5 @@
 package com.dummy.myerp.business.impl.manager;
 
-import static org.junit.Assert.assertNull;
-
 import java.math.BigDecimal;
 import java.util.Date;
 
@@ -17,12 +15,6 @@ import com.dummy.myerp.technical.exception.FunctionalException;
 public class ComptabiliteManagerImplTest {
 
 	private ComptabiliteManagerImpl manager = new ComptabiliteManagerImpl();
-
-	@Test
-	public void test() {
-		String nulExcpected = manager.test("Texte", 20);
-		assertNull(nulExcpected);
-	}
 
 	@Ignore
 	@Test

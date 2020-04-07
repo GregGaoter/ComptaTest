@@ -245,9 +245,15 @@
 
 			<!-- ===== Test unitaires ===== -->
 			<dependency>
-				<groupId>junit</groupId>
-				<artifactId>junit</artifactId>
-				<version>4.12</version>
+				<groupId>org.junit.jupiter</groupId>
+				<artifactId>junit-jupiter</artifactId>
+				<version>5.6.1</version>
+				<scope>test</scope>
+			</dependency>
+			<dependency>
+				<groupId>org.assertj</groupId>
+				<artifactId>assertj-core</artifactId>
+				<version>3.15.0</version>
 				<scope>test</scope>
 			</dependency>
 		</dependencies>
@@ -279,6 +285,12 @@
 						<source>${java.version}</source>
 						<target>${java.version}</target>
 					</configuration>
+				</plugin>
+
+				<!-- ===== Compatibilité avec JUnit 5 ===== -->
+				<plugin>
+					<artifactId>maven-surefire-plugin</artifactId>
+					<version>2.22.2</version>
 				</plugin>
 
 				<!-- ===== "Filtrage/Parsing" des resources ===== -->
