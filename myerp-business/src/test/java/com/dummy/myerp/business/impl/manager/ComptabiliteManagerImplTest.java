@@ -3,20 +3,19 @@ package com.dummy.myerp.business.impl.manager;
 import java.math.BigDecimal;
 import java.util.Date;
 
-import org.junit.Ignore;
-import org.junit.Test;
+import org.junit.jupiter.api.Disabled;
+import org.junit.jupiter.api.Test;
 
 import com.dummy.myerp.model.bean.comptabilite.CompteComptable;
 import com.dummy.myerp.model.bean.comptabilite.EcritureComptable;
 import com.dummy.myerp.model.bean.comptabilite.JournalComptable;
 import com.dummy.myerp.model.bean.comptabilite.LigneEcritureComptable;
-import com.dummy.myerp.technical.exception.FunctionalException;
 
 public class ComptabiliteManagerImplTest {
 
 	private ComptabiliteManagerImpl manager = new ComptabiliteManagerImpl();
 
-	@Ignore
+	@Disabled
 	@Test
 	public void checkEcritureComptableUnit() throws Exception {
 		EcritureComptable vEcritureComptable;
@@ -31,16 +30,18 @@ public class ComptabiliteManagerImplTest {
 		manager.checkEcritureComptableUnit(vEcritureComptable);
 	}
 
-	@Ignore
-	@Test(expected = FunctionalException.class)
+	@Disabled
+	@Test
+	// @Test(expected = FunctionalException.class)
 	public void checkEcritureComptableUnitViolation() throws Exception {
 		EcritureComptable vEcritureComptable;
 		vEcritureComptable = new EcritureComptable();
 		manager.checkEcritureComptableUnit(vEcritureComptable);
 	}
 
-	@Ignore
-	@Test(expected = FunctionalException.class)
+	@Disabled
+	@Test
+	// @Test(expected = FunctionalException.class)
 	public void checkEcritureComptableUnitRG2() throws Exception {
 		EcritureComptable vEcritureComptable;
 		vEcritureComptable = new EcritureComptable();
@@ -54,8 +55,9 @@ public class ComptabiliteManagerImplTest {
 		manager.checkEcritureComptableUnit(vEcritureComptable);
 	}
 
-	@Ignore
-	@Test(expected = FunctionalException.class)
+	@Disabled
+	@Test
+	// @Test(expected = FunctionalException.class)
 	public void checkEcritureComptableUnitRG3() throws Exception {
 		EcritureComptable vEcritureComptable;
 		vEcritureComptable = new EcritureComptable();
