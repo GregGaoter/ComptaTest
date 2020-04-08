@@ -2,7 +2,6 @@ package com.dummy.myerp.consumer.dao.impl.db.rowmapper.comptabilite;
 
 import java.sql.ResultSet;
 import java.sql.SQLException;
-import java.util.Map;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -12,7 +11,6 @@ import com.dummy.myerp.consumer.dao.impl.cache.CompteComptableDaoCache;
 import com.dummy.myerp.model.bean.comptabilite.LigneEcritureComptable;
 import com.dummy.myerp.technical.log.message.DebugMessage;
 import com.dummy.myerp.technical.log.message.EntreeMessage;
-import com.dummy.myerp.technical.log.message.ParamMessage;
 import com.dummy.myerp.technical.log.message.SortieMessage;
 
 /**
@@ -29,7 +27,8 @@ public class LigneEcritureComptableRM implements RowMapper<LigneEcritureComptabl
 	@Override
 	public LigneEcritureComptable mapRow(ResultSet pRS, int pRowNum) throws SQLException {
 		LOGGER.trace(new EntreeMessage());
-		LOGGER.debug(new ParamMessage(Map.of("ResultSet pRS", pRS, "int pRowNum", pRowNum)));
+		LOGGER.debug(new DebugMessage("ResultSet pRS", pRS));
+		LOGGER.debug(new DebugMessage("int pRowNum", pRowNum));
 		LigneEcritureComptable vBean = new LigneEcritureComptable();
 		LOGGER.debug(new DebugMessage("(ResultSet) pRS.getObject(\"compte_comptable_numero\", Integer.class)",
 				pRS.getObject("compte_comptable_numero", Integer.class)));

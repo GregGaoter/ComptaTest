@@ -4,7 +4,6 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.Calendar;
 import java.util.Date;
-import java.util.Map;
 
 import org.apache.commons.lang3.time.DateUtils;
 import org.apache.logging.log4j.LogManager;
@@ -12,7 +11,6 @@ import org.apache.logging.log4j.Logger;
 
 import com.dummy.myerp.technical.log.message.DebugMessage;
 import com.dummy.myerp.technical.log.message.EntreeMessage;
-import com.dummy.myerp.technical.log.message.ParamMessage;
 import com.dummy.myerp.technical.log.message.SortieMessage;
 
 /**
@@ -43,7 +41,8 @@ public abstract class ResultSetHelper {
 	 */
 	public static Integer getInteger(ResultSet pRS, String pColName) throws SQLException {
 		LOGGER.trace(new EntreeMessage());
-		LOGGER.debug(new ParamMessage(Map.of("ResultSet pRS", pRS, "String pColName", pColName)));
+		LOGGER.debug(new DebugMessage("ResultSet pRS", pRS));
+		LOGGER.debug(new DebugMessage("String pColName", pColName));
 		Integer vRetour = null;
 		int vInt = pRS.getInt(pColName);
 		LOGGER.debug(new DebugMessage("(ResultSet) pRS.getInt(pColName)", pRS.getInt(pColName)));
@@ -67,7 +66,8 @@ public abstract class ResultSetHelper {
 	 */
 	public static Long getLong(ResultSet pRS, String pColName) throws SQLException {
 		LOGGER.trace(new EntreeMessage());
-		LOGGER.debug(new ParamMessage(Map.of("ResultSet pRS", pRS, "String pColName", pColName)));
+		LOGGER.debug(new DebugMessage("ResultSet pRS", pRS));
+		LOGGER.debug(new DebugMessage("String pColName", pColName));
 		Long vRetour = null;
 		Long vLong = pRS.getLong(pColName);
 		LOGGER.debug(new DebugMessage("(ResultSet) pRS.getLong(pColName)", pRS.getLong(pColName)));
@@ -92,7 +92,8 @@ public abstract class ResultSetHelper {
 	 */
 	public static Date getDate(ResultSet pRS, String pColName) throws SQLException {
 		LOGGER.trace(new EntreeMessage());
-		LOGGER.debug(new ParamMessage(Map.of("ResultSet pRS", pRS, "String pColName", pColName)));
+		LOGGER.debug(new DebugMessage("ResultSet pRS", pRS));
+		LOGGER.debug(new DebugMessage("String pColName", pColName));
 		Date vDate = pRS.getDate(pColName);
 		LOGGER.debug(new DebugMessage("(ResultSet) pRS.getDate(pColName)", pRS.getDate(pColName)));
 		if (vDate != null) {

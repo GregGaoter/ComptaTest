@@ -195,6 +195,8 @@ public class EcritureComptable {
 	public boolean isEquilibree() {
 		LOGGER.trace(new EntreeMessage());
 		boolean vRetour = this.getTotalDebit().equals(getTotalCredit());
+		LOGGER.debug(new DebugMessage("getTotalCredit()", getTotalCredit()));
+		LOGGER.debug(new DebugMessage("getTotalDebit()", getTotalDebit()));
 		LOGGER.debug(new DebugMessage("isEquilibree()", vRetour));
 		LOGGER.trace(new SortieMessage());
 		return vRetour;

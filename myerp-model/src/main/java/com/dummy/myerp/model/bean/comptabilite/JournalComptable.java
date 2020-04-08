@@ -1,7 +1,6 @@
 package com.dummy.myerp.model.bean.comptabilite;
 
 import java.util.List;
-import java.util.Map;
 import java.util.Objects;
 
 import javax.validation.constraints.NotNull;
@@ -12,7 +11,6 @@ import org.apache.logging.log4j.Logger;
 
 import com.dummy.myerp.technical.log.message.DebugMessage;
 import com.dummy.myerp.technical.log.message.EntreeMessage;
-import com.dummy.myerp.technical.log.message.ParamMessage;
 import com.dummy.myerp.technical.log.message.SortieMessage;
 
 /**
@@ -118,7 +116,8 @@ public class JournalComptable {
 	 */
 	public static JournalComptable getByCode(List<? extends JournalComptable> pList, String pCode) {
 		LOGGER.trace(new EntreeMessage());
-		LOGGER.debug(new ParamMessage(Map.of("List<? extends CompteComptable> pList", pList, "String pCode", pCode)));
+		LOGGER.debug(new DebugMessage("List<? extends CompteComptable> pList", pList));
+		LOGGER.debug(new DebugMessage("String pCode", pCode));
 		JournalComptable vRetour = null;
 		for (JournalComptable vBean : pList) {
 			if (vBean != null && Objects.equals(vBean.getCode(), pCode)) {

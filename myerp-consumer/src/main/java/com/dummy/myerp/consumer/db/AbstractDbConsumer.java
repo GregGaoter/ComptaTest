@@ -14,7 +14,6 @@ import com.dummy.myerp.consumer.dao.contrat.DaoProxy;
 import com.dummy.myerp.technical.log.message.DebugMessage;
 import com.dummy.myerp.technical.log.message.EntreeMessage;
 import com.dummy.myerp.technical.log.message.ErrorMessage;
-import com.dummy.myerp.technical.log.message.ParamMessage;
 import com.dummy.myerp.technical.log.message.SortieMessage;
 
 /**
@@ -60,7 +59,7 @@ public abstract class AbstractDbConsumer {
 	 */
 	protected DataSource getDataSource(DataSourcesEnum pDataSourceId) {
 		LOGGER.trace(new EntreeMessage());
-		LOGGER.debug(new ParamMessage(Map.of("DataSourcesEnum pDataSourceId", pDataSourceId)));
+		LOGGER.debug(new DebugMessage("DataSourcesEnum pDataSourceId", pDataSourceId));
 		DataSource vRetour = AbstractDbConsumer.mapDataSource.get(pDataSourceId);
 		LOGGER.debug(new DebugMessage("DataSource vRetour", vRetour));
 		if (vRetour == null) {
@@ -91,8 +90,9 @@ public abstract class AbstractDbConsumer {
 	protected <T> T queryGetSequenceValuePostgreSQL(DataSourcesEnum pDataSourcesId, String pSeqName,
 			Class<T> pSeqValueClass) {
 		LOGGER.trace(new EntreeMessage());
-		LOGGER.debug(new ParamMessage(Map.of("DataSourcesEnum pDataSourcesId", pDataSourcesId, "String pSeqName",
-				pSeqName, "Class<T> pSeqValueClass", pSeqValueClass)));
+		LOGGER.debug(new DebugMessage("DataSourcesEnum pDataSourcesId", pDataSourcesId));
+		LOGGER.debug(new DebugMessage("String pSeqName", pSeqName));
+		LOGGER.debug(new DebugMessage("Class<T> pSeqValueClass", pSeqValueClass));
 		JdbcTemplate vJdbcTemplate = new JdbcTemplate(getDataSource(pDataSourcesId));
 		String vSeqSQL = "SELECT last_value FROM " + pSeqName;
 		LOGGER.debug(new DebugMessage("vSeqSQL", vSeqSQL));
@@ -110,7 +110,7 @@ public abstract class AbstractDbConsumer {
 	 */
 	public static void configure(Map<DataSourcesEnum, DataSource> pMapDataSource) {
 		LOGGER.trace(new EntreeMessage());
-		LOGGER.debug(new ParamMessage(Map.of("Map<DataSourcesEnum, DataSource> pMapDataSource", pMapDataSource)));
+		LOGGER.debug(new DebugMessage("Map<DataSourcesEnum, DataSource>", pMapDataSource));
 		// On pilote l'ajout avec l'Enum et on ne rajoute pas tout à l'aveuglette...
 		// ( pas de AbstractDbDao.mapDataSource.putAll(...) )
 		Map<DataSourcesEnum, DataSource> vMapDataSource = new HashMap<>(DataSourcesEnum.values().length);

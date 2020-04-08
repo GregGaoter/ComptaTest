@@ -1,7 +1,5 @@
 package com.dummy.myerp.business.impl;
 
-import java.util.Map;
-
 import javax.validation.Configuration;
 import javax.validation.Validation;
 import javax.validation.Validator;
@@ -12,8 +10,8 @@ import org.apache.logging.log4j.Logger;
 
 import com.dummy.myerp.business.contrat.BusinessProxy;
 import com.dummy.myerp.consumer.dao.contrat.DaoProxy;
+import com.dummy.myerp.technical.log.message.DebugMessage;
 import com.dummy.myerp.technical.log.message.EntreeMessage;
-import com.dummy.myerp.technical.log.message.ParamMessage;
 import com.dummy.myerp.technical.log.message.SortieMessage;
 
 /**
@@ -49,8 +47,9 @@ public abstract class AbstractBusinessManager {
 	public static void configure(BusinessProxy pBusinessProxy, DaoProxy pDaoProxy,
 			TransactionManager pTransactionManager) {
 		LOGGER.trace(new EntreeMessage());
-		LOGGER.debug(new ParamMessage(Map.of("BusinessProxy pBusinessProxy", pBusinessProxy, "DaoProxy pDaoProxy",
-				pDaoProxy, "TransactionManager pTransactionManager", pTransactionManager)));
+		LOGGER.debug(new DebugMessage("BusinessProxy pBusinessProxy", pBusinessProxy));
+		LOGGER.debug(new DebugMessage("DaoProxy pDaoProxy", pDaoProxy));
+		LOGGER.debug(new DebugMessage("TransactionManager pTransactionManager", pTransactionManager));
 		businessProxy = pBusinessProxy;
 		daoProxy = pDaoProxy;
 		transactionManager = pTransactionManager;

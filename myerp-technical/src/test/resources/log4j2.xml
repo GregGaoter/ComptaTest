@@ -4,7 +4,7 @@
 	<Appenders>
 		<Console name="console" target="SYSTEM_OUT">
 			<PatternLayout
-				pattern="%d{yyyy.MM.dd HH:mm:ss} [%-5p] %C{2}.%M(ligne %L) - %m%n" />
+				pattern="%highlight{%d{yyyy.MM.dd HH:mm:ss} [%-5p] %C{3.}.%M(ligne %L) - %m%n}{TRACE=default}" />
 		</Console>
 	</Appenders>
 	<Loggers>

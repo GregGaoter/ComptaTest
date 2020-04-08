@@ -36,7 +36,7 @@ public class DebugMessage extends DefaultMessage {
 	 */
 	public DebugMessage(String dataName, Object value) {
 		this.dataName = dataName;
-		this.value = value.toString();
+		this.value = value == null ? null : value.toString();
 	}
 
 	/**
