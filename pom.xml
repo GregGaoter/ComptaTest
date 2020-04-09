@@ -54,6 +54,7 @@
 		<!-- ===== Version properties ===== -->
 		<log4j.version>2.8.1</log4j.version>
 		<spring.version>5.2.5.RELEASE</spring.version>
+		<junit-jupiter-version>5.6.1</junit-jupiter-version>
 	</properties>
 
 
@@ -244,17 +245,30 @@
 			</dependency>
 
 			<!-- ===== Test unitaires ===== -->
+			<!-- JUnit 5 -->
 			<dependency>
 				<groupId>org.junit.jupiter</groupId>
 				<artifactId>junit-jupiter</artifactId>
-				<version>5.6.1</version>
+				<version>${junit-jupiter-version}</version>
 				<scope>test</scope>
 			</dependency>
+			<dependency>
+				<groupId>org.junit.jupiter</groupId>
+				<artifactId>junit-jupiter-api</artifactId>
+				<version>${junit-jupiter-version}</version>
+			</dependency>
+			<!-- AssertJ -->
 			<dependency>
 				<groupId>org.assertj</groupId>
 				<artifactId>assertj-core</artifactId>
 				<version>3.15.0</version>
 				<scope>test</scope>
+			</dependency>
+			<!-- Mockito -->
+			<dependency>
+				<groupId>org.mockito</groupId>
+				<artifactId>mockito-junit-jupiter</artifactId>
+				<version>3.3.3</version>
 			</dependency>
 		</dependencies>
 	</dependencyManagement>

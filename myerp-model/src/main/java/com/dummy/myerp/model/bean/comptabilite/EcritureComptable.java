@@ -49,6 +49,14 @@ public class EcritureComptable {
 	@Size(min = 2)
 	private final List<LigneEcritureComptable> listLigneEcriture = new ArrayList<>();
 
+	// ==================== Constructeurs ====================
+	/**
+	 * Constructeur.
+	 */
+	public EcritureComptable() {
+		super();
+	}
+
 	// ==================== Getters/Setters ====================
 	/**
 	 * Renvoie l'id de l'écriture comptable
@@ -194,7 +202,10 @@ public class EcritureComptable {
 	 */
 	public boolean isEquilibree() {
 		LOGGER.trace(new EntreeMessage());
-		boolean vRetour = this.getTotalDebit().equals(getTotalCredit());
+		boolean vRetour = false;
+		if (getTotalDebit() != null && getTotalCredit() != null) {
+			vRetour = getTotalDebit().equals(getTotalCredit());
+		}
 		LOGGER.debug(new DebugMessage("getTotalCredit()", getTotalCredit()));
 		LOGGER.debug(new DebugMessage("getTotalDebit()", getTotalDebit()));
 		LOGGER.debug(new DebugMessage("isEquilibree()", vRetour));

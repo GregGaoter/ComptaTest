@@ -1,45 +1,110 @@
 package com.dummy.myerp.model.bean.comptabilite;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.mockito.Mockito.when;
 
 import java.math.BigDecimal;
 
-import org.apache.commons.lang3.ObjectUtils;
-import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.ValueSource;
+import org.mockito.Mock;
+import org.mockito.junit.jupiter.MockitoExtension;
 
+@ExtendWith(MockitoExtension.class)
 public class EcritureComptableTest {
 
-	private LigneEcritureComptable createLigne(Integer pCompteComptableNumero, String pDebit, String pCredit) {
-		BigDecimal vDebit = pDebit == null ? null : new BigDecimal(pDebit);
-		BigDecimal vCredit = pCredit == null ? null : new BigDecimal(pCredit);
-		String vLibelle = ObjectUtils.defaultIfNull(vDebit, BigDecimal.ZERO)
-				.subtract(ObjectUtils.defaultIfNull(vCredit, BigDecimal.ZERO)).toPlainString();
-		LigneEcritureComptable vRetour = new LigneEcritureComptable(new CompteComptable(pCompteComptableNumero),
-				vLibelle, vDebit, vCredit);
-		return vRetour;
+	@Mock
+	private EcritureComptable ecritureComptable;
+
+	// ==================== isEquilibree ====================
+
+	@ParameterizedTest
+	@ValueSource(longs = { 20050L, -20050L, Long.MAX_VALUE, Long.MIN_VALUE, Long.MAX_VALUE / 2, Long.MIN_VALUE / 2, 0 })
+	void isEquilibree_EcritureComptableCreditAndDebitWithMultipleEgalUnscaledVal_returnsTrue(long unscaledVal) {
+		// GIVEN
+		when(ecritureComptable.getTotalCredit()).thenReturn(BigDecimal.valueOf(unscaledVal, 2));
+		when(ecritureComptable.getTotalDebit()).thenReturn(BigDecimal.valueOf(unscaledVal, 2));
+		when(ecritureComptable.isEquilibree()).thenCallRealMethod();
+
+		// WHEN
+		boolean isEquilibree = ecritureComptable.isEquilibree();
+
+		// THEN
+		assertThat(isEquilibree).isTrue();
 	}
 
-	@Disabled
 	@Test
-	public void isEquilibree() {
-		EcritureComptable vEcriture;
-		vEcriture = new EcritureComptable();
+	void isEquilibree_EcritureComptableCreditAndDebitNull_returnsFalse() {
+		// GIVEN
+		when(ecritureComptable.getTotalCredit()).thenReturn(null);
+		when(ecritureComptable.getTotalDebit()).thenReturn(null);
+		when(ecritureComptable.isEquilibree()).thenCallRealMethod();
 
-		vEcriture.setLibelle("Equilibrée");
-		vEcriture.getListLigneEcriture().add(this.createLigne(1, "200.50", null));
-		vEcriture.getListLigneEcriture().add(this.createLigne(1, "100.50", "33"));
-		vEcriture.getListLigneEcriture().add(this.createLigne(2, null, "301"));
-		vEcriture.getListLigneEcriture().add(this.createLigne(2, "40", "7"));
-		assertThat(vEcriture.isEquilibree()).isTrue();
+		// WHEN
+		boolean isEquilibree = ecritureComptable.isEquilibree();
 
-		vEcriture.getListLigneEcriture().clear();
-		vEcriture.setLibelle("Non équilibrée");
-		vEcriture.getListLigneEcriture().add(this.createLigne(1, "10", null));
-		vEcriture.getListLigneEcriture().add(this.createLigne(1, "20", "1"));
-		vEcriture.getListLigneEcriture().add(this.createLigne(2, null, "30"));
-		vEcriture.getListLigneEcriture().add(this.createLigne(2, "1", "2"));
-		assertThat(vEcriture.isEquilibree()).isFalse();
+		// THEN
+		assertThat(isEquilibree).isFalse();
+	}
+
+	@Test
+	void isEquilibree_EcritureComptableCreditNullAndDebitNotNull_returnsFalse() {
+		// GIVEN
+		when(ecritureComptable.getTotalCredit()).thenReturn(null);
+		when(ecritureComptable.getTotalDebit()).thenReturn(BigDecimal.valueOf(20050L, 2));
+		when(ecritureComptable.isEquilibree()).thenCallRealMethod();
+
+		// WHEN
+		boolean isEquilibree = ecritureComptable.isEquilibree();
+
+		// THEN
+		assertThat(isEquilibree).isFalse();
+	}
+
+	@Test
+	void isEquilibree_EcritureComptableCreditNotNullAndDebitNull_returnsFalse() {
+		// GIVEN
+		when(ecritureComptable.getTotalCredit()).thenReturn(BigDecimal.valueOf(20050L, 2));
+		when(ecritureComptable.getTotalDebit()).thenReturn(null);
+		when(ecritureComptable.isEquilibree()).thenCallRealMethod();
+
+		// WHEN
+		boolean isEquilibree = ecritureComptable.isEquilibree();
+
+		// THEN
+		assertThat(isEquilibree).isFalse();
+	}
+
+	@ParameterizedTest
+	@ValueSource(ints = { 2, -2, Integer.MAX_VALUE, Integer.MIN_VALUE, Integer.MAX_VALUE / 2, Integer.MIN_VALUE / 2,
+			0 })
+	void isEquilibree_EcritureComptableCreditAndDebitWithMultipleEgalScale_returnsTrue(int scale) {
+		// GIVEN
+		when(ecritureComptable.getTotalCredit()).thenReturn(BigDecimal.valueOf(20050L, scale));
+		when(ecritureComptable.getTotalDebit()).thenReturn(BigDecimal.valueOf(20050L, scale));
+		when(ecritureComptable.isEquilibree()).thenCallRealMethod();
+
+		// WHEN
+		boolean isEquilibree = ecritureComptable.isEquilibree();
+
+		// THEN
+		assertThat(isEquilibree).isTrue();
+	}
+
+	@Test
+	void isEquilibree_EcritureComptableCreditAndDebitNotEgal_returnsFalse() {
+		// GIVEN
+		when(ecritureComptable.getTotalCredit()).thenReturn(BigDecimal.valueOf(-538L, 2));
+		when(ecritureComptable.getTotalDebit()).thenReturn(BigDecimal.valueOf(620L, 1));
+		when(ecritureComptable.isEquilibree()).thenCallRealMethod();
+
+		// WHEN
+		boolean isEquilibree = ecritureComptable.isEquilibree();
+
+		// THEN
+		assertThat(isEquilibree).isFalse();
 	}
 
 }
