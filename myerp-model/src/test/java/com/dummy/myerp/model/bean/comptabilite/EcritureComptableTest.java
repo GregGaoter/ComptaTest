@@ -4,7 +4,11 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.Mockito.when;
 
 import java.math.BigDecimal;
+import java.sql.Date;
+import java.util.ArrayList;
+import java.util.List;
 
+import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.junit.jupiter.params.ParameterizedTest;
@@ -17,6 +21,9 @@ public class EcritureComptableTest {
 
 	@Mock
 	private EcritureComptable ecritureComptable;
+
+	@Mock
+	private JournalComptable journalComptable;
 
 	// ==================== isEquilibree ====================
 
@@ -105,6 +112,35 @@ public class EcritureComptableTest {
 
 		// THEN
 		assertThat(isEquilibree).isFalse();
+	}
+
+	// ==================== toString ====================
+
+	@Disabled
+	@Test
+	void toString_ecritureComptable_returnsEcritureComptableString() {
+		// GIVEN
+		EcritureComptable ecritureComptable = new EcritureComptable();
+		ecritureComptable.setId(1);
+		ecritureComptable.setJournal(journalComptable);
+		ecritureComptable.setReference("JC-2020/00001");
+		ecritureComptable.setDate(Date.valueOf("2020-04-09"));
+		ecritureComptable.setLibelle("Ecriture comptable test");
+		when(ecritureComptable.getTotalCredit()).thenReturn(BigDecimal.valueOf(20050L, 2));
+		when(ecritureComptable.getTotalDebit()).thenReturn(BigDecimal.valueOf(20050L, 2));
+		List<LigneEcritureComptable> listLigneEcriture = new ArrayList<>();
+		listLigneEcriture.add(new LigneEcritureComptable(new CompteComptable(1, "C1"), "L1",
+				BigDecimal.valueOf(888L, -2), BigDecimal.valueOf(-813L, -1)));
+		listLigneEcriture.add(new LigneEcritureComptable(new CompteComptable(2, "C2"), "L2",
+				BigDecimal.valueOf(-77L, 2), BigDecimal.valueOf(43L, -2)));
+		listLigneEcriture.add(new LigneEcritureComptable(new CompteComptable(3, "C3"), "L3",
+				BigDecimal.valueOf(-473L, -1), BigDecimal.valueOf(85L, 1)));
+
+		// WHEN
+		String actualString = ecritureComptable.toString();
+
+		// THEN
+		assertThat(actualString).isEqualTo("CompteComptable{numero=-2147483648, libelle='Libellé'}");
 	}
 
 }
