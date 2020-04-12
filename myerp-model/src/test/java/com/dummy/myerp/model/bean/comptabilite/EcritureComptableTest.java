@@ -5,8 +5,6 @@ import static org.mockito.Mockito.when;
 
 import java.math.BigDecimal;
 import java.sql.Date;
-import java.util.ArrayList;
-import java.util.List;
 
 import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
@@ -120,27 +118,42 @@ public class EcritureComptableTest {
 	@Test
 	void toString_ecritureComptable_returnsEcritureComptableString() {
 		// GIVEN
-		EcritureComptable ecritureComptable = new EcritureComptable();
 		ecritureComptable.setId(1);
 		ecritureComptable.setJournal(journalComptable);
 		ecritureComptable.setReference("JC-2020/00001");
-		ecritureComptable.setDate(Date.valueOf("2020-04-09"));
-		ecritureComptable.setLibelle("Ecriture comptable test");
+		ecritureComptable.setDate(Date.valueOf("2020-04-12"));
+		ecritureComptable.setLibelle("Développement tests");
 		when(ecritureComptable.getTotalCredit()).thenReturn(BigDecimal.valueOf(20050L, 2));
 		when(ecritureComptable.getTotalDebit()).thenReturn(BigDecimal.valueOf(20050L, 2));
-		List<LigneEcritureComptable> listLigneEcriture = new ArrayList<>();
-		listLigneEcriture.add(new LigneEcritureComptable(new CompteComptable(1, "C1"), "L1",
-				BigDecimal.valueOf(888L, -2), BigDecimal.valueOf(-813L, -1)));
-		listLigneEcriture.add(new LigneEcritureComptable(new CompteComptable(2, "C2"), "L2",
-				BigDecimal.valueOf(-77L, 2), BigDecimal.valueOf(43L, -2)));
-		listLigneEcriture.add(new LigneEcritureComptable(new CompteComptable(3, "C3"), "L3",
-				BigDecimal.valueOf(-473L, -1), BigDecimal.valueOf(85L, 1)));
+		when(ecritureComptable.toString()).thenCallRealMethod();
 
 		// WHEN
 		String actualString = ecritureComptable.toString();
 
 		// THEN
-		assertThat(actualString).isEqualTo("CompteComptable{numero=-2147483648, libelle='Libellé'}");
+		assertThat(actualString).isEqualTo(
+				"{id=1, journal=journal, reference='reference', date=date, libelle='libelle', totalDebit=200.50, totalCredit=200.50, listLigneEcriture=[nlistLigneEcriture]}");
+	}
+
+	@Disabled
+	@Test
+	public void toString_ecritureComptable_returnsStringOfEcritureComptable() {
+		// GIVEN
+		EcritureComptable ecritureComptable = new EcritureComptable();
+		ecritureComptable.setId(1);
+		ecritureComptable.setJournal(journalComptable);
+		ecritureComptable.setReference("JC-2020/00001");
+		ecritureComptable.setDate(Date.valueOf("2020-04-12"));
+		ecritureComptable.setLibelle("Développement tests");
+		when(ecritureComptable.getTotalCredit()).thenReturn(BigDecimal.valueOf(20050L, 2));
+		when(ecritureComptable.getTotalDebit()).thenReturn(BigDecimal.valueOf(20050L, 2));
+
+		// WHEN
+		String actualString = ecritureComptable.toString();
+
+		// THEN
+		assertThat(actualString).isEqualTo(
+				"{id=1, journal=journal, reference='reference', date=date, libelle='libelle', totalDebit=200.50, totalCredit=200.50, listLigneEcriture=[null]}");
 	}
 
 }

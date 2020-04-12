@@ -119,10 +119,12 @@ public class JournalComptable {
 		LOGGER.debug(new DebugMessage("List<? extends CompteComptable> pList", pList));
 		LOGGER.debug(new DebugMessage("String pCode", pCode));
 		JournalComptable vRetour = null;
-		for (JournalComptable vBean : pList) {
-			if (vBean != null && Objects.equals(vBean.getCode(), pCode)) {
-				vRetour = vBean;
-				break;
+		if (pList != null) {
+			for (JournalComptable vBean : pList) {
+				if (vBean != null && Objects.equals(vBean.getCode(), pCode)) {
+					vRetour = vBean;
+					break;
+				}
 			}
 		}
 		LOGGER.debug(new DebugMessage("JournalComptable vRetour", vRetour));
