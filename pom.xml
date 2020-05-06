@@ -212,6 +212,17 @@
 				<version>${spring.version}</version>
 				<scope>compile</scope>
 			</dependency>
+			<dependency>
+				<groupId>org.springframework</groupId>
+				<artifactId>spring-context</artifactId>
+				<version>${spring.version}</version>
+			</dependency>
+			<!-- Spring MVC -->
+			<dependency>
+				<groupId>org.springframework</groupId>
+				<artifactId>spring-webmvc</artifactId>
+				<version>${spring.version}</version>
+			</dependency>
 
 			<!-- ===== Spring JDBC/Tx ===== -->
 			<!-- spring-tx : transaction, JCA, DAO -->
@@ -269,6 +280,11 @@
 				<groupId>org.mockito</groupId>
 				<artifactId>mockito-junit-jupiter</artifactId>
 				<version>3.3.3</version>
+			</dependency>
+			<dependency>
+				<groupId>org.mockito</groupId>
+				<artifactId>mockito-core</artifactId>
+				<version>3.2.4</version>
 			</dependency>
 		</dependencies>
 	</dependencyManagement>

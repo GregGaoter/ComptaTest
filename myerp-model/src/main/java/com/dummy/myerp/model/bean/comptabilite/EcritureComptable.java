@@ -158,6 +158,16 @@ public class EcritureComptable {
 	}
 
 	/**
+	 * Initialise les lignes d'écriture de l'écriture comptable
+	 * 
+	 * @param listLigneEcriture - La liste des lignes d'écriture
+	 */
+	public void setListLigneEcriture(List<LigneEcritureComptable> listLigneEcriture) {
+		this.listLigneEcriture.clear();
+		this.listLigneEcriture.addAll(listLigneEcriture);
+	}
+
+	/**
 	 * Calcul et renvoie le total des montants au débit des lignes d'écriture
 	 *
 	 * @return {@link BigDecimal}, {@link BigDecimal#ZERO} si aucun montant au débit

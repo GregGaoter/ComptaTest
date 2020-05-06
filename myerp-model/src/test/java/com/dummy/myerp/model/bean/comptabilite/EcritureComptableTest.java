@@ -5,6 +5,8 @@ import static org.mockito.Mockito.when;
 
 import java.math.BigDecimal;
 import java.sql.Date;
+import java.util.ArrayList;
+import java.util.List;
 
 import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
@@ -12,6 +14,7 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.ValueSource;
 import org.mockito.Mock;
+import org.mockito.Mockito;
 import org.mockito.junit.jupiter.MockitoExtension;
 
 @ExtendWith(MockitoExtension.class)
@@ -110,6 +113,76 @@ public class EcritureComptableTest {
 
 		// THEN
 		assertThat(isEquilibree).isFalse();
+	}
+
+	// ==================== getTotalDebit ====================
+
+	@Test
+	void getTotalDebit_ecritureComptableDebitNormal_returnsBigDecimal() {
+		// GIVEN
+		LigneEcritureComptable ligneEcritureComptable01 = Mockito.mock(LigneEcritureComptable.class);
+		LigneEcritureComptable ligneEcritureComptable02 = Mockito.mock(LigneEcritureComptable.class);
+		LigneEcritureComptable ligneEcritureComptable03 = Mockito.mock(LigneEcritureComptable.class);
+		when(ligneEcritureComptable01.getDebit()).thenReturn(BigDecimal.valueOf(4395L, 2));
+		when(ligneEcritureComptable02.getDebit()).thenReturn(BigDecimal.valueOf(879L, 2));
+		when(ligneEcritureComptable03.getDebit()).thenReturn(null);
+
+		List<LigneEcritureComptable> listLigneEcriture = new ArrayList<>(3);
+		listLigneEcriture.add(ligneEcritureComptable01);
+		listLigneEcriture.add(ligneEcritureComptable02);
+		listLigneEcriture.add(ligneEcritureComptable03);
+
+		EcritureComptable ecritureComptable = new EcritureComptable();
+		ecritureComptable.setListLigneEcriture(listLigneEcriture);
+
+		// WHEN
+		BigDecimal actualTotalDebit = ecritureComptable.getTotalDebit();
+
+		// THEN
+		assertThat(actualTotalDebit).isEqualTo(BigDecimal.valueOf(5274L, 2));
+
+	}
+
+	@Test
+	void getTotalDebit_ecritureComptableDebitNull_returnsBigDecimalZero() {
+		// GIVEN
+		LigneEcritureComptable ligneEcritureComptable01 = Mockito.mock(LigneEcritureComptable.class);
+		LigneEcritureComptable ligneEcritureComptable02 = Mockito.mock(LigneEcritureComptable.class);
+		LigneEcritureComptable ligneEcritureComptable03 = Mockito.mock(LigneEcritureComptable.class);
+		when(ligneEcritureComptable01.getDebit()).thenReturn(null);
+		when(ligneEcritureComptable02.getDebit()).thenReturn(null);
+		when(ligneEcritureComptable03.getDebit()).thenReturn(null);
+
+		List<LigneEcritureComptable> listLigneEcriture = new ArrayList<>(3);
+		listLigneEcriture.add(ligneEcritureComptable01);
+		listLigneEcriture.add(ligneEcritureComptable02);
+		listLigneEcriture.add(ligneEcritureComptable03);
+
+		EcritureComptable ecritureComptable = new EcritureComptable();
+		ecritureComptable.setListLigneEcriture(listLigneEcriture);
+
+		// WHEN
+		BigDecimal actualTotalDebit = ecritureComptable.getTotalDebit();
+
+		// THEN
+		assertThat(actualTotalDebit).isEqualTo(BigDecimal.ZERO);
+
+	}
+
+	@Test
+	void getTotalDebit_ecritureComptableListLigneEcritureVide_returnsBigDecimalZero() {
+		// GIVEN
+		List<LigneEcritureComptable> listLigneEcriture = new ArrayList<>();
+
+		EcritureComptable ecritureComptable = new EcritureComptable();
+		ecritureComptable.setListLigneEcriture(listLigneEcriture);
+
+		// WHEN
+		BigDecimal actualTotalDebit = ecritureComptable.getTotalDebit();
+
+		// THEN
+		assertThat(actualTotalDebit).isEqualTo(BigDecimal.ZERO);
+
 	}
 
 	// ==================== toString ====================
