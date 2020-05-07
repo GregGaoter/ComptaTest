@@ -245,4 +245,5 @@ public class EcritureComptable {
 		LOGGER.trace(new SortieMessage());
 		return vStB.toString();
 	}
+
 }

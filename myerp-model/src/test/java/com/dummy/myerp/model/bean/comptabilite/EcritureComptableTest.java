@@ -8,23 +8,16 @@ import java.sql.Date;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.ValueSource;
-import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.mockito.junit.jupiter.MockitoExtension;
+import org.springframework.test.util.ReflectionTestUtils;
 
 @ExtendWith(MockitoExtension.class)
 public class EcritureComptableTest {
-
-	@Mock
-	private EcritureComptable ecritureComptable;
-
-	@Mock
-	private JournalComptable journalComptable;
 
 	// ==================== isEquilibree ====================
 
@@ -32,6 +25,7 @@ public class EcritureComptableTest {
 	@ValueSource(longs = { 20050L, -20050L, Long.MAX_VALUE, Long.MIN_VALUE, Long.MAX_VALUE / 2, Long.MIN_VALUE / 2, 0 })
 	void isEquilibree_EcritureComptableCreditAndDebitWithMultipleEgalUnscaledVal_returnsTrue(long unscaledVal) {
 		// GIVEN
+		EcritureComptable ecritureComptable = Mockito.mock(EcritureComptable.class);
 		when(ecritureComptable.getTotalCredit()).thenReturn(BigDecimal.valueOf(unscaledVal, 2));
 		when(ecritureComptable.getTotalDebit()).thenReturn(BigDecimal.valueOf(unscaledVal, 2));
 		when(ecritureComptable.isEquilibree()).thenCallRealMethod();
@@ -46,6 +40,7 @@ public class EcritureComptableTest {
 	@Test
 	void isEquilibree_EcritureComptableCreditAndDebitNull_returnsFalse() {
 		// GIVEN
+		EcritureComptable ecritureComptable = Mockito.mock(EcritureComptable.class);
 		when(ecritureComptable.getTotalCredit()).thenReturn(null);
 		when(ecritureComptable.getTotalDebit()).thenReturn(null);
 		when(ecritureComptable.isEquilibree()).thenCallRealMethod();
@@ -60,6 +55,7 @@ public class EcritureComptableTest {
 	@Test
 	void isEquilibree_EcritureComptableCreditNullAndDebitNotNull_returnsFalse() {
 		// GIVEN
+		EcritureComptable ecritureComptable = Mockito.mock(EcritureComptable.class);
 		when(ecritureComptable.getTotalCredit()).thenReturn(null);
 		when(ecritureComptable.getTotalDebit()).thenReturn(BigDecimal.valueOf(20050L, 2));
 		when(ecritureComptable.isEquilibree()).thenCallRealMethod();
@@ -74,6 +70,7 @@ public class EcritureComptableTest {
 	@Test
 	void isEquilibree_EcritureComptableCreditNotNullAndDebitNull_returnsFalse() {
 		// GIVEN
+		EcritureComptable ecritureComptable = Mockito.mock(EcritureComptable.class);
 		when(ecritureComptable.getTotalCredit()).thenReturn(BigDecimal.valueOf(20050L, 2));
 		when(ecritureComptable.getTotalDebit()).thenReturn(null);
 		when(ecritureComptable.isEquilibree()).thenCallRealMethod();
@@ -90,6 +87,7 @@ public class EcritureComptableTest {
 			0 })
 	void isEquilibree_EcritureComptableCreditAndDebitWithMultipleEgalScale_returnsTrue(int scale) {
 		// GIVEN
+		EcritureComptable ecritureComptable = Mockito.mock(EcritureComptable.class);
 		when(ecritureComptable.getTotalCredit()).thenReturn(BigDecimal.valueOf(20050L, scale));
 		when(ecritureComptable.getTotalDebit()).thenReturn(BigDecimal.valueOf(20050L, scale));
 		when(ecritureComptable.isEquilibree()).thenCallRealMethod();
@@ -104,6 +102,7 @@ public class EcritureComptableTest {
 	@Test
 	void isEquilibree_EcritureComptableCreditAndDebitNotEgal_returnsFalse() {
 		// GIVEN
+		EcritureComptable ecritureComptable = Mockito.mock(EcritureComptable.class);
 		when(ecritureComptable.getTotalCredit()).thenReturn(BigDecimal.valueOf(-538L, 2));
 		when(ecritureComptable.getTotalDebit()).thenReturn(BigDecimal.valueOf(620L, 1));
 		when(ecritureComptable.isEquilibree()).thenCallRealMethod();
@@ -257,46 +256,42 @@ public class EcritureComptableTest {
 
 	// ==================== toString ====================
 
-	@Disabled
 	@Test
-	void toString_ecritureComptable_returnsEcritureComptableString() {
+	public void toString_ecritureComptableNormale_returnsStringOfEcritureComptable() {
 		// GIVEN
-		ecritureComptable.setId(1);
-		ecritureComptable.setJournal(journalComptable);
-		ecritureComptable.setReference("JC-2020/00001");
-		ecritureComptable.setDate(Date.valueOf("2020-04-12"));
-		ecritureComptable.setLibelle("Développement tests");
+		EcritureComptable ecritureComptable = Mockito.mock(EcritureComptable.class);
+		ReflectionTestUtils.setField(ecritureComptable, "id", 1);
+		JournalComptable journalComptable = Mockito.mock(JournalComptable.class);
+		when(journalComptable.toString()).thenReturn("journal");
+		ReflectionTestUtils.setField(ecritureComptable, "journal", journalComptable);
+		ReflectionTestUtils.setField(ecritureComptable, "reference", "JC-2020/00001");
+		ReflectionTestUtils.setField(ecritureComptable, "date", Date.valueOf("2020-05-07"));
+		ReflectionTestUtils.setField(ecritureComptable, "libelle", "Développement tests");
 		when(ecritureComptable.getTotalCredit()).thenReturn(BigDecimal.valueOf(20050L, 2));
 		when(ecritureComptable.getTotalDebit()).thenReturn(BigDecimal.valueOf(20050L, 2));
+
+		LigneEcritureComptable ligneEcritureComptable01 = Mockito.mock(LigneEcritureComptable.class);
+		LigneEcritureComptable ligneEcritureComptable02 = Mockito.mock(LigneEcritureComptable.class);
+		LigneEcritureComptable ligneEcritureComptable03 = Mockito.mock(LigneEcritureComptable.class);
+		when(ligneEcritureComptable01.toString()).thenReturn("l1");
+		when(ligneEcritureComptable02.toString()).thenReturn("l2");
+		when(ligneEcritureComptable03.toString()).thenReturn("l3");
+
+		List<LigneEcritureComptable> listLigneEcriture = new ArrayList<>(3);
+		listLigneEcriture.add(ligneEcritureComptable01);
+		listLigneEcriture.add(ligneEcritureComptable02);
+		listLigneEcriture.add(ligneEcritureComptable03);
+
+		ReflectionTestUtils.setField(ecritureComptable, "listLigneEcriture", listLigneEcriture);
+
 		when(ecritureComptable.toString()).thenCallRealMethod();
 
 		// WHEN
-		String actualString = ecritureComptable.toString();
+		String actualString = ecritureComptable.toString().split("\\{|\\}")[1];
 
 		// THEN
 		assertThat(actualString).isEqualTo(
-				"{id=1, journal=journal, reference='reference', date=date, libelle='libelle', totalDebit=200.50, totalCredit=200.50, listLigneEcriture=[nlistLigneEcriture]}");
-	}
-
-	@Disabled
-	@Test
-	public void toString_ecritureComptable_returnsStringOfEcritureComptable() {
-		// GIVEN
-		EcritureComptable ecritureComptable = new EcritureComptable();
-		ecritureComptable.setId(1);
-		ecritureComptable.setJournal(journalComptable);
-		ecritureComptable.setReference("JC-2020/00001");
-		ecritureComptable.setDate(Date.valueOf("2020-04-12"));
-		ecritureComptable.setLibelle("Développement tests");
-		when(ecritureComptable.getTotalCredit()).thenReturn(BigDecimal.valueOf(20050L, 2));
-		when(ecritureComptable.getTotalDebit()).thenReturn(BigDecimal.valueOf(20050L, 2));
-
-		// WHEN
-		String actualString = ecritureComptable.toString();
-
-		// THEN
-		assertThat(actualString).isEqualTo(
-				"{id=1, journal=journal, reference='reference', date=date, libelle='libelle', totalDebit=200.50, totalCredit=200.50, listLigneEcriture=[null]}");
+				"id=1, journal=journal, reference='JC-2020/00001', date=2020-05-07, libelle='Développement tests', totalDebit=200.50, totalCredit=200.50, listLigneEcriture=[\nl1\nl2\nl3\n]");
 	}
 
 }
