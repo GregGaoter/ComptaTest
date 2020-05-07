@@ -185,6 +185,76 @@ public class EcritureComptableTest {
 
 	}
 
+	// ==================== getTotalCredit ====================
+
+	@Test
+	void getTotalCredit_ecritureComptableCreditNormal_returnsBigDecimal() {
+		// GIVEN
+		LigneEcritureComptable ligneEcritureComptable01 = Mockito.mock(LigneEcritureComptable.class);
+		LigneEcritureComptable ligneEcritureComptable02 = Mockito.mock(LigneEcritureComptable.class);
+		LigneEcritureComptable ligneEcritureComptable03 = Mockito.mock(LigneEcritureComptable.class);
+		when(ligneEcritureComptable01.getCredit()).thenReturn(null);
+		when(ligneEcritureComptable02.getCredit()).thenReturn(BigDecimal.valueOf(2500L, 0));
+		when(ligneEcritureComptable03.getCredit()).thenReturn(BigDecimal.valueOf(500L, 0));
+
+		List<LigneEcritureComptable> listLigneEcriture = new ArrayList<>(3);
+		listLigneEcriture.add(ligneEcritureComptable01);
+		listLigneEcriture.add(ligneEcritureComptable02);
+		listLigneEcriture.add(ligneEcritureComptable03);
+
+		EcritureComptable ecritureComptable = new EcritureComptable();
+		ecritureComptable.setListLigneEcriture(listLigneEcriture);
+
+		// WHEN
+		BigDecimal actualTotalCredit = ecritureComptable.getTotalCredit();
+
+		// THEN
+		assertThat(actualTotalCredit).isEqualTo(BigDecimal.valueOf(3000L, 0));
+
+	}
+
+	@Test
+	void getTotalCredit_ecritureComptableCreditNull_returnsBigDecimalZero() {
+		// GIVEN
+		LigneEcritureComptable ligneEcritureComptable01 = Mockito.mock(LigneEcritureComptable.class);
+		LigneEcritureComptable ligneEcritureComptable02 = Mockito.mock(LigneEcritureComptable.class);
+		LigneEcritureComptable ligneEcritureComptable03 = Mockito.mock(LigneEcritureComptable.class);
+		when(ligneEcritureComptable01.getCredit()).thenReturn(null);
+		when(ligneEcritureComptable02.getCredit()).thenReturn(null);
+		when(ligneEcritureComptable03.getCredit()).thenReturn(null);
+
+		List<LigneEcritureComptable> listLigneEcriture = new ArrayList<>(3);
+		listLigneEcriture.add(ligneEcritureComptable01);
+		listLigneEcriture.add(ligneEcritureComptable02);
+		listLigneEcriture.add(ligneEcritureComptable03);
+
+		EcritureComptable ecritureComptable = new EcritureComptable();
+		ecritureComptable.setListLigneEcriture(listLigneEcriture);
+
+		// WHEN
+		BigDecimal actualTotalCredit = ecritureComptable.getTotalCredit();
+
+		// THEN
+		assertThat(actualTotalCredit).isEqualTo(BigDecimal.ZERO);
+
+	}
+
+	@Test
+	void getTotalCredit_ecritureComptableListLigneEcritureVide_returnsBigDecimalZero() {
+		// GIVEN
+		List<LigneEcritureComptable> listLigneEcriture = new ArrayList<>();
+
+		EcritureComptable ecritureComptable = new EcritureComptable();
+		ecritureComptable.setListLigneEcriture(listLigneEcriture);
+
+		// WHEN
+		BigDecimal actualTotalCredit = ecritureComptable.getTotalCredit();
+
+		// THEN
+		assertThat(actualTotalCredit).isEqualTo(BigDecimal.ZERO);
+
+	}
+
 	// ==================== toString ====================
 
 	@Disabled

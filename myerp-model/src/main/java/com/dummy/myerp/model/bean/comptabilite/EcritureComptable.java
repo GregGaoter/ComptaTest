@@ -196,8 +196,8 @@ public class EcritureComptable {
 		LOGGER.trace(new EntreeMessage());
 		BigDecimal vRetour = BigDecimal.ZERO;
 		for (LigneEcritureComptable vLigneEcritureComptable : listLigneEcriture) {
-			if (vLigneEcritureComptable.getDebit() != null) {
-				vRetour = vRetour.add(vLigneEcritureComptable.getDebit());
+			if (vLigneEcritureComptable.getCredit() != null) {
+				vRetour = vRetour.add(vLigneEcritureComptable.getCredit());
 			}
 		}
 		LOGGER.debug(new DebugMessage("BigDecimal getTotalCredit()", vRetour));
