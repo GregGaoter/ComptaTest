@@ -42,13 +42,6 @@ public interface ComptabiliteManager {
 	List<SequenceEcritureComptable> getListSequenceEcritureComptable();
 
 	/**
-	 * Renvoie la dernière valeur de la séquence de l'écriture comptable.
-	 *
-	 * @return {@link Integer}
-	 */
-	Integer getDerniereValeurSequenceEcritureComptable(EcritureComptable pEcritureComptable);
-
-	/**
 	 * Ajoute une référence à l'écriture comptable.<br>
 	 *
 	 * <strong>RG_Compta_5 : </strong> La référence d'une écriture comptable est

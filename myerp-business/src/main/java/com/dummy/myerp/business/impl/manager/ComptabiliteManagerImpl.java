@@ -88,14 +88,6 @@ public class ComptabiliteManagerImpl extends AbstractBusinessManager implements 
 	 * {@inheritDoc}
 	 */
 	@Override
-	public Integer getDerniereValeurSequenceEcritureComptable(EcritureComptable pEcritureComptable) {
-		return null;
-	}
-
-	/**
-	 * {@inheritDoc}
-	 */
-	@Override
 	public synchronized void addReference(EcritureComptable pEcritureComptable) {
 		LOGGER.trace(new EntreeMessage());
 		// Bien se réferer à la JavaDoc de cette méthode !

@@ -21,12 +21,12 @@ import org.mockito.Mockito;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.test.util.ReflectionTestUtils;
 
+import com.dummy.myerp.business.test.BusinessTestCase;
 import com.dummy.myerp.model.bean.comptabilite.CompteComptable;
 import com.dummy.myerp.model.bean.comptabilite.EcritureComptable;
 import com.dummy.myerp.model.bean.comptabilite.JournalComptable;
 import com.dummy.myerp.model.bean.comptabilite.LigneEcritureComptable;
 import com.dummy.myerp.model.bean.comptabilite.SequenceEcritureComptable;
-import com.dummy.myerp.testbusiness.business.BusinessTestCase;
 
 @ExtendWith(MockitoExtension.class)
 public class ComptabiliteManagerImplTest extends BusinessTestCase {
@@ -180,59 +180,6 @@ public class ComptabiliteManagerImplTest extends BusinessTestCase {
 		// THEN
 		verify(manager).insertSequenceEcritureComptable(any(SequenceEcritureComptable.class));
 		assertThat(ecriture.getReference()).isEqualTo("BQ-2020/00001");
-	}
-
-	// ========== getDerniereValeurSequenceEcritureComptable ==========
-
-	@Test
-	public void getDerniereValeurSequenceEcritureComptable_ecritureComptableNormale_returnsDerniereValeur() {
-		// GIVEN
-		ComptabiliteManagerImpl manager = Mockito.mock(ComptabiliteManagerImpl.class);
-		EcritureComptable ecriture = Mockito.mock(EcritureComptable.class);
-		JournalComptable journal = Mockito.mock(JournalComptable.class);
-		SequenceEcritureComptable sequence01 = Mockito.mock(SequenceEcritureComptable.class);
-		SequenceEcritureComptable sequence02 = Mockito.mock(SequenceEcritureComptable.class);
-		SequenceEcritureComptable sequence03 = Mockito.mock(SequenceEcritureComptable.class);
-		SequenceEcritureComptable sequence04 = Mockito.mock(SequenceEcritureComptable.class);
-
-		Calendar calendar = Calendar.getInstance();
-		calendar.set(Calendar.YEAR, 2020);
-		calendar.set(Calendar.MONTH, 5);
-		calendar.set(Calendar.DAY_OF_MONTH, 12);
-		Date date = calendar.getTime();
-
-		when(ecriture.getJournal()).thenReturn(journal);
-		when(journal.getCode()).thenReturn("BQ");
-		when(ecriture.getDate()).thenReturn(date);
-
-		when(sequence01.getJournalCode()).thenReturn("AC");
-		when(sequence01.getAnnee()).thenReturn(2020);
-		when(sequence01.getDerniereValeur()).thenReturn(40);
-
-		when(sequence02.getJournalCode()).thenReturn("VE");
-		when(sequence02.getAnnee()).thenReturn(2020);
-		when(sequence02.getDerniereValeur()).thenReturn(41);
-
-		when(sequence03.getJournalCode()).thenReturn("BQ");
-		when(sequence03.getAnnee()).thenReturn(2020);
-		when(sequence03.getDerniereValeur()).thenReturn(51);
-
-		when(sequence04.getJournalCode()).thenReturn("OD");
-		when(sequence04.getAnnee()).thenReturn(2020);
-		when(sequence04.getDerniereValeur()).thenReturn(88);
-
-		List<SequenceEcritureComptable> listeSequences = new ArrayList<>(4);
-		listeSequences.add(sequence01);
-		listeSequences.add(sequence02);
-		listeSequences.add(sequence03);
-		listeSequences.add(sequence04);
-		when(manager.getListSequenceEcritureComptable()).thenReturn(listeSequences);
-
-		// WHEN
-		Integer actualValeur = manager.getDerniereValeurSequenceEcritureComptable(ecriture);
-
-		// THEN
-		assertThat(actualValeur).isEqualTo(51);
 	}
 
 	// ==================== checkEcritureComptableUnit ====================

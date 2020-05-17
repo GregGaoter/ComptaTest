@@ -1,4 +1,4 @@
-package com.dummy.myerp.testbusiness.business;
+package com.dummy.myerp.business.test;
 
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 
