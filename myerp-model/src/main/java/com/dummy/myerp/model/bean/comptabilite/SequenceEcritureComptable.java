@@ -1,21 +1,13 @@
 package com.dummy.myerp.model.bean.comptabilite;
 
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
-
-import com.dummy.myerp.technical.log.message.DebugMessage;
-import com.dummy.myerp.technical.log.message.EntreeMessage;
-import com.dummy.myerp.technical.log.message.SortieMessage;
-
 /**
  * Bean représentant une séquence pour les références d'écriture comptable
  */
 public class SequenceEcritureComptable {
 
-	/** Logger Log4j pour la classe */
-	private static final Logger LOGGER = LogManager.getLogger(SequenceEcritureComptable.class);
-
 	// ==================== Attributs ====================
+	/** Le code du journal comptable */
+	private String journal_code;
 	/** L'année de l'écriture comptable */
 	private Integer annee;
 	/** La dernière valeur utilisée pour les références d'écriture comptable */
@@ -41,6 +33,24 @@ public class SequenceEcritureComptable {
 	}
 
 	// ==================== Getters/Setters ====================
+	/**
+	 * Renvoie le code du journal dans lequel figure l'écriture comptable
+	 * 
+	 * @return Le code du journal dans lequel figure l'écriture comptable
+	 */
+	public String getJournalCode() {
+		return journal_code;
+	}
+
+	/**
+	 * Initialise le code du journal dans lequel figure l'écriture comptable
+	 * 
+	 * @param pAnnee - Le code du journal dans lequel figure l'écriture comptable
+	 */
+	public void setJournalCode(String journalCode) {
+		this.journal_code = journalCode;
+	}
+
 	/**
 	 * Renvoie l'année de l'écriture comptable
 	 * 
@@ -87,13 +97,10 @@ public class SequenceEcritureComptable {
 	 */
 	@Override
 	public String toString() {
-		LOGGER.trace(new EntreeMessage());
 		final StringBuilder vStB = new StringBuilder(this.getClass().getSimpleName());
 		final String vSEP = ", ";
 		vStB.append("{").append("annee=").append(annee).append(vSEP).append("derniereValeur=").append(derniereValeur)
 				.append("}");
-		LOGGER.debug(new DebugMessage("StringBuilder vStB.toString()", vStB.toString()));
-		LOGGER.trace(new SortieMessage());
 		return vStB.toString();
 	}
 }

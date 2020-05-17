@@ -172,7 +172,6 @@ public class EcritureComptable {
 	 *
 	 * @return {@link BigDecimal}, {@link BigDecimal#ZERO} si aucun montant au débit
 	 */
-	// TODO à tester
 	public BigDecimal getTotalDebit() {
 		LOGGER.trace(new EntreeMessage());
 		BigDecimal vRetour = BigDecimal.ZERO;
@@ -232,7 +231,6 @@ public class EcritureComptable {
 	 */
 	@Override
 	public String toString() {
-		LOGGER.trace(new EntreeMessage());
 		final StringBuilder vStB = new StringBuilder(this.getClass().getSimpleName());
 		final String vSEP = ", ";
 		vStB.append("{").append("id=").append(id).append(vSEP).append("journal=").append(journal).append(vSEP)
@@ -241,8 +239,6 @@ public class EcritureComptable {
 				.append(this.getTotalDebit().toPlainString()).append(vSEP).append("totalCredit=")
 				.append(this.getTotalCredit().toPlainString()).append(vSEP).append("listLigneEcriture=[\n")
 				.append(StringUtils.join(listLigneEcriture, "\n")).append("\n]").append("}");
-		LOGGER.debug(new DebugMessage("StringBuilder vStB.toString()", vStB.toString()));
-		LOGGER.trace(new SortieMessage());
 		return vStB.toString();
 	}
 

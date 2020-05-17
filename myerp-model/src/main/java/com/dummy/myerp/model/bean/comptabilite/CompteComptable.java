@@ -103,13 +103,10 @@ public class CompteComptable {
 	 */
 	@Override
 	public String toString() {
-		LOGGER.trace(new EntreeMessage());
 		final StringBuilder vStB = new StringBuilder(this.getClass().getSimpleName());
 		final String vSEP = ", ";
 		vStB.append("{").append("numero=").append(numero).append(vSEP).append("libelle='").append(libelle).append('\'')
 				.append("}");
-		LOGGER.debug(new DebugMessage("StringBuilder vStB.toString()", vStB.toString()));
-		LOGGER.trace(new SortieMessage());
 		return vStB.toString();
 	}
 

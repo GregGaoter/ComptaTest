@@ -1,6 +1,8 @@
 package com.dummy.myerp.business.impl.manager;
 
 import java.math.BigDecimal;
+import java.util.Calendar;
+import java.util.Date;
 import java.util.List;
 import java.util.Set;
 
@@ -20,6 +22,7 @@ import com.dummy.myerp.model.bean.comptabilite.CompteComptable;
 import com.dummy.myerp.model.bean.comptabilite.EcritureComptable;
 import com.dummy.myerp.model.bean.comptabilite.JournalComptable;
 import com.dummy.myerp.model.bean.comptabilite.LigneEcritureComptable;
+import com.dummy.myerp.model.bean.comptabilite.SequenceEcritureComptable;
 import com.dummy.myerp.technical.exception.FunctionalException;
 import com.dummy.myerp.technical.exception.NotFoundException;
 import com.dummy.myerp.technical.log.message.DebugMessage;
@@ -76,12 +79,25 @@ public class ComptabiliteManagerImpl extends AbstractBusinessManager implements 
 	/**
 	 * {@inheritDoc}
 	 */
-	// TODO à tester
+	@Override
+	public List<SequenceEcritureComptable> getListSequenceEcritureComptable() {
+		return getDaoProxy().getComptabiliteDao().getListSequenceEcritureComptable();
+	}
+
+	/**
+	 * {@inheritDoc}
+	 */
+	@Override
+	public Integer getDerniereValeurSequenceEcritureComptable(EcritureComptable pEcritureComptable) {
+		return null;
+	}
+
+	/**
+	 * {@inheritDoc}
+	 */
 	@Override
 	public synchronized void addReference(EcritureComptable pEcritureComptable) {
 		LOGGER.trace(new EntreeMessage());
-		LOGGER.debug(new DebugMessage("EcritureComptable pEcritureComptable", pEcritureComptable));
-		// TODO à implémenter
 		// Bien se réferer à la JavaDoc de cette méthode !
 		/*
 		 * Le principe : 1. Remonter depuis la persitance la dernière valeur de la
@@ -92,7 +108,55 @@ public class ComptabiliteManagerImpl extends AbstractBusinessManager implements 
 		 * référence calculée (RG_Compta_5) 4. Enregistrer (insert/update) la valeur de
 		 * la séquence en persitance (table sequence_ecriture_comptable)
 		 */
+
+		if (pEcritureComptable != null) {
+			// Paramètres
+			JournalComptable journal = pEcritureComptable.getJournal();
+			String codeJournal = journal.getCode();
+			Date dateEcriture = pEcritureComptable.getDate();
+			Integer anneeEcriture = Integer.valueOf(getYear(dateEcriture));
+			SequenceEcritureComptable sequence = new SequenceEcritureComptable();
+
+			// Dernière valeur de la séquence
+			String prochaineValeurSequence = "00001";
+			for (SequenceEcritureComptable seq : getListSequenceEcritureComptable()) {
+				if (seq.getJournalCode().equals(codeJournal) && seq.getAnnee().equals(anneeEcriture)) {
+					prochaineValeurSequence = String.format("%05d", seq.getDerniereValeur() + 1);
+					sequence.setAnnee(seq.getAnnee());
+					sequence.setDerniereValeur(seq.getDerniereValeur() + 1);
+					sequence.setJournalCode(seq.getJournalCode());
+					break;
+				}
+			}
+
+			// Référence
+			String reference = codeJournal + "-" + anneeEcriture + "/" + prochaineValeurSequence;
+			pEcritureComptable.setReference(reference);
+
+			// Persistance de la valeur de la séquence
+			if (prochaineValeurSequence.equals("00001")) {
+				sequence.setAnnee(anneeEcriture);
+				sequence.setDerniereValeur(1);
+				sequence.setJournalCode(codeJournal);
+				insertSequenceEcritureComptable(sequence);
+			} else {
+				updateSequenceEcritureComptable(sequence);
+			}
+		}
+
 		LOGGER.trace(new SortieMessage());
+	}
+
+	/**
+	 * Renvoie l'année d'une {@link Date}.
+	 * 
+	 * @param date Date
+	 * @return L'année de la {@link Date}.
+	 */
+	private int getYear(Date date) {
+		Calendar calendar = Calendar.getInstance();
+		calendar.setTime(date);
+		return calendar.get(Calendar.YEAR);
 	}
 
 	/**
@@ -274,4 +338,39 @@ public class ComptabiliteManagerImpl extends AbstractBusinessManager implements 
 		}
 		LOGGER.trace(new SortieMessage());
 	}
+
+	/**
+	 * {@inheritDoc}
+	 */
+	@Override
+	public void insertSequenceEcritureComptable(SequenceEcritureComptable pSequenceEcritureComptable) {
+		LOGGER.trace(new EntreeMessage());
+		TransactionStatus vTS = getTransactionManager().beginTransactionMyERP();
+		try {
+			getDaoProxy().getComptabiliteDao().insertSequenceEcritureComptable(pSequenceEcritureComptable);
+			getTransactionManager().commitMyERP(vTS);
+			vTS = null;
+		} finally {
+			getTransactionManager().rollbackMyERP(vTS);
+		}
+		LOGGER.trace(new SortieMessage());
+	}
+
+	/**
+	 * {@inheritDoc}
+	 */
+	@Override
+	public void updateSequenceEcritureComptable(SequenceEcritureComptable pSequenceEcritureComptable) {
+		LOGGER.trace(new EntreeMessage());
+		TransactionStatus vTS = getTransactionManager().beginTransactionMyERP();
+		try {
+			getDaoProxy().getComptabiliteDao().updateSequenceEcritureComptable(pSequenceEcritureComptable);
+			getTransactionManager().commitMyERP(vTS);
+			vTS = null;
+		} finally {
+			getTransactionManager().rollbackMyERP(vTS);
+		}
+		LOGGER.trace(new SortieMessage());
+	}
+
 }

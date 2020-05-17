@@ -5,6 +5,7 @@ import java.util.List;
 import com.dummy.myerp.model.bean.comptabilite.CompteComptable;
 import com.dummy.myerp.model.bean.comptabilite.EcritureComptable;
 import com.dummy.myerp.model.bean.comptabilite.JournalComptable;
+import com.dummy.myerp.model.bean.comptabilite.SequenceEcritureComptable;
 import com.dummy.myerp.technical.exception.FunctionalException;
 
 /**
@@ -32,6 +33,20 @@ public interface ComptabiliteManager {
 	 * @return {@link List}
 	 */
 	List<EcritureComptable> getListEcritureComptable();
+
+	/**
+	 * Renvoie la liste des séquences des écritures comptables.
+	 *
+	 * @return {@link List}
+	 */
+	List<SequenceEcritureComptable> getListSequenceEcritureComptable();
+
+	/**
+	 * Renvoie la dernière valeur de la séquence de l'écriture comptable.
+	 *
+	 * @return {@link Integer}
+	 */
+	Integer getDerniereValeurSequenceEcritureComptable(EcritureComptable pEcritureComptable);
 
 	/**
 	 * Ajoute une référence à l'écriture comptable.<br>
@@ -99,4 +114,21 @@ public interface ComptabiliteManager {
 	 * @param pId - L'id de l'écriture comptable.
 	 */
 	void deleteEcritureComptable(Integer pId);
+
+	/**
+	 * Insert une nouvelle séquence d'écriture comptable à la liste des séquences
+	 * d'écritures comptables.
+	 *
+	 * @param pSequenceEcritureComptable - La séquence d'écriture comptable à
+	 *                                   insérer.
+	 */
+	void insertSequenceEcritureComptable(SequenceEcritureComptable pSequenceEcritureComptable);
+
+	/**
+	 * Met à jour la séquence d'écriture comptable.
+	 *
+	 * @param pSequenceEcritureComptable - La séquence d'écriture comptable à mettre
+	 *                                   à jour.
+	 */
+	void updateSequenceEcritureComptable(SequenceEcritureComptable pSequenceEcritureComptable);
 }

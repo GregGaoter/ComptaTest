@@ -2,9 +2,13 @@ package com.dummy.myerp.consumer.dao.contrat;
 
 import java.util.List;
 
+import org.springframework.jdbc.core.JdbcTemplate;
+
+import com.dummy.myerp.consumer.dao.impl.db.rowmapper.comptabilite.SequenceEcritureComptableRM;
 import com.dummy.myerp.model.bean.comptabilite.CompteComptable;
 import com.dummy.myerp.model.bean.comptabilite.EcritureComptable;
 import com.dummy.myerp.model.bean.comptabilite.JournalComptable;
+import com.dummy.myerp.model.bean.comptabilite.SequenceEcritureComptable;
 import com.dummy.myerp.technical.exception.NotFoundException;
 
 /**
@@ -82,4 +86,28 @@ public interface ComptabiliteDao {
 	 * @param pId l'id de l'écriture comptable à supprimer
 	 */
 	void deleteEcritureComptable(Integer pId);
+
+	/**
+	 * {@inheritDoc}
+	 * 
+	 * @see JdbcTemplate
+	 * @see SequenceEcritureComptableRM
+	 */
+	List<SequenceEcritureComptable> getListSequenceEcritureComptable();
+
+	/**
+	 * Insert une nouvelle séquence d'écriture comptable.
+	 *
+	 * @param pSequenceEcritureComptable - la séquence d'écriture comptable à
+	 *                                   insérer
+	 */
+	void insertSequenceEcritureComptable(SequenceEcritureComptable pSequenceEcritureComptable);
+
+	/**
+	 * Met à jour la séquence d'écriture comptable.
+	 *
+	 * @param pSequenceEcritureComptable - la séquence d'écriture comptable à mettre
+	 *                                   à jour
+	 */
+	void updateSequenceEcritureComptable(SequenceEcritureComptable pSequenceEcritureComptable);
 }
