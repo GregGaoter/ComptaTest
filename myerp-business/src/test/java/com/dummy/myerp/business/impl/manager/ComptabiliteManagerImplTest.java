@@ -203,19 +203,21 @@ public class ComptabiliteManagerImplTest extends BusinessTestCase {
 
 	// ==================== checkEcritureComptableUnit ====================
 
-	@Disabled
 	@Test
-	public void checkEcritureComptableUnit() throws Exception {
-		EcritureComptable vEcritureComptable;
-		vEcritureComptable = new EcritureComptable();
-		vEcritureComptable.setJournal(new JournalComptable("AC", "Achat"));
-		vEcritureComptable.setDate(new Date());
-		vEcritureComptable.setLibelle("Libelle");
-		vEcritureComptable.getListLigneEcriture()
-				.add(new LigneEcritureComptable(new CompteComptable(1), null, new BigDecimal(123), null));
-		vEcritureComptable.getListLigneEcriture()
-				.add(new LigneEcritureComptable(new CompteComptable(2), null, null, new BigDecimal(123)));
-		// manager.checkEcritureComptableUnit(vEcritureComptable);
+	public void checkEcritureComptableUnit_ecritureNormale_callsViolationAndRG2AndRG3AndReference()
+			throws FunctionalException {
+		// GIVEN
+		ComptabiliteManagerImpl manager = Mockito.mock(ComptabiliteManagerImpl.class);
+		doCallRealMethod().when(manager).checkEcritureComptableUnit(any(EcritureComptable.class));
+
+		// WHEN
+		manager.checkEcritureComptableUnit(new EcritureComptable());
+
+		// THEN
+		verify(manager).checkEcritureComptableUnitViolation(any(EcritureComptable.class));
+		verify(manager).checkEcritureComptableUnitRG2(any(EcritureComptable.class));
+		verify(manager).checkEcritureComptableUnitRG3(any(EcritureComptable.class));
+		verify(manager).checkEcritureComptableUnitReference(any(EcritureComptable.class));
 	}
 
 	// ==================== checkEcritureComptableUnitViolation ====================
