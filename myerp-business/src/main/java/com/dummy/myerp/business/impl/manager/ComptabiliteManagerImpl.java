@@ -154,7 +154,6 @@ public class ComptabiliteManagerImpl extends AbstractBusinessManager implements 
 	/**
 	 * {@inheritDoc}
 	 */
-	// TODO à tester
 	@Override
 	public void checkEcritureComptable(EcritureComptable pEcritureComptable) throws FunctionalException {
 		LOGGER.trace(new EntreeMessage());
@@ -176,8 +175,20 @@ public class ComptabiliteManagerImpl extends AbstractBusinessManager implements 
 	// TODO tests à compléter
 	protected void checkEcritureComptableUnit(EcritureComptable pEcritureComptable) throws FunctionalException {
 		LOGGER.trace(new EntreeMessage());
-		LOGGER.debug(new DebugMessage("EcritureComptable pEcritureComptable", pEcritureComptable));
-		// ===== Vérification des contraintes unitaires sur les attributs de l'écriture
+		checkEcritureComptableUnitViolation(pEcritureComptable);
+		checkEcritureComptableUnitRG2(pEcritureComptable);
+		checkEcritureComptableUnitRG3(pEcritureComptable);
+		checkEcritureComptableUnitReference(pEcritureComptable);
+		LOGGER.trace(new SortieMessage());
+	}
+
+	/**
+	 * Vérifie les contraintes unitaires sur les attributs de l'écriture.
+	 * 
+	 * @param pEcritureComptable L'écriture comptable.
+	 */
+	protected void checkEcritureComptableUnitViolation(EcritureComptable pEcritureComptable) {
+		LOGGER.trace(new EntreeMessage());
 		Set<ConstraintViolation<EcritureComptable>> vViolations = getConstraintValidator().validate(pEcritureComptable);
 		if (!vViolations.isEmpty()) {
 			try {
@@ -188,9 +199,16 @@ public class ComptabiliteManagerImpl extends AbstractBusinessManager implements 
 				LOGGER.error(new ErrorMessage(e));
 			}
 		}
+		LOGGER.trace(new SortieMessage());
+	}
 
-		// ===== RG_Compta_2 : Pour qu'une écriture comptable soit valide, elle doit
-		// être équilibrée
+	/**
+	 * Vérifie que l'écriture comptable est équilibrée.
+	 * 
+	 * @param pEcritureComptable L'écriture comptable
+	 */
+	protected void checkEcritureComptableUnitRG2(EcritureComptable pEcritureComptable) {
+		LOGGER.trace(new EntreeMessage());
 		if (!pEcritureComptable.isEquilibree()) {
 			try {
 				throw new FunctionalException("L'écriture comptable n'est pas équilibrée.");
@@ -198,9 +216,17 @@ public class ComptabiliteManagerImpl extends AbstractBusinessManager implements 
 				LOGGER.error(new ErrorMessage(e));
 			}
 		}
+		LOGGER.trace(new SortieMessage());
+	}
 
-		// ===== RG_Compta_3 : une écriture comptable doit avoir au moins 2 lignes
-		// d'écriture (1 au débit, 1 au crédit)
+	/**
+	 * Vérifie que l'écriture comptable a au moins 2 lignes d'écriture (1 au débit,
+	 * 1 au crédit)
+	 * 
+	 * @param pEcritureComptable L'écriture comptable
+	 */
+	protected void checkEcritureComptableUnitRG3(EcritureComptable pEcritureComptable) {
+		LOGGER.trace(new EntreeMessage());
 		int vNbrCredit = 0;
 		int vNbrDebit = 0;
 		for (LigneEcritureComptable vLigneEcritureComptable : pEcritureComptable.getListLigneEcriture()) {
@@ -213,10 +239,6 @@ public class ComptabiliteManagerImpl extends AbstractBusinessManager implements 
 				vNbrDebit++;
 			}
 		}
-		LOGGER.debug(new DebugMessage("vNbrCredit", vNbrCredit));
-		LOGGER.debug(new DebugMessage("vNbrDebit", vNbrDebit));
-		LOGGER.debug(new DebugMessage("pEcritureComptable.getListLigneEcriture().size()",
-				pEcritureComptable.getListLigneEcriture().size()));
 		// On test le nombre de lignes car si l'écriture à une seule ligne
 		// avec un montant au débit et un montant au crédit ce n'est pas valable
 		if (pEcritureComptable.getListLigneEcriture().size() < 2 || vNbrCredit < 1 || vNbrDebit < 1) {
@@ -227,11 +249,128 @@ public class ComptabiliteManagerImpl extends AbstractBusinessManager implements 
 				LOGGER.error(new ErrorMessage(e));
 			}
 		}
-
-		// TODO ===== RG_Compta_5 : Format et contenu de la référence
-		// vérifier que l'année dans la référence correspond bien à la date de
-		// l'écriture, idem pour le code journal...
 		LOGGER.trace(new SortieMessage());
+	}
+
+	/**
+	 * Vérifie le format de la référence, que l'année dans la référence correspond
+	 * bien à la date de l'écriture, idem pour le code journal...
+	 * 
+	 * @param pEcritureComptable L'écriture comptable
+	 */
+	protected void checkEcritureComptableUnitReference(EcritureComptable pEcritureComptable) {
+		LOGGER.trace(new EntreeMessage());
+		String reference = pEcritureComptable.getReference();
+
+		// Format
+		if (!isEcritureComptableReferenceFormatValid(pEcritureComptable)) {
+			try {
+				throw new FunctionalException("Le format de la référence est invalide.");
+			} catch (FunctionalException e) {
+				LOGGER.error(new ErrorMessage(e));
+			}
+		} else {
+			String[] referenceArray = reference.split("-|/");
+
+			// Année
+			if (!isEcritureComptableReferenceAnneeValid(pEcritureComptable)) {
+				try {
+					throw new FunctionalException("L'année de la référence ne correspond pas à la date de l'écriture.");
+				} catch (FunctionalException e) {
+					LOGGER.error(new ErrorMessage(e));
+				}
+			}
+
+			// Code journal
+			if (!isEcritureComptableReferenceCodeJournalValid(pEcritureComptable)) {
+				try {
+					throw new FunctionalException(
+							"Le code journal de la référence ne correspond pas au code journal de l'écriture.");
+				} catch (FunctionalException e) {
+					LOGGER.error(new ErrorMessage(e));
+				}
+			}
+
+			// Numéro de séquence
+			Integer valeurSequence = getDerniereValeurNumeroSequence(pEcritureComptable);
+			if (valeurSequence == null || Integer.valueOf(referenceArray[2]).compareTo(valeurSequence) > 0) {
+				try {
+					throw new FunctionalException("Le numéro de séquence de la référence n'est pas valide.");
+				} catch (FunctionalException e) {
+					LOGGER.error(new ErrorMessage(e));
+				}
+			}
+		}
+		LOGGER.trace(new SortieMessage());
+	}
+
+	/**
+	 * Renvoie la dernière valeur du numéro de séquence correspondant au journal et
+	 * à l'année de l'écriture comptable.
+	 * 
+	 * @param pEcritureComptable L'écriture comptable
+	 * @return La dernière valeur du numéro de séquence ou null si aucune séquence
+	 *         ne correspond au journal et à l'année de l'écriture.
+	 */
+	protected Integer getDerniereValeurNumeroSequence(EcritureComptable pEcritureComptable) {
+		Integer valeurSequence = null;
+		for (SequenceEcritureComptable seq : getListSequenceEcritureComptable()) {
+			if (seq.getJournalCode().equals(pEcritureComptable.getJournal().getCode())
+					&& seq.getAnnee().equals(Integer.valueOf(getYear(pEcritureComptable.getDate())))) {
+				valeurSequence = seq.getDerniereValeur();
+				break;
+			}
+		}
+		return valeurSequence;
+	}
+
+	/**
+	 * Vérifie si le format de la référence d'une écriture comptable est valide.
+	 * 
+	 * @param pEcritureComptable L'écriture comptable
+	 * @return true si le format est valide, false autrement.
+	 */
+	protected boolean isEcritureComptableReferenceFormatValid(EcritureComptable pEcritureComptable) {
+		LOGGER.trace(new EntreeMessage());
+		LOGGER.trace(new SortieMessage());
+		return pEcritureComptable.getReference().matches("\\d{1,5}-\\d{4}/\\d{5}");
+	}
+
+	/**
+	 * Vérifie si l'année de la référence d'une écriture comptable est valide.
+	 * 
+	 * @param pEcritureComptable L'écriture comptable
+	 * @return true si l'année est valide, false si le format ou l'année ne sont pas
+	 *         valides.
+	 */
+	protected boolean isEcritureComptableReferenceAnneeValid(EcritureComptable pEcritureComptable) {
+		LOGGER.trace(new EntreeMessage());
+		if (isEcritureComptableReferenceFormatValid(pEcritureComptable)) {
+			String reference = pEcritureComptable.getReference();
+			String annee = reference.split("-|/")[0];
+			return annee.equals(String.valueOf(getYear(pEcritureComptable.getDate())));
+		}
+		LOGGER.trace(new SortieMessage());
+		return false;
+	}
+
+	/**
+	 * Vérifie si le code journal de la référence d'une écriture comptable est
+	 * valide.
+	 * 
+	 * @param pEcritureComptable L'écriture comptable
+	 * @return true si le code journal est valide, false si le format ou le code
+	 *         journal ne sont pas valides.
+	 */
+	protected boolean isEcritureComptableReferenceCodeJournalValid(EcritureComptable pEcritureComptable) {
+		LOGGER.trace(new EntreeMessage());
+		if (isEcritureComptableReferenceFormatValid(pEcritureComptable)) {
+			String reference = pEcritureComptable.getReference();
+			String codeJournal = reference.split("-|/")[1];
+			return codeJournal.equals(pEcritureComptable.getJournal().getCode());
+		}
+		LOGGER.trace(new SortieMessage());
+		return false;
 	}
 
 	/**
