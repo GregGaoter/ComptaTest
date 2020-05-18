@@ -27,6 +27,7 @@ import com.dummy.myerp.model.bean.comptabilite.EcritureComptable;
 import com.dummy.myerp.model.bean.comptabilite.JournalComptable;
 import com.dummy.myerp.model.bean.comptabilite.LigneEcritureComptable;
 import com.dummy.myerp.model.bean.comptabilite.SequenceEcritureComptable;
+import com.dummy.myerp.technical.exception.FunctionalException;
 
 @ExtendWith(MockitoExtension.class)
 public class ComptabiliteManagerImplTest extends BusinessTestCase {
@@ -180,6 +181,24 @@ public class ComptabiliteManagerImplTest extends BusinessTestCase {
 		// THEN
 		verify(manager).insertSequenceEcritureComptable(any(SequenceEcritureComptable.class));
 		assertThat(ecriture.getReference()).isEqualTo("BQ-2020/00001");
+	}
+
+	// ==================== checkEcritureComptable ====================
+
+	@Test
+	public void checkEcritureComptable_ecritureNormale_callscheckEcritureComptableUnitAndcheckEcritureComptableContext()
+			throws FunctionalException {
+		// GIVEN
+		ComptabiliteManagerImpl manager = Mockito.mock(ComptabiliteManagerImpl.class);
+		EcritureComptable ecriture = new EcritureComptable();
+		doCallRealMethod().when(manager).checkEcritureComptable(any(EcritureComptable.class));
+
+		// WHEN
+		manager.checkEcritureComptable(ecriture);
+
+		// THEN
+		verify(manager).checkEcritureComptableUnit(any(EcritureComptable.class));
+		verify(manager).checkEcritureComptableContext(any(EcritureComptable.class));
 	}
 
 	// ==================== checkEcritureComptableUnit ====================

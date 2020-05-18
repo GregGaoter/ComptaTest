@@ -158,7 +158,6 @@ public class ComptabiliteManagerImpl extends AbstractBusinessManager implements 
 	@Override
 	public void checkEcritureComptable(EcritureComptable pEcritureComptable) throws FunctionalException {
 		LOGGER.trace(new EntreeMessage());
-		LOGGER.debug(new DebugMessage("EcritureComptable pEcritureComptable", pEcritureComptable));
 		this.checkEcritureComptableUnit(pEcritureComptable);
 		this.checkEcritureComptableContext(pEcritureComptable);
 		LOGGER.trace(new SortieMessage());
