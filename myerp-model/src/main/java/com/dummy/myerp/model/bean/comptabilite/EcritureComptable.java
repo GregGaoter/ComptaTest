@@ -29,12 +29,16 @@ public class EcritureComptable {
 	// ==================== Attributs ====================
 	/** L'id de l'écriture comptable */
 	private Integer id;
+
 	/** Journal comptable */
 	@NotNull
 	private JournalComptable journal;
+
 	/** La référence de l'écriture comptable */
-	@Pattern(regexp = "\\d{1,5}-\\d{4}/\\d{5}")
+	// @Pattern(regexp = "\\d{1,5}-\\d{4}/\\d{5}")
+	@Pattern(regexp = "\\D{1,5}-\\d{4}/\\d{5}")
 	private String reference;
+
 	/** La date de l'écriture comptable */
 	@NotNull
 	private Date date;

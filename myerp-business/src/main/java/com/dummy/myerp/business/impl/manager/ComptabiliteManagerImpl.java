@@ -187,17 +187,15 @@ public class ComptabiliteManagerImpl extends AbstractBusinessManager implements 
 	 * 
 	 * @param pEcritureComptable L'écriture comptable.
 	 */
-	protected void checkEcritureComptableUnitViolation(EcritureComptable pEcritureComptable) {
+	protected void checkEcritureComptableUnitViolation(EcritureComptable pEcritureComptable)
+			throws FunctionalException {
 		LOGGER.trace(new EntreeMessage());
 		Set<ConstraintViolation<EcritureComptable>> vViolations = getConstraintValidator().validate(pEcritureComptable);
+		LOGGER.debug(new DebugMessage("vViolations", vViolations));
 		if (!vViolations.isEmpty()) {
-			try {
-				throw new FunctionalException("L'écriture comptable ne respecte pas les règles de gestion.",
-						new ConstraintViolationException(
-								"L'écriture comptable ne respecte pas les contraintes de validation", vViolations));
-			} catch (FunctionalException e) {
-				LOGGER.error(new ErrorMessage(e));
-			}
+			throw new FunctionalException("L'écriture comptable ne respecte pas les règles de gestion.",
+					new ConstraintViolationException(
+							"L'écriture comptable ne respecte pas les contraintes de validation", vViolations));
 		}
 		LOGGER.trace(new SortieMessage());
 	}

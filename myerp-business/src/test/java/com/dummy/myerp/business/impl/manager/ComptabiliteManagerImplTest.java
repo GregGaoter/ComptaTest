@@ -1,7 +1,9 @@
 package com.dummy.myerp.business.impl.manager;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.assertThatCode;
 import static org.assertj.core.api.Assertions.assertThatNullPointerException;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.doCallRealMethod;
 import static org.mockito.Mockito.verify;
@@ -10,6 +12,7 @@ import static org.mockito.Mockito.when;
 import java.math.BigDecimal;
 import java.time.Instant;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
@@ -222,13 +225,40 @@ public class ComptabiliteManagerImplTest extends BusinessTestCase {
 
 	// ==================== checkEcritureComptableUnitViolation ====================
 
-	@Disabled
 	@Test
-	// @Test(expected = FunctionalException.class)
-	public void checkEcritureComptableUnitViolation() throws Exception {
-		EcritureComptable vEcritureComptable;
-		vEcritureComptable = new EcritureComptable();
-		// manager.checkEcritureComptableUnit(vEcritureComptable);
+	public void checkEcritureComptableUnitViolation_ecritureWithViolations_throwsFunctionalException() {
+		// GIVEN
+		ComptabiliteManagerImpl manager = new ComptabiliteManagerImpl();
+		EcritureComptable vEcritureComptable = new EcritureComptable();
+
+		// WHEN
+		Exception exception = assertThrows(FunctionalException.class, () -> {
+			manager.checkEcritureComptableUnitViolation(vEcritureComptable);
+		});
+
+		// THEN
+		assertThat(exception.getMessage()).isEqualTo("L'écriture comptable ne respecte pas les règles de gestion.");
+	}
+
+	@Test
+	public void checkEcritureComptableUnitViolation_ecritureWithoutViolations_notThrowsFunctionalException() {
+		// GIVEN
+		ComptabiliteManagerImpl manager = new ComptabiliteManagerImpl();
+		EcritureComptable vEcritureComptable = new EcritureComptable();
+		vEcritureComptable.setDate(new Date());
+		vEcritureComptable.setId(1);
+		vEcritureComptable.setJournal(new JournalComptable());
+		vEcritureComptable.setLibelle("Libellé");
+		vEcritureComptable.setListLigneEcriture(
+				Arrays.asList(new LigneEcritureComptable(new CompteComptable(), "LE1", BigDecimal.ZERO, null),
+						new LigneEcritureComptable(new CompteComptable(), "LE2", null, BigDecimal.ZERO)));
+		vEcritureComptable.setReference("BQ-2020/00001");
+
+		// WHEN
+
+		// THEN
+		assertThatCode(() -> manager.checkEcritureComptableUnitViolation(vEcritureComptable))
+				.doesNotThrowAnyException();
 	}
 
 	// ==================== checkEcritureComptableUnitRG2 ====================
