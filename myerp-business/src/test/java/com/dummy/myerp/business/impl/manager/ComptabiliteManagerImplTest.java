@@ -263,38 +263,49 @@ public class ComptabiliteManagerImplTest extends BusinessTestCase {
 
 	// ==================== checkEcritureComptableUnitRG2 ====================
 
-	@Disabled
 	@Test
-	// @Test(expected = FunctionalException.class)
-	public void checkEcritureComptableUnitRG2() throws Exception {
-		EcritureComptable vEcritureComptable;
-		vEcritureComptable = new EcritureComptable();
-		vEcritureComptable.setJournal(new JournalComptable("AC", "Achat"));
+	public void checkEcritureComptableUnitRG2_ecritureEquilibree_notThrowsFunctionalException() {
+		// GIVEN
+		ComptabiliteManagerImpl manager = new ComptabiliteManagerImpl();
+		EcritureComptable vEcritureComptable = new EcritureComptable();
 		vEcritureComptable.setDate(new Date());
-		vEcritureComptable.setLibelle("Libelle");
-		vEcritureComptable.getListLigneEcriture()
-				.add(new LigneEcritureComptable(new CompteComptable(1), null, new BigDecimal(123), null));
-		vEcritureComptable.getListLigneEcriture()
-				.add(new LigneEcritureComptable(new CompteComptable(2), null, null, new BigDecimal(1234)));
-		// manager.checkEcritureComptableUnit(vEcritureComptable);
+		vEcritureComptable.setId(1);
+		vEcritureComptable.setJournal(new JournalComptable());
+		vEcritureComptable.setLibelle("Libellé");
+		vEcritureComptable.setListLigneEcriture(
+				Arrays.asList(new LigneEcritureComptable(new CompteComptable(), "LE1", BigDecimal.ZERO, null),
+						new LigneEcritureComptable(new CompteComptable(), "LE2", null, BigDecimal.ZERO)));
+		vEcritureComptable.setReference("BQ-2020/00001");
+
+		// WHEN
+
+		// THEN
+		assertThatCode(() -> manager.checkEcritureComptableUnitRG2(vEcritureComptable)).doesNotThrowAnyException();
+	}
+
+	@Test
+	public void checkEcritureComptableUnitRG2_ecritureNotEquilibree_throwsFunctionalException() {
+		// GIVEN
+		ComptabiliteManagerImpl manager = new ComptabiliteManagerImpl();
+		EcritureComptable vEcritureComptable = new EcritureComptable();
+		vEcritureComptable.setDate(new Date());
+		vEcritureComptable.setId(1);
+		vEcritureComptable.setJournal(new JournalComptable());
+		vEcritureComptable.setLibelle("Libellé");
+		vEcritureComptable.setListLigneEcriture(
+				Arrays.asList(new LigneEcritureComptable(new CompteComptable(), "LE1", BigDecimal.ZERO, null),
+						new LigneEcritureComptable(new CompteComptable(), "LE2", null, BigDecimal.ONE)));
+		vEcritureComptable.setReference("BQ-2020/00001");
+
+		// WHEN
+		Exception exception = assertThrows(FunctionalException.class, () -> {
+			manager.checkEcritureComptableUnitRG2(vEcritureComptable);
+		});
+
+		// THEN
+		assertThat(exception.getMessage()).isEqualTo("L'écriture comptable n'est pas équilibrée.");
 	}
 
 	// ==================== checkEcritureComptableUnitRG3 ====================
-
-	@Disabled
-	@Test
-	// @Test(expected = FunctionalException.class)
-	public void checkEcritureComptableUnitRG3() throws Exception {
-		EcritureComptable vEcritureComptable;
-		vEcritureComptable = new EcritureComptable();
-		vEcritureComptable.setJournal(new JournalComptable("AC", "Achat"));
-		vEcritureComptable.setDate(new Date());
-		vEcritureComptable.setLibelle("Libelle");
-		vEcritureComptable.getListLigneEcriture()
-				.add(new LigneEcritureComptable(new CompteComptable(1), null, new BigDecimal(123), null));
-		vEcritureComptable.getListLigneEcriture()
-				.add(new LigneEcritureComptable(new CompteComptable(1), null, new BigDecimal(123), null));
-		// manager.checkEcritureComptableUnit(vEcritureComptable);
-	}
 
 }

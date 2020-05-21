@@ -204,15 +204,12 @@ public class ComptabiliteManagerImpl extends AbstractBusinessManager implements 
 	 * Vérifie que l'écriture comptable est équilibrée.
 	 * 
 	 * @param pEcritureComptable L'écriture comptable
+	 * @throws FunctionalException
 	 */
-	protected void checkEcritureComptableUnitRG2(EcritureComptable pEcritureComptable) {
+	protected void checkEcritureComptableUnitRG2(EcritureComptable pEcritureComptable) throws FunctionalException {
 		LOGGER.trace(new EntreeMessage());
 		if (!pEcritureComptable.isEquilibree()) {
-			try {
-				throw new FunctionalException("L'écriture comptable n'est pas équilibrée.");
-			} catch (FunctionalException e) {
-				LOGGER.error(new ErrorMessage(e));
-			}
+			throw new FunctionalException("L'écriture comptable n'est pas équilibrée.");
 		}
 		LOGGER.trace(new SortieMessage());
 	}
