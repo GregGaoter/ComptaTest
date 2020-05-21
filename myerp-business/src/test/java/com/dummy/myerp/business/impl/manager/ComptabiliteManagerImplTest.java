@@ -17,7 +17,6 @@ import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
 
-import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.Mockito;
@@ -306,6 +305,176 @@ public class ComptabiliteManagerImplTest extends BusinessTestCase {
 		assertThat(exception.getMessage()).isEqualTo("L'écriture comptable n'est pas équilibrée.");
 	}
 
+	// ==================== getNbCredit ====================
+
+	@Test
+	public void getNbCredit_ecritureCreditOne_returnsUn() {
+		// GIVEN
+		ComptabiliteManagerImpl manager = new ComptabiliteManagerImpl();
+		EcritureComptable vEcritureComptable = new EcritureComptable();
+		vEcritureComptable.setListLigneEcriture(
+				Arrays.asList(new LigneEcritureComptable(new CompteComptable(), "LE1", BigDecimal.ONE, null),
+						new LigneEcritureComptable(new CompteComptable(), "LE2", null, BigDecimal.ONE)));
+
+		// WHEN
+		int nbCreditActual = manager.getNbCredit(vEcritureComptable);
+
+		// THEN
+		assertThat(nbCreditActual).isEqualTo(1);
+	}
+
+	@Test
+	public void getNbCredit_ecritureCreditZero_returnsZero() {
+		// GIVEN
+		ComptabiliteManagerImpl manager = new ComptabiliteManagerImpl();
+		EcritureComptable vEcritureComptable = new EcritureComptable();
+		vEcritureComptable.setListLigneEcriture(
+				Arrays.asList(new LigneEcritureComptable(new CompteComptable(), "LE1", BigDecimal.ZERO, null),
+						new LigneEcritureComptable(new CompteComptable(), "LE2", null, BigDecimal.ZERO)));
+
+		// WHEN
+		int nbCreditActual = manager.getNbCredit(vEcritureComptable);
+
+		// THEN
+		assertThat(nbCreditActual).isEqualTo(0);
+	}
+
+	@Test
+	public void getNbCredit_ecritureCreditNull_returnsZero() {
+		// GIVEN
+		ComptabiliteManagerImpl manager = new ComptabiliteManagerImpl();
+		EcritureComptable vEcritureComptable = new EcritureComptable();
+		vEcritureComptable.setListLigneEcriture(
+				Arrays.asList(new LigneEcritureComptable(new CompteComptable(), "LE1", null, null),
+						new LigneEcritureComptable(new CompteComptable(), "LE2", null, null)));
+
+		// WHEN
+		int nbCreditActual = manager.getNbCredit(vEcritureComptable);
+
+		// THEN
+		assertThat(nbCreditActual).isEqualTo(0);
+	}
+
+	// ==================== getNbDebit ====================
+
+	@Test
+	public void getNbDebit_ecritureDebitOne_returnsUn() {
+		// GIVEN
+		ComptabiliteManagerImpl manager = new ComptabiliteManagerImpl();
+		EcritureComptable vEcritureComptable = new EcritureComptable();
+		vEcritureComptable.setListLigneEcriture(
+				Arrays.asList(new LigneEcritureComptable(new CompteComptable(), "LE1", BigDecimal.ONE, null),
+						new LigneEcritureComptable(new CompteComptable(), "LE2", null, BigDecimal.ONE)));
+
+		// WHEN
+		int nbDebitActual = manager.getNbDebit(vEcritureComptable);
+
+		// THEN
+		assertThat(nbDebitActual).isEqualTo(1);
+	}
+
+	@Test
+	public void getNbDebit_ecritureDebitZero_returnsZero() {
+		// GIVEN
+		ComptabiliteManagerImpl manager = new ComptabiliteManagerImpl();
+		EcritureComptable vEcritureComptable = new EcritureComptable();
+		vEcritureComptable.setListLigneEcriture(
+				Arrays.asList(new LigneEcritureComptable(new CompteComptable(), "LE1", BigDecimal.ZERO, null),
+						new LigneEcritureComptable(new CompteComptable(), "LE2", null, BigDecimal.ZERO)));
+
+		// WHEN
+		int nbDebitActual = manager.getNbDebit(vEcritureComptable);
+
+		// THEN
+		assertThat(nbDebitActual).isEqualTo(0);
+	}
+
+	@Test
+	public void getNbDebit_ecritureCreditNull_returnsZero() {
+		// GIVEN
+		ComptabiliteManagerImpl manager = new ComptabiliteManagerImpl();
+		EcritureComptable vEcritureComptable = new EcritureComptable();
+		vEcritureComptable.setListLigneEcriture(
+				Arrays.asList(new LigneEcritureComptable(new CompteComptable(), "LE1", null, null),
+						new LigneEcritureComptable(new CompteComptable(), "LE2", null, null)));
+
+		// WHEN
+		int nbDebitActual = manager.getNbDebit(vEcritureComptable);
+
+		// THEN
+		assertThat(nbDebitActual).isEqualTo(0);
+	}
+
 	// ==================== checkEcritureComptableUnitRG3 ====================
+
+	@Test
+	public void checkEcritureComptableUnitRG3_listeLigneEcritureValide_notThrowsFunctionalException() {
+		// GIVEN
+		ComptabiliteManagerImpl manager = new ComptabiliteManagerImpl();
+		EcritureComptable vEcritureComptable = new EcritureComptable();
+		vEcritureComptable.setListLigneEcriture(
+				Arrays.asList(new LigneEcritureComptable(new CompteComptable(), "LE1", BigDecimal.ONE, null),
+						new LigneEcritureComptable(new CompteComptable(), "LE2", null, BigDecimal.ONE)));
+
+		// WHEN
+
+		// THEN
+		assertThatCode(() -> manager.checkEcritureComptableUnitRG3(vEcritureComptable)).doesNotThrowAnyException();
+	}
+
+	@Test
+	public void checkEcritureComptableUnitRG3_listeLigneEcritureSizeUn_throwsFunctionalException() {
+		// GIVEN
+		ComptabiliteManagerImpl manager = new ComptabiliteManagerImpl();
+		EcritureComptable vEcritureComptable = new EcritureComptable();
+		vEcritureComptable.setListLigneEcriture(Arrays.asList(new LigneEcritureComptable()));
+
+		// WHEN
+		Exception exception = assertThrows(FunctionalException.class, () -> {
+			manager.checkEcritureComptableUnitRG3(vEcritureComptable);
+		});
+
+		// THEN
+		assertThat(exception.getMessage()).isEqualTo(
+				"L'écriture comptable doit avoir au moins deux lignes : une ligne au débit et une ligne au crédit.");
+	}
+
+	@Test
+	public void checkEcritureComptableUnitRG3_nbCreditZero_throwsFunctionalException() {
+		// GIVEN
+		ComptabiliteManagerImpl manager = new ComptabiliteManagerImpl();
+		EcritureComptable vEcritureComptable = new EcritureComptable();
+		vEcritureComptable.setListLigneEcriture(
+				Arrays.asList(new LigneEcritureComptable(new CompteComptable(), "LE1", null, null),
+						new LigneEcritureComptable(new CompteComptable(), "LE2", null, BigDecimal.ONE)));
+
+		// WHEN
+		Exception exception = assertThrows(FunctionalException.class, () -> {
+			manager.checkEcritureComptableUnitRG3(vEcritureComptable);
+		});
+
+		// THEN
+		assertThat(exception.getMessage()).isEqualTo(
+				"L'écriture comptable doit avoir au moins deux lignes : une ligne au débit et une ligne au crédit.");
+	}
+
+	@Test
+	public void checkEcritureComptableUnitRG3_nbDebitZero_throwsFunctionalException() {
+		// GIVEN
+		ComptabiliteManagerImpl manager = new ComptabiliteManagerImpl();
+		EcritureComptable vEcritureComptable = new EcritureComptable();
+		vEcritureComptable.setListLigneEcriture(
+				Arrays.asList(new LigneEcritureComptable(new CompteComptable(), "LE1", BigDecimal.ONE, null),
+						new LigneEcritureComptable(new CompteComptable(), "LE2", null, null)));
+
+		// WHEN
+		Exception exception = assertThrows(FunctionalException.class, () -> {
+			manager.checkEcritureComptableUnitRG3(vEcritureComptable);
+		});
+
+		// THEN
+		assertThat(exception.getMessage()).isEqualTo(
+				"L'écriture comptable doit avoir au moins deux lignes : une ligne au débit et une ligne au crédit.");
+	}
 
 }

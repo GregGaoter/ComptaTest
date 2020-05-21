@@ -219,32 +219,52 @@ public class ComptabiliteManagerImpl extends AbstractBusinessManager implements 
 	 * 1 au crédit)
 	 * 
 	 * @param pEcritureComptable L'écriture comptable
+	 * @throws FunctionalException
 	 */
-	protected void checkEcritureComptableUnitRG3(EcritureComptable pEcritureComptable) {
+	protected void checkEcritureComptableUnitRG3(EcritureComptable pEcritureComptable) throws FunctionalException {
 		LOGGER.trace(new EntreeMessage());
+		// On test le nombre de lignes car si l'écriture à une seule ligne
+		// avec un montant au débit et un montant au crédit ce n'est pas valable
+		if (pEcritureComptable.getListLigneEcriture().size() < 2 || getNbCredit(pEcritureComptable) < 1
+				|| getNbDebit(pEcritureComptable) < 1) {
+			throw new FunctionalException(
+					"L'écriture comptable doit avoir au moins deux lignes : une ligne au débit et une ligne au crédit.");
+		}
+		LOGGER.trace(new SortieMessage());
+	}
+
+	/**
+	 * Renvoi le nombre de crédits d'une écriture comptable.
+	 * 
+	 * @param pEcritureComptable L'écriture comptable.
+	 * @return Le nombre de crédits de l'écriture comptable.
+	 */
+	protected int getNbCredit(EcritureComptable pEcritureComptable) {
 		int vNbrCredit = 0;
-		int vNbrDebit = 0;
 		for (LigneEcritureComptable vLigneEcritureComptable : pEcritureComptable.getListLigneEcriture()) {
 			if (BigDecimal.ZERO
 					.compareTo(ObjectUtils.defaultIfNull(vLigneEcritureComptable.getCredit(), BigDecimal.ZERO)) != 0) {
 				vNbrCredit++;
 			}
+		}
+		return vNbrCredit;
+	}
+
+	/**
+	 * Renvoi le nombre de débits d'une écriture comptable.
+	 * 
+	 * @param pEcritureComptable L'écriture comptable.
+	 * @return Le nombre de débits de l'écriture comptable.
+	 */
+	protected int getNbDebit(EcritureComptable pEcritureComptable) {
+		int vNbrDebit = 0;
+		for (LigneEcritureComptable vLigneEcritureComptable : pEcritureComptable.getListLigneEcriture()) {
 			if (BigDecimal.ZERO
 					.compareTo(ObjectUtils.defaultIfNull(vLigneEcritureComptable.getDebit(), BigDecimal.ZERO)) != 0) {
 				vNbrDebit++;
 			}
 		}
-		// On test le nombre de lignes car si l'écriture à une seule ligne
-		// avec un montant au débit et un montant au crédit ce n'est pas valable
-		if (pEcritureComptable.getListLigneEcriture().size() < 2 || vNbrCredit < 1 || vNbrDebit < 1) {
-			try {
-				throw new FunctionalException(
-						"L'écriture comptable doit avoir au moins deux lignes : une ligne au débit et une ligne au crédit.");
-			} catch (FunctionalException e) {
-				LOGGER.error(new ErrorMessage(e));
-			}
-		}
-		LOGGER.trace(new SortieMessage());
+		return vNbrDebit;
 	}
 
 	/**
