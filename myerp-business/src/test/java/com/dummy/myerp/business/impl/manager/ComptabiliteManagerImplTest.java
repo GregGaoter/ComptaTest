@@ -477,4 +477,23 @@ public class ComptabiliteManagerImplTest extends BusinessTestCase {
 				"L'écriture comptable doit avoir au moins deux lignes : une ligne au débit et une ligne au crédit.");
 	}
 
+	// ==================== checkEcritureComptableUnitReference ====================
+
+	@Test
+	public void checkEcritureComptableUnitReference_ecritureNormale_callsFormatAndAnneeAndCodeJournalAndNumeroSequence()
+			throws FunctionalException {
+		// GIVEN
+		ComptabiliteManagerImpl manager = Mockito.mock(ComptabiliteManagerImpl.class);
+		doCallRealMethod().when(manager).checkEcritureComptableUnitReference(any(EcritureComptable.class));
+
+		// WHEN
+		manager.checkEcritureComptableUnitReference(new EcritureComptable());
+
+		// THEN
+		verify(manager).checkEcritureComptableReferenceFormatValid(any(EcritureComptable.class));
+		verify(manager).checkEcritureComptableReferenceAnneeValid(any(EcritureComptable.class));
+		verify(manager).checkEcritureComptableReferenceCodeJournalValid(any(EcritureComptable.class));
+		verify(manager).checkEcritureComptableReferenceNumeroSequenceValid(any(EcritureComptable.class));
+	}
+
 }
