@@ -274,7 +274,8 @@ public class ComptabiliteManagerImpl extends AbstractBusinessManager implements 
 	 * @param pEcritureComptable L'écriture comptable
 	 * @throws FunctionalException
 	 */
-	protected void checkEcritureComptableUnitReference(EcritureComptable pEcritureComptable) throws FunctionalException {
+	protected void checkEcritureComptableUnitReference(EcritureComptable pEcritureComptable)
+			throws FunctionalException {
 		LOGGER.trace(new EntreeMessage());
 		checkEcritureComptableReferenceFormatValid(pEcritureComptable);
 		checkEcritureComptableReferenceAnneeValid(pEcritureComptable);
@@ -295,7 +296,7 @@ public class ComptabiliteManagerImpl extends AbstractBusinessManager implements 
 		Integer valeurSequence = null;
 		for (SequenceEcritureComptable seq : getListSequenceEcritureComptable()) {
 			if (seq.getJournalCode().equals(pEcritureComptable.getJournal().getCode())
-					&& seq.getAnnee().equals(Integer.valueOf(getYear(pEcritureComptable.getDate())))) {
+					&& seq.getAnnee().compareTo(Integer.valueOf(getYear(pEcritureComptable.getDate()))) == 0) {
 				valeurSequence = seq.getDerniereValeur();
 				break;
 			}
@@ -322,18 +323,15 @@ public class ComptabiliteManagerImpl extends AbstractBusinessManager implements 
 	 * Vérifie si l'année de la référence d'une écriture comptable est valide.
 	 * 
 	 * @param pEcritureComptable L'écriture comptable
+	 * @throws FunctionalException
 	 */
-	protected void checkEcritureComptableReferenceAnneeValid(EcritureComptable pEcritureComptable) {
+	protected void checkEcritureComptableReferenceAnneeValid(EcritureComptable pEcritureComptable)
+			throws FunctionalException {
 		LOGGER.trace(new EntreeMessage());
-		try {
-			checkEcritureComptableReferenceFormatValid(pEcritureComptable);
-			String reference = pEcritureComptable.getReference();
-			String annee = reference.split("-|/")[1];
-			if (!annee.equals(String.valueOf(getYear(pEcritureComptable.getDate())))) {
-				throw new FunctionalException("L'année de la référence ne correspond pas à l'année de l'écriture.");
-			}
-		} catch (FunctionalException e) {
-			LOGGER.error(new ErrorMessage(e));
+		String reference = pEcritureComptable.getReference();
+		String annee = reference.split("-|/")[1];
+		if (!annee.equals(String.valueOf(getYear(pEcritureComptable.getDate())))) {
+			throw new FunctionalException("L'année de la référence ne correspond pas à l'année de l'écriture.");
 		}
 		LOGGER.trace(new SortieMessage());
 	}
@@ -343,19 +341,16 @@ public class ComptabiliteManagerImpl extends AbstractBusinessManager implements 
 	 * valide.
 	 * 
 	 * @param pEcritureComptable L'écriture comptable
+	 * @throws FunctionalException
 	 */
-	protected void checkEcritureComptableReferenceCodeJournalValid(EcritureComptable pEcritureComptable) {
+	protected void checkEcritureComptableReferenceCodeJournalValid(EcritureComptable pEcritureComptable)
+			throws FunctionalException {
 		LOGGER.trace(new EntreeMessage());
-		try {
-			checkEcritureComptableReferenceFormatValid(pEcritureComptable);
-			String reference = pEcritureComptable.getReference();
-			String codeJournal = reference.split("-|/")[0];
-			if (!codeJournal.equals(String.valueOf(getYear(pEcritureComptable.getDate())))) {
-				throw new FunctionalException(
-						"Le code journal de la référence ne correspond pas au code journal de l'écriture.");
-			}
-		} catch (FunctionalException e) {
-			LOGGER.error(new ErrorMessage(e));
+		String reference = pEcritureComptable.getReference();
+		String codeJournal = reference.split("-|/")[0];
+		if (!codeJournal.equals(pEcritureComptable.getJournal().getCode())) {
+			throw new FunctionalException(
+					"Le code journal de la référence ne correspond pas au code journal de l'écriture.");
 		}
 		LOGGER.trace(new SortieMessage());
 	}
@@ -365,24 +360,17 @@ public class ComptabiliteManagerImpl extends AbstractBusinessManager implements 
 	 * valide.
 	 * 
 	 * @param pEcritureComptable L'écriture comptable
+	 * @throws FunctionalException
 	 */
-	protected void checkEcritureComptableReferenceNumeroSequenceValid(EcritureComptable pEcritureComptable) {
+	protected void checkEcritureComptableReferenceNumeroSequenceValid(EcritureComptable pEcritureComptable)
+			throws FunctionalException {
 		LOGGER.trace(new EntreeMessage());
-		try {
-			checkEcritureComptableReferenceFormatValid(pEcritureComptable);
-			String reference = pEcritureComptable.getReference();
-			String numeroSequenceReference = reference.split("-|/")[2];
-			Integer numeroSequenceEcriture = getDerniereValeurNumeroSequence(pEcritureComptable);
-			if (numeroSequenceEcriture == null
-					|| Integer.valueOf(numeroSequenceReference).compareTo(numeroSequenceEcriture) > 0) {
-				try {
-					throw new FunctionalException("Le numéro de séquence de la référence n'est pas valide.");
-				} catch (FunctionalException e) {
-					LOGGER.error(new ErrorMessage(e));
-				}
-			}
-		} catch (FunctionalException e) {
-			LOGGER.error(new ErrorMessage(e));
+		String reference = pEcritureComptable.getReference();
+		String numeroSequenceReference = reference.split("-|/")[2];
+		Integer numeroSequenceEcriture = getDerniereValeurNumeroSequence(pEcritureComptable);
+		if (numeroSequenceEcriture == null
+				|| Integer.valueOf(numeroSequenceReference).compareTo(numeroSequenceEcriture) > 0) {
+			throw new FunctionalException("Le numéro de séquence de la référence n'est pas valide.");
 		}
 		LOGGER.trace(new SortieMessage());
 	}

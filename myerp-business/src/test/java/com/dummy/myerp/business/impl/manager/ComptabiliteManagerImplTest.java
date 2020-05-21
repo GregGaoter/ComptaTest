@@ -16,9 +16,14 @@ import java.util.Arrays;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
+import java.util.stream.Stream;
 
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.Arguments;
+import org.junit.jupiter.params.provider.CsvSource;
+import org.junit.jupiter.params.provider.MethodSource;
 import org.mockito.Mockito;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.test.util.ReflectionTestUtils;
@@ -494,6 +499,307 @@ public class ComptabiliteManagerImplTest extends BusinessTestCase {
 		verify(manager).checkEcritureComptableReferenceAnneeValid(any(EcritureComptable.class));
 		verify(manager).checkEcritureComptableReferenceCodeJournalValid(any(EcritureComptable.class));
 		verify(manager).checkEcritureComptableReferenceNumeroSequenceValid(any(EcritureComptable.class));
+	}
+
+	// ==================== checkEcritureComptableReferenceFormatValid
+	// ====================
+
+	@Test
+	public void checkEcritureComptableReferenceFormatValid_formatValide_notThrowsFunctionalException() {
+		// GIVEN
+		ComptabiliteManagerImpl manager = new ComptabiliteManagerImpl();
+		EcritureComptable vEcritureComptable = new EcritureComptable();
+		vEcritureComptable.setReference("BQ-2020/00001");
+
+		// WHEN
+
+		// THEN
+		assertThatCode(() -> manager.checkEcritureComptableReferenceFormatValid(vEcritureComptable))
+				.doesNotThrowAnyException();
+	}
+
+	@Test
+	public void checkEcritureComptableReferenceFormatValid_formatNonValide_throwsFunctionalException() {
+		// GIVEN
+		ComptabiliteManagerImpl manager = new ComptabiliteManagerImpl();
+		EcritureComptable vEcritureComptable = new EcritureComptable();
+		vEcritureComptable.setReference("BQ-2020-00001");
+
+		// WHEN
+		Exception exception = assertThrows(FunctionalException.class, () -> {
+			manager.checkEcritureComptableReferenceFormatValid(vEcritureComptable);
+		});
+
+		// THEN
+		assertThat(exception.getMessage()).isEqualTo("Le format de la référence est invalide.");
+	}
+
+	// ==================== checkEcritureComptableReferenceAnneeValid
+	// ====================
+
+	@Test
+	public void checkEcritureComptableReferenceAnneeValid_anneeValide_notThrowsFunctionalException() {
+		// GIVEN
+		ComptabiliteManagerImpl manager = new ComptabiliteManagerImpl();
+		EcritureComptable vEcritureComptable = new EcritureComptable();
+		Calendar calendar = Calendar.getInstance();
+		calendar.set(Calendar.YEAR, 2020);
+		calendar.set(Calendar.MONTH, 5);
+		calendar.set(Calendar.DAY_OF_MONTH, 21);
+		Date date = calendar.getTime();
+		vEcritureComptable.setDate(date);
+		vEcritureComptable.setReference("BQ-2020/00001");
+
+		// WHEN
+
+		// THEN
+		assertThatCode(() -> manager.checkEcritureComptableReferenceAnneeValid(vEcritureComptable))
+				.doesNotThrowAnyException();
+	}
+
+	@Test
+	public void checkEcritureComptableReferenceAnneeValid_anneeNonValide_throwsFunctionalException() {
+		// GIVEN
+		ComptabiliteManagerImpl manager = new ComptabiliteManagerImpl();
+		EcritureComptable vEcritureComptable = new EcritureComptable();
+		Calendar calendar = Calendar.getInstance();
+		calendar.set(Calendar.YEAR, 2019);
+		calendar.set(Calendar.MONTH, 5);
+		calendar.set(Calendar.DAY_OF_MONTH, 21);
+		Date date = calendar.getTime();
+		vEcritureComptable.setDate(date);
+		vEcritureComptable.setReference("BQ-2020/00001");
+
+		// WHEN
+		Exception exception = assertThrows(FunctionalException.class, () -> {
+			manager.checkEcritureComptableReferenceAnneeValid(vEcritureComptable);
+		});
+
+		// THEN
+		assertThat(exception.getMessage())
+				.isEqualTo("L'année de la référence ne correspond pas à l'année de l'écriture.");
+	}
+
+	// ==================== checkEcritureComptableReferenceCodeJournalValid
+	// ====================
+
+	@Test
+	public void checkEcritureComptableReferenceCodeJournalValid_codeJournalValide_notThrowsFunctionalException() {
+		// GIVEN
+		ComptabiliteManagerImpl manager = new ComptabiliteManagerImpl();
+		EcritureComptable vEcritureComptable = new EcritureComptable();
+		JournalComptable journal = new JournalComptable();
+		journal.setCode("BQ");
+		vEcritureComptable.setJournal(journal);
+		vEcritureComptable.setReference("BQ-2020/00001");
+
+		// WHEN
+
+		// THEN
+		assertThatCode(() -> manager.checkEcritureComptableReferenceCodeJournalValid(vEcritureComptable))
+				.doesNotThrowAnyException();
+	}
+
+	@Test
+	public void checkEcritureComptableReferenceCodeJournalValid_codeJournalNonValide_throwsFunctionalException() {
+		// GIVEN
+		ComptabiliteManagerImpl manager = new ComptabiliteManagerImpl();
+		EcritureComptable vEcritureComptable = new EcritureComptable();
+		JournalComptable journal = new JournalComptable();
+		journal.setCode("AC");
+		vEcritureComptable.setJournal(journal);
+		vEcritureComptable.setReference("BQ-2020/00001");
+
+		// WHEN
+		Exception exception = assertThrows(FunctionalException.class, () -> {
+			manager.checkEcritureComptableReferenceCodeJournalValid(vEcritureComptable);
+		});
+
+		// THEN
+		assertThat(exception.getMessage())
+				.isEqualTo("Le code journal de la référence ne correspond pas au code journal de l'écriture.");
+	}
+
+	// ==================== checkEcritureComptableReferenceNumeroSequenceValid
+	// ====================
+
+	@Test
+	public void checkEcritureComptableReferenceNumeroSequenceValid_numeroSequenceValide_notThrowsFunctionalException()
+			throws FunctionalException {
+		// GIVEN
+		ComptabiliteManagerImpl manager = Mockito.mock(ComptabiliteManagerImpl.class);
+		EcritureComptable ecriture = new EcritureComptable();
+		JournalComptable journal = new JournalComptable();
+		SequenceEcritureComptable sequence01 = new SequenceEcritureComptable();
+		SequenceEcritureComptable sequence02 = new SequenceEcritureComptable();
+		SequenceEcritureComptable sequence03 = new SequenceEcritureComptable();
+		SequenceEcritureComptable sequence04 = new SequenceEcritureComptable();
+
+		Calendar calendar = Calendar.getInstance();
+		calendar.set(Calendar.YEAR, 2020);
+		calendar.set(Calendar.MONTH, 5);
+		calendar.set(Calendar.DAY_OF_MONTH, 22);
+		Date date = calendar.getTime();
+
+		ecriture.setJournal(journal);
+		journal.setCode("BQ");
+		ecriture.setDate(date);
+		ecriture.setReference("BQ-2020/00001");
+
+		sequence01.setJournalCode("AC");
+		sequence01.setAnnee(2020);
+		sequence01.setDerniereValeur(40);
+
+		sequence02.setJournalCode("VE");
+		sequence02.setAnnee(2020);
+		sequence02.setDerniereValeur(41);
+
+		sequence03.setJournalCode("BQ");
+		sequence03.setAnnee(2020);
+		sequence03.setDerniereValeur(51);
+
+		sequence04.setJournalCode("OD");
+		sequence04.setAnnee(2020);
+		sequence04.setDerniereValeur(88);
+
+		List<SequenceEcritureComptable> listeSequences = new ArrayList<>(4);
+		listeSequences.add(sequence01);
+		listeSequences.add(sequence02);
+		listeSequences.add(sequence03);
+		listeSequences.add(sequence04);
+		when(manager.getListSequenceEcritureComptable()).thenReturn(listeSequences);
+
+		doCallRealMethod().when(manager).getDerniereValeurNumeroSequence(any(EcritureComptable.class));
+		doCallRealMethod().when(manager)
+				.checkEcritureComptableReferenceNumeroSequenceValid(any(EcritureComptable.class));
+
+		// WHEN
+
+		// THEN
+		assertThatCode(() -> manager.checkEcritureComptableReferenceNumeroSequenceValid(ecriture))
+				.doesNotThrowAnyException();
+	}
+
+	@ParameterizedTest
+	@CsvSource({ "2019,51", "2020,50", "2019,50" })
+	public void checkEcritureComptableReferenceNumeroSequenceValid_numeroSequenceNonValide_throwsFunctionalException(
+			Integer annee, Integer numero) throws FunctionalException {
+		// GIVEN
+		ComptabiliteManagerImpl manager = Mockito.mock(ComptabiliteManagerImpl.class);
+		EcritureComptable ecriture = new EcritureComptable();
+		JournalComptable journal = new JournalComptable();
+		SequenceEcritureComptable sequence01 = new SequenceEcritureComptable();
+		SequenceEcritureComptable sequence02 = new SequenceEcritureComptable();
+		SequenceEcritureComptable sequence03 = new SequenceEcritureComptable();
+		SequenceEcritureComptable sequence04 = new SequenceEcritureComptable();
+
+		Calendar calendar = Calendar.getInstance();
+		calendar.set(Calendar.YEAR, 2020);
+		calendar.set(Calendar.MONTH, 5);
+		calendar.set(Calendar.DAY_OF_MONTH, 22);
+		Date date = calendar.getTime();
+
+		ecriture.setJournal(journal);
+		journal.setCode("BQ");
+		ecriture.setDate(date);
+		ecriture.setReference("BQ-2020/00051");
+
+		sequence01.setJournalCode("AC");
+		sequence01.setAnnee(2020);
+		sequence01.setDerniereValeur(40);
+
+		sequence02.setJournalCode("VE");
+		sequence02.setAnnee(2020);
+		sequence02.setDerniereValeur(41);
+
+		sequence03.setJournalCode("BQ");
+		sequence03.setAnnee(annee);
+		sequence03.setDerniereValeur(numero);
+
+		sequence04.setJournalCode("OD");
+		sequence04.setAnnee(2020);
+		sequence04.setDerniereValeur(88);
+
+		List<SequenceEcritureComptable> listeSequences = new ArrayList<>(4);
+		listeSequences.add(sequence01);
+		listeSequences.add(sequence02);
+		listeSequences.add(sequence03);
+		listeSequences.add(sequence04);
+		when(manager.getListSequenceEcritureComptable()).thenReturn(listeSequences);
+
+		doCallRealMethod().when(manager).getDerniereValeurNumeroSequence(any(EcritureComptable.class));
+		doCallRealMethod().when(manager)
+				.checkEcritureComptableReferenceNumeroSequenceValid(any(EcritureComptable.class));
+
+		// WHEN
+		Exception exception = assertThrows(FunctionalException.class, () -> {
+			manager.checkEcritureComptableReferenceNumeroSequenceValid(ecriture);
+		});
+
+		// THEN
+		assertThat(exception.getMessage()).isEqualTo("Le numéro de séquence de la référence n'est pas valide.");
+	}
+
+	// ==================== getDerniereValeurNumeroSequence
+	// ====================
+
+	private static Stream<Arguments> getArgumentsPourGetDerniereValeurNumeroSequence() {
+		return Stream.of(Arguments.of("BQ", 2020, 51), Arguments.of("OC", 2020, null), Arguments.of("BQ", 2019, null),
+				Arguments.of("OC", 2019, null));
+	}
+
+	@ParameterizedTest
+	@MethodSource("getArgumentsPourGetDerniereValeurNumeroSequence")
+	public void getDerniereValeurNumeroSequence_returnsDerniereValeur(String code, Integer annee, Integer numero) {
+		// GIVEN
+		ComptabiliteManagerImpl manager = Mockito.mock(ComptabiliteManagerImpl.class);
+		EcritureComptable ecriture = new EcritureComptable();
+		JournalComptable journal = new JournalComptable();
+		SequenceEcritureComptable sequence01 = new SequenceEcritureComptable();
+		SequenceEcritureComptable sequence02 = new SequenceEcritureComptable();
+		SequenceEcritureComptable sequence03 = new SequenceEcritureComptable();
+		SequenceEcritureComptable sequence04 = new SequenceEcritureComptable();
+
+		Calendar calendar = Calendar.getInstance();
+		calendar.set(Calendar.YEAR, annee);
+		calendar.set(Calendar.MONTH, 5);
+		calendar.set(Calendar.DAY_OF_MONTH, 22);
+		Date date = calendar.getTime();
+
+		ecriture.setJournal(journal);
+		journal.setCode(code);
+		ecriture.setDate(date);
+
+		sequence01.setJournalCode("AC");
+		sequence01.setAnnee(2020);
+		sequence01.setDerniereValeur(40);
+
+		sequence02.setJournalCode("VE");
+		sequence02.setAnnee(2020);
+		sequence02.setDerniereValeur(41);
+
+		sequence03.setJournalCode("BQ");
+		sequence03.setAnnee(2020);
+		sequence03.setDerniereValeur(51);
+
+		sequence04.setJournalCode("OD");
+		sequence04.setAnnee(2020);
+		sequence04.setDerniereValeur(88);
+
+		List<SequenceEcritureComptable> listeSequences = new ArrayList<>(4);
+		listeSequences.add(sequence01);
+		listeSequences.add(sequence02);
+		listeSequences.add(sequence03);
+		listeSequences.add(sequence04);
+		when(manager.getListSequenceEcritureComptable()).thenReturn(listeSequences);
+
+		doCallRealMethod().when(manager).getDerniereValeurNumeroSequence(any(EcritureComptable.class));
+
+		// WHEN
+		Integer numeroSequenceActual = manager.getDerniereValeurNumeroSequence(ecriture);
+
+		// THEN
+		assertThat(numeroSequenceActual).isEqualTo(numero);
 	}
 
 }
