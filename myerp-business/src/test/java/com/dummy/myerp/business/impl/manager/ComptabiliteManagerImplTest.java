@@ -18,23 +18,28 @@ import java.util.Date;
 import java.util.List;
 import java.util.stream.Stream;
 
+import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.Arguments;
 import org.junit.jupiter.params.provider.CsvSource;
 import org.junit.jupiter.params.provider.MethodSource;
+import org.junit.jupiter.params.provider.NullAndEmptySource;
 import org.mockito.Mockito;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.test.util.ReflectionTestUtils;
 
 import com.dummy.myerp.business.test.BusinessTestCase;
+import com.dummy.myerp.consumer.dao.contrat.ComptabiliteDao;
+import com.dummy.myerp.consumer.dao.contrat.DaoProxy;
 import com.dummy.myerp.model.bean.comptabilite.CompteComptable;
 import com.dummy.myerp.model.bean.comptabilite.EcritureComptable;
 import com.dummy.myerp.model.bean.comptabilite.JournalComptable;
 import com.dummy.myerp.model.bean.comptabilite.LigneEcritureComptable;
 import com.dummy.myerp.model.bean.comptabilite.SequenceEcritureComptable;
 import com.dummy.myerp.technical.exception.FunctionalException;
+import com.dummy.myerp.technical.exception.NotFoundException;
 
 @ExtendWith(MockitoExtension.class)
 public class ComptabiliteManagerImplTest extends BusinessTestCase {
@@ -800,6 +805,49 @@ public class ComptabiliteManagerImplTest extends BusinessTestCase {
 
 		// THEN
 		assertThat(numeroSequenceActual).isEqualTo(numero);
+	}
+
+	// ==================== checkEcritureComptableContext ====================
+
+	@ParameterizedTest
+	@NullAndEmptySource
+	public void checkEcritureComptableContext_ecritureReferenceNullEmpty_doesNotThrowAnyException(String reference) {
+		// GIVEN
+		ComptabiliteManagerImpl manager = new ComptabiliteManagerImpl();
+		EcritureComptable ecriture = new EcritureComptable();
+		ecriture.setReference(reference);
+
+		// WHEN
+
+		// THEN
+		assertThatCode(() -> manager.checkEcritureComptableContext(ecriture)).doesNotThrowAnyException();
+	}
+
+	@Disabled
+	@Test
+	public void checkEcritureComptableContext_ecritureReferenceUnique_throwsNotFoundException()
+			throws NotFoundException {
+		// GIVEN
+		ComptabiliteManagerImpl manager = Mockito.spy(new ComptabiliteManagerImpl());
+		EcritureComptable ecriture = new EcritureComptable();
+		ecriture.setReference("BQ-2020/00001");
+		DaoProxy daoProxy = ReflectionTestUtils.invokeMethod(manager, "getDaoProxy");
+		ComptabiliteDao comptabiliteDao = Mockito.spy(daoProxy.getComptabiliteDao());
+		/*
+		 * when(comptabiliteDao.getEcritureComptableByRef(ecriture.getReference()))
+		 * .thenReturn(new EcritureComptable("BQ-2020/00001"));
+		 */
+		Mockito.doReturn(new EcritureComptable("BQ-2020/00001")).when(comptabiliteDao)
+				.getEcritureComptableByRef(ecriture.getReference());
+
+		// WHEN
+		Exception exception = assertThrows(FunctionalException.class, () -> {
+			manager.checkEcritureComptableUnitRG3(ecriture);
+		});
+
+		// THEN
+		assertThat(exception.getMessage()).isEqualTo(
+				"L'écriture comptable doit avoir au moins deux lignes : une ligne au débit et une ligne au crédit.");
 	}
 
 }

@@ -61,6 +61,13 @@ public class EcritureComptable {
 		super();
 	}
 
+	/**
+	 * Constructeur.
+	 */
+	public EcritureComptable(String reference) {
+		this.reference = reference;
+	}
+
 	// ==================== Getters/Setters ====================
 	/**
 	 * Renvoie l'id de l'écriture comptable

@@ -7,7 +7,6 @@ import com.dummy.myerp.business.contrat.BusinessProxy;
 import com.dummy.myerp.business.contrat.manager.ComptabiliteManager;
 import com.dummy.myerp.business.impl.manager.ComptabiliteManagerImpl;
 import com.dummy.myerp.consumer.dao.contrat.DaoProxy;
-import com.dummy.myerp.technical.log.message.DebugMessage;
 import com.dummy.myerp.technical.log.message.EntreeMessage;
 import com.dummy.myerp.technical.log.message.ErrorMessage;
 import com.dummy.myerp.technical.log.message.SortieMessage;
@@ -42,8 +41,6 @@ public class BusinessProxyImpl implements BusinessProxy {
 	 */
 	private static final BusinessProxyImpl INSTANCE = new BusinessProxyImpl();
 
-	// TODO ERREUR - Le message d'erreur doit indiquer que la classe DaoProxy n'a
-	// pas été initialisée.
 	/**
 	 * Renvoie l'instance unique de la classe (design pattern Singleton).<br>
 	 * Construit une erreur {@link UnsatisfiedLinkError} si la classe
@@ -73,8 +70,6 @@ public class BusinessProxyImpl implements BusinessProxy {
 	 */
 	public static BusinessProxyImpl getInstance(DaoProxy pDaoProxy, TransactionManager pTransactionManager) {
 		LOGGER.trace(new EntreeMessage());
-		LOGGER.debug(new DebugMessage("DaoProxy pDaoProxy", pDaoProxy));
-		LOGGER.debug(new DebugMessage("TransactionManager pTransactionManager", pTransactionManager));
 		daoProxy = pDaoProxy;
 		AbstractBusinessManager.configure(BusinessProxyImpl.INSTANCE, pDaoProxy, pTransactionManager);
 		LOGGER.trace(new SortieMessage());

@@ -27,7 +27,6 @@ import com.dummy.myerp.technical.exception.FunctionalException;
 import com.dummy.myerp.technical.exception.NotFoundException;
 import com.dummy.myerp.technical.log.message.DebugMessage;
 import com.dummy.myerp.technical.log.message.EntreeMessage;
-import com.dummy.myerp.technical.log.message.ErrorMessage;
 import com.dummy.myerp.technical.log.message.SortieMessage;
 
 /**
@@ -172,7 +171,6 @@ public class ComptabiliteManagerImpl extends AbstractBusinessManager implements 
 	 * @throws FunctionalException Si l'écriture comptable ne respecte pas les
 	 *                             règles de gestion unitaires
 	 */
-	// TODO tests à compléter
 	protected void checkEcritureComptableUnit(EcritureComptable pEcritureComptable) throws FunctionalException {
 		LOGGER.trace(new EntreeMessage());
 		checkEcritureComptableUnitViolation(pEcritureComptable);
@@ -386,9 +384,7 @@ public class ComptabiliteManagerImpl extends AbstractBusinessManager implements 
 	 */
 	protected void checkEcritureComptableContext(EcritureComptable pEcritureComptable) throws FunctionalException {
 		LOGGER.trace(new EntreeMessage());
-		LOGGER.debug(new DebugMessage("EcritureComptable pEcritureComptable", pEcritureComptable));
 		// ===== RG_Compta_6 : La référence d'une écriture comptable doit être unique
-		LOGGER.debug(new DebugMessage("pEcritureComptable.getReference()", pEcritureComptable.getReference()));
 		if (StringUtils.isNoneEmpty(pEcritureComptable.getReference())) {
 			try {
 				// Recherche d'une écriture ayant la même référence
@@ -398,15 +394,8 @@ public class ComptabiliteManagerImpl extends AbstractBusinessManager implements 
 				// Si l'écriture à vérifier est une nouvelle écriture (id == null),
 				// ou si elle ne correspond pas à l'écriture trouvée (id != idECRef),
 				// c'est qu'il y a déjà une autre écriture avec la même référence
-				LOGGER.debug(new DebugMessage("pEcritureComptable.getId()", pEcritureComptable.getId()));
-				LOGGER.debug(new DebugMessage("vECRef.getId()", vECRef.getId()));
 				if (pEcritureComptable.getId() == null || !pEcritureComptable.getId().equals(vECRef.getId())) {
-					try {
-						throw new FunctionalException(
-								"Une autre écriture comptable existe déjà avec la même référence.");
-					} catch (FunctionalException e) {
-						LOGGER.error(new ErrorMessage(e));
-					}
+					throw new FunctionalException("Une autre écriture comptable existe déjà avec la même référence.");
 				}
 			} catch (NotFoundException vEx) {
 				// Dans ce cas, c'est bon, ça veut dire qu'on n'a aucune autre écriture avec la
@@ -422,7 +411,6 @@ public class ComptabiliteManagerImpl extends AbstractBusinessManager implements 
 	@Override
 	public void insertEcritureComptable(EcritureComptable pEcritureComptable) throws FunctionalException {
 		LOGGER.trace(new EntreeMessage());
-		LOGGER.debug(new DebugMessage("EcritureComptable pEcritureComptable", pEcritureComptable));
 		this.checkEcritureComptable(pEcritureComptable);
 		TransactionStatus vTS = getTransactionManager().beginTransactionMyERP();
 		try {
