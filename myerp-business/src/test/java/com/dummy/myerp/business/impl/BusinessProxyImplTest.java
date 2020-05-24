@@ -1,6 +1,7 @@
 package com.dummy.myerp.business.impl;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 
 import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
@@ -8,6 +9,34 @@ import org.mockito.Mockito;
 import com.dummy.myerp.consumer.dao.contrat.DaoProxy;
 
 public class BusinessProxyImplTest {
+
+	// ========== getInstance ==========
+
+	@Test
+	public void getInstance_daoProxyNotNull_returnsBusinessProxyImpl() {
+		// GIVEN
+		DaoProxy daoProxy = Mockito.mock(DaoProxy.class);
+		BusinessProxyImpl.setDaoProxy(daoProxy);
+
+		// WHEN
+		BusinessProxyImpl businessProxy = BusinessProxyImpl.getInstance();
+
+		// THEN
+		assertThat(businessProxy).isNotNull();
+	}
+
+	@Test
+	public void getInstance_daoProxyNull_throwsUnsatisfiedLinkError() {
+		// GIVEN
+
+		// WHEN
+		UnsatisfiedLinkError error = assertThrows(UnsatisfiedLinkError.class, () -> {
+			BusinessProxyImpl.getInstance();
+		});
+
+		// THEN
+		assertThat(error.getMessage()).isEqualTo("La classe BusinessProxyImpl n'a pas été initialisée.");
+	}
 
 	// ========== getInstance(DaoProxy, TransactionManager) ==========
 
