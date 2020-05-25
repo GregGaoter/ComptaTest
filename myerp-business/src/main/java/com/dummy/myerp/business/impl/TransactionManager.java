@@ -7,7 +7,6 @@ import org.springframework.transaction.TransactionDefinition;
 import org.springframework.transaction.TransactionStatus;
 import org.springframework.transaction.support.DefaultTransactionDefinition;
 
-import com.dummy.myerp.technical.log.message.DebugMessage;
 import com.dummy.myerp.technical.log.message.EntreeMessage;
 import com.dummy.myerp.technical.log.message.SortieMessage;
 
@@ -88,7 +87,6 @@ public class TransactionManager {
 	 */
 	public void commitMyERP(TransactionStatus pTStatus) {
 		LOGGER.trace(new EntreeMessage());
-		LOGGER.debug(new DebugMessage("TransactionStatus pTStatus", pTStatus));
 		if (pTStatus != null) {
 			ptmMyERP.commit(pTStatus);
 		}
@@ -102,7 +100,6 @@ public class TransactionManager {
 	 */
 	public void rollbackMyERP(TransactionStatus pTStatus) {
 		LOGGER.trace(new EntreeMessage());
-		LOGGER.debug(new DebugMessage("TransactionStatus pTStatus", pTStatus));
 		if (pTStatus != null) {
 			ptmMyERP.rollback(pTStatus);
 		}
