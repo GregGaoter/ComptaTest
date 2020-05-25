@@ -7,6 +7,7 @@ import com.dummy.myerp.business.contrat.BusinessProxy;
 import com.dummy.myerp.business.contrat.manager.ComptabiliteManager;
 import com.dummy.myerp.business.impl.manager.ComptabiliteManagerImpl;
 import com.dummy.myerp.consumer.dao.contrat.DaoProxy;
+import com.dummy.myerp.technical.exception.TechnicalException;
 import com.dummy.myerp.technical.log.message.EntreeMessage;
 import com.dummy.myerp.technical.log.message.SortieMessage;
 
@@ -46,6 +47,7 @@ public class BusinessProxyImpl implements BusinessProxy {
 	 * {@link BusinessProxyImpl} n'a pas été initialisée.
 	 *
 	 * @return {@link BusinessProxyImpl}
+	 * @throws TechnicalException
 	 */
 	protected static BusinessProxyImpl getInstance() {
 		LOGGER.trace(new EntreeMessage());
@@ -85,14 +87,5 @@ public class BusinessProxyImpl implements BusinessProxy {
 	@Override
 	public ComptabiliteManager getComptabiliteManager() {
 		return comptabiliteManager;
-	}
-
-	/**
-	 * Initialise le {@link DaoProxy}.
-	 * 
-	 * @param pDaoProxy Le {@link DaoProxy} à initialiser.
-	 */
-	public static void setDaoProxy(DaoProxy pDaoProxy) {
-		daoProxy = pDaoProxy;
 	}
 }
