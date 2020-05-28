@@ -43,7 +43,8 @@ public class JournalComptableDaoCache {
 		if (listJournalComptable == null) {
 			listJournalComptable = ConsumerHelper.getDaoProxy().getComptabiliteDao().getListJournalComptable();
 		}
-		JournalComptable vRetour = JournalComptable.getByCode(listJournalComptable, pCode);
+		JournalComptable vRetour = pCode == null || listJournalComptable.isEmpty() ? null
+				: JournalComptable.getByCode(listJournalComptable, pCode);
 		LOGGER.trace(new SortieMessage());
 		return vRetour;
 	}

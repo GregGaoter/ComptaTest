@@ -64,9 +64,12 @@ public class CompteComptableDaoCacheTest {
 
 	private static Stream<Arguments> getArgumentsPourGetByNumero() {
 		initListCompteComptable();
-		return Stream.of(Arguments.of(1, listCompteComptable, listCompteComptable.get(0)),
-				Arguments.of(2, new ArrayList<CompteComptable>(), null), Arguments.of(null, listCompteComptable, null),
-				Arguments.of(null, new ArrayList<CompteComptable>(), null), Arguments.of(null, null, null));
+		return Stream.of(
+				Arguments.of(1, listCompteComptable, listCompteComptable.get(1)),
+				Arguments.of(2, new ArrayList<CompteComptable>(), null),
+				Arguments.of(null, listCompteComptable, null),
+				Arguments.of(null, new ArrayList<CompteComptable>(), null), 
+				Arguments.of(null, null, null));
 	}
 
 	@ParameterizedTest(name = "numero = {0}, listCompteComptable = {1}, expectedCompteComptable = {2}")
