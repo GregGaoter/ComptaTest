@@ -43,7 +43,8 @@ public class CompteComptableDaoCache {
 		if (listCompteComptable == null) {
 			listCompteComptable = ConsumerHelper.getDaoProxy().getComptabiliteDao().getListCompteComptable();
 		}
-		CompteComptable vRetour = CompteComptable.getByNumero(listCompteComptable, pNumero);
+		CompteComptable vRetour = pNumero == null || listCompteComptable.isEmpty() ? null
+				: CompteComptable.getByNumero(listCompteComptable, pNumero);
 		LOGGER.trace(new SortieMessage());
 		return vRetour;
 	}
