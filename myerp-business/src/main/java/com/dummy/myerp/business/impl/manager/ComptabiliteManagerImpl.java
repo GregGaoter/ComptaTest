@@ -27,6 +27,7 @@ import com.dummy.myerp.technical.exception.FunctionalException;
 import com.dummy.myerp.technical.exception.NotFoundException;
 import com.dummy.myerp.technical.log.message.DebugMessage;
 import com.dummy.myerp.technical.log.message.EntreeMessage;
+import com.dummy.myerp.technical.log.message.ErrorMessage;
 import com.dummy.myerp.technical.log.message.SortieMessage;
 
 /**
@@ -400,6 +401,7 @@ public class ComptabiliteManagerImpl extends AbstractBusinessManager implements 
 			} catch (NotFoundException vEx) {
 				// Dans ce cas, c'est bon, ça veut dire qu'on n'a aucune autre écriture avec la
 				// même référence.
+				LOGGER.error(new ErrorMessage(vEx));
 			}
 		}
 		LOGGER.trace(new SortieMessage());

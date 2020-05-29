@@ -5,7 +5,9 @@ import static org.assertj.core.api.Assertions.assertThatCode;
 import static org.assertj.core.api.Assertions.assertThatNullPointerException;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.Mockito.doCallRealMethod;
+import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
@@ -18,7 +20,6 @@ import java.util.Date;
 import java.util.List;
 import java.util.stream.Stream;
 
-import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.junit.jupiter.params.ParameterizedTest;
@@ -30,6 +31,7 @@ import org.mockito.Mockito;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.test.util.ReflectionTestUtils;
 
+import com.dummy.myerp.business.impl.AbstractBusinessManager;
 import com.dummy.myerp.business.test.BusinessTestCase;
 import com.dummy.myerp.consumer.dao.contrat.ComptabiliteDao;
 import com.dummy.myerp.consumer.dao.contrat.DaoProxy;
@@ -823,31 +825,88 @@ public class ComptabiliteManagerImplTest extends BusinessTestCase {
 		assertThatCode(() -> manager.checkEcritureComptableContext(ecriture)).doesNotThrowAnyException();
 	}
 
-	@Disabled
 	@Test
 	public void checkEcritureComptableContext_ecritureReferenceUnique_throwsNotFoundException()
-			throws NotFoundException {
+			throws NotFoundException, FunctionalException {
 		// GIVEN
-		ComptabiliteManagerImpl manager = Mockito.spy(new ComptabiliteManagerImpl());
-		EcritureComptable ecriture = new EcritureComptable();
-		ecriture.setReference("BQ-2020/00001");
-		DaoProxy daoProxy = ReflectionTestUtils.invokeMethod(manager, "getDaoProxy");
-		ComptabiliteDao comptabiliteDao = Mockito.spy(daoProxy.getComptabiliteDao());
-		/*
-		 * when(comptabiliteDao.getEcritureComptableByRef(ecriture.getReference()))
-		 * .thenReturn(new EcritureComptable("BQ-2020/00001"));
-		 */
-		Mockito.doReturn(new EcritureComptable("BQ-2020/00001")).when(comptabiliteDao)
-				.getEcritureComptableByRef(ecriture.getReference());
+		ComptabiliteManagerImpl manager = new ComptabiliteManagerImpl();
+		EcritureComptable ecritureToCheck = Mockito.mock(EcritureComptable.class);
+		DaoProxy daoProxy = Mockito.mock(DaoProxy.class);
+		ComptabiliteDao comptabiliteDao = Mockito.mock(ComptabiliteDao.class);
+
+		when(ecritureToCheck.getReference()).thenReturn("BQ-2020/00001");
+		ReflectionTestUtils.setField(AbstractBusinessManager.class, "daoProxy", daoProxy);
+		when(daoProxy.getComptabiliteDao()).thenReturn(comptabiliteDao);
+		when(comptabiliteDao.getEcritureComptableByRef(anyString())).thenThrow(NotFoundException.class);
 
 		// WHEN
-		Exception exception = assertThrows(FunctionalException.class, () -> {
-			manager.checkEcritureComptableUnitRG3(ecriture);
-		});
+		manager.checkEcritureComptableContext(ecritureToCheck);
 
 		// THEN
-		assertThat(exception.getMessage()).isEqualTo(
-				"L'écriture comptable doit avoir au moins deux lignes : une ligne au débit et une ligne au crédit.");
+		verify(ecritureToCheck, times(0)).getId();
+	}
+
+	// ==================== getListCompteComptable() ====================
+
+	@Test
+	public void getListCompteComptable_returnsListCompteComptable() {
+		// GIVEN
+		ComptabiliteManagerImpl comptabiliteManagerImpl = new ComptabiliteManagerImpl();
+		DaoProxy daoProxy = Mockito.mock(DaoProxy.class);
+		ComptabiliteDao comptabiliteDao = Mockito.mock(ComptabiliteDao.class);
+		List<CompteComptable> expectedListCompteComptable = new ArrayList<>();
+
+		ReflectionTestUtils.setField(AbstractBusinessManager.class, "daoProxy", daoProxy);
+		when(daoProxy.getComptabiliteDao()).thenReturn(comptabiliteDao);
+		when(comptabiliteDao.getListCompteComptable()).thenReturn(expectedListCompteComptable);
+
+		// WHEN
+		List<CompteComptable> actualListCompteComptable = comptabiliteManagerImpl.getListCompteComptable();
+
+		// THEN
+		assertThat(actualListCompteComptable).isEqualTo(expectedListCompteComptable);
+	}
+
+	// ==================== getListJournalComptable() ====================
+
+	@Test
+	public void getListJournalComptable_returnsListJournalComptable() {
+		// GIVEN
+		ComptabiliteManagerImpl comptabiliteManagerImpl = new ComptabiliteManagerImpl();
+		DaoProxy daoProxy = Mockito.mock(DaoProxy.class);
+		ComptabiliteDao comptabiliteDao = Mockito.mock(ComptabiliteDao.class);
+		List<JournalComptable> expectedListJournalComptable = new ArrayList<>();
+
+		ReflectionTestUtils.setField(AbstractBusinessManager.class, "daoProxy", daoProxy);
+		when(daoProxy.getComptabiliteDao()).thenReturn(comptabiliteDao);
+		when(comptabiliteDao.getListJournalComptable()).thenReturn(expectedListJournalComptable);
+
+		// WHEN
+		List<JournalComptable> actualListJournalComptable = comptabiliteManagerImpl.getListJournalComptable();
+
+		// THEN
+		assertThat(actualListJournalComptable).isEqualTo(expectedListJournalComptable);
+	}
+
+	// ==================== getListEcritureComptable() ====================
+
+	@Test
+	public void getListEcritureComptable_returnsListEcritureComptable() {
+		// GIVEN
+		ComptabiliteManagerImpl comptabiliteManagerImpl = new ComptabiliteManagerImpl();
+		DaoProxy daoProxy = Mockito.mock(DaoProxy.class);
+		ComptabiliteDao comptabiliteDao = Mockito.mock(ComptabiliteDao.class);
+		List<EcritureComptable> expectedListEcritureComptable = new ArrayList<>();
+
+		ReflectionTestUtils.setField(AbstractBusinessManager.class, "daoProxy", daoProxy);
+		when(daoProxy.getComptabiliteDao()).thenReturn(comptabiliteDao);
+		when(comptabiliteDao.getListEcritureComptable()).thenReturn(expectedListEcritureComptable);
+
+		// WHEN
+		List<EcritureComptable> actualListEcritureComptable = comptabiliteManagerImpl.getListEcritureComptable();
+
+		// THEN
+		assertThat(actualListEcritureComptable).isEqualTo(expectedListEcritureComptable);
 	}
 
 }
