@@ -68,6 +68,21 @@ public class EcritureComptable {
 		this.reference = reference;
 	}
 
+	/**
+	 * Constructeur.
+	 */
+	public EcritureComptable(Integer id) {
+		this.id = id;
+	}
+
+	/**
+	 * Constructeur.
+	 */
+	public EcritureComptable(Integer id, String reference) {
+		this.id = id;
+		this.reference = reference;
+	}
+
 	// ==================== Getters/Setters ====================
 	/**
 	 * Renvoie l'id de l'écriture comptable

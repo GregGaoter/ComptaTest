@@ -3,7 +3,7 @@ package com.dummy.myerp.business.impl.manager;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatCode;
 import static org.assertj.core.api.Assertions.assertThatNullPointerException;
-import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.junit.Assert.assertThrows;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.Mockito.doCallRealMethod;
@@ -826,7 +826,7 @@ public class ComptabiliteManagerImplTest extends BusinessTestCase {
 	}
 
 	@Test
-	public void checkEcritureComptableContext_ecritureReferenceUnique_throwsNotFoundException()
+	public void checkEcritureComptableContext_ecritureReferenceUnique_notCallsGetId()
 			throws NotFoundException, FunctionalException {
 		// GIVEN
 		ComptabiliteManagerImpl manager = new ComptabiliteManagerImpl();
@@ -844,6 +844,42 @@ public class ComptabiliteManagerImplTest extends BusinessTestCase {
 
 		// THEN
 		verify(ecritureToCheck, times(0)).getId();
+	}
+
+	private static String messFuncExcCheckEcrComCon = "Une autre écriture comptable existe déjà avec la même référence.";
+
+	private static Stream<Arguments> getArgumentsPourCheckEcritureComptableContextEcritureReferenceNonUniqueThrowsFunctionalException() {
+		return Stream.of(Arguments.of(1, 1, null), Arguments.of(1, 2, messFuncExcCheckEcrComCon),
+				Arguments.of(1, null, messFuncExcCheckEcrComCon), Arguments.of(null, 1, messFuncExcCheckEcrComCon),
+				Arguments.of(null, null, messFuncExcCheckEcrComCon));
+	}
+
+	@ParameterizedTest(name = "idToCheck = {0}, idResult = {1}, excpectedMessage = {2}")
+	@MethodSource("getArgumentsPourCheckEcritureComptableContextEcritureReferenceNonUniqueThrowsFunctionalException")
+	public void checkEcritureComptableContext_ecritureReferenceNonUnique_throwsFunctionalException(Integer idToCheck,
+			Integer idResult, String excpectedMessage) throws NotFoundException {
+		// GIVEN
+		ComptabiliteManagerImpl manager = new ComptabiliteManagerImpl();
+		EcritureComptable ecritureToCheck = new EcritureComptable(idToCheck, "BQ-2020/00001");
+		DaoProxy daoProxy = Mockito.mock(DaoProxy.class);
+		ComptabiliteDao comptabiliteDao = Mockito.mock(ComptabiliteDao.class);
+
+		ReflectionTestUtils.setField(AbstractBusinessManager.class, "daoProxy", daoProxy);
+		when(daoProxy.getComptabiliteDao()).thenReturn(comptabiliteDao);
+		when(comptabiliteDao.getEcritureComptableByRef(anyString())).thenReturn(new EcritureComptable(idResult));
+
+		String actualMessage;
+
+		// WHEN
+		try {
+			manager.checkEcritureComptableContext(ecritureToCheck);
+			actualMessage = null;
+		} catch (FunctionalException e) {
+			actualMessage = e.getMessage();
+		}
+
+		// THEN
+		assertThat(actualMessage).isEqualTo(excpectedMessage);
 	}
 
 	// ==================== getListCompteComptable() ====================
