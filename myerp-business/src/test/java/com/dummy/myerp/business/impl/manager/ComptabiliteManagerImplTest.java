@@ -7,6 +7,7 @@ import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.Mockito.doCallRealMethod;
+import static org.mockito.Mockito.doNothing;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
@@ -30,8 +31,10 @@ import org.junit.jupiter.params.provider.NullAndEmptySource;
 import org.mockito.Mockito;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.test.util.ReflectionTestUtils;
+import org.springframework.transaction.TransactionStatus;
 
 import com.dummy.myerp.business.impl.AbstractBusinessManager;
+import com.dummy.myerp.business.impl.TransactionManager;
 import com.dummy.myerp.business.test.BusinessTestCase;
 import com.dummy.myerp.consumer.dao.contrat.ComptabiliteDao;
 import com.dummy.myerp.consumer.dao.contrat.DaoProxy;
@@ -943,6 +946,33 @@ public class ComptabiliteManagerImplTest extends BusinessTestCase {
 
 		// THEN
 		assertThat(actualListEcritureComptable).isEqualTo(expectedListEcritureComptable);
+	}
+
+	// =============== insertEcritureComptable(EcritureComptable) ===============
+
+	@Test
+	public void insertEcritureComptable_insertEcritureComptable() throws FunctionalException {
+		// GIVEN
+		ComptabiliteManagerImpl manager = Mockito.spy(new ComptabiliteManagerImpl());
+		EcritureComptable ecriture = new EcritureComptable();
+		TransactionManager transactionManager = Mockito.mock(TransactionManager.class);
+		TransactionStatus transactionStatus = Mockito.mock(TransactionStatus.class);
+		DaoProxy daoProxy = Mockito.mock(DaoProxy.class);
+		ComptabiliteDao comptabiliteDao = Mockito.mock(ComptabiliteDao.class);
+
+		doNothing().when(manager).checkEcritureComptable(any(EcritureComptable.class));
+		ReflectionTestUtils.setField(AbstractBusinessManager.class, "transactionManager", transactionManager);
+		when(transactionManager.beginTransactionMyERP()).thenReturn(transactionStatus);
+		ReflectionTestUtils.setField(AbstractBusinessManager.class, "daoProxy", daoProxy);
+		when(daoProxy.getComptabiliteDao()).thenReturn(comptabiliteDao);
+
+		// WHEN
+		manager.insertEcritureComptable(ecriture);
+
+		// THEN
+		verify(comptabiliteDao).insertEcritureComptable(ecriture);
+		verify(transactionManager).commitMyERP(transactionStatus);
+		verify(transactionManager).rollbackMyERP(null);
 	}
 
 }
