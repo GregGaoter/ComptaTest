@@ -975,4 +975,109 @@ public class ComptabiliteManagerImplTest extends BusinessTestCase {
 		verify(transactionManager).rollbackMyERP(null);
 	}
 
+	// =============== updateEcritureComptable(EcritureComptable) ===============
+
+	@Test
+	public void updateEcritureComptable_updateEcritureComptable() throws FunctionalException {
+		// GIVEN
+		ComptabiliteManagerImpl manager = new ComptabiliteManagerImpl();
+		EcritureComptable ecriture = new EcritureComptable();
+		TransactionManager transactionManager = Mockito.mock(TransactionManager.class);
+		TransactionStatus transactionStatus = Mockito.mock(TransactionStatus.class);
+		DaoProxy daoProxy = Mockito.mock(DaoProxy.class);
+		ComptabiliteDao comptabiliteDao = Mockito.mock(ComptabiliteDao.class);
+
+		ReflectionTestUtils.setField(AbstractBusinessManager.class, "transactionManager", transactionManager);
+		when(transactionManager.beginTransactionMyERP()).thenReturn(transactionStatus);
+		ReflectionTestUtils.setField(AbstractBusinessManager.class, "daoProxy", daoProxy);
+		when(daoProxy.getComptabiliteDao()).thenReturn(comptabiliteDao);
+
+		// WHEN
+		manager.updateEcritureComptable(ecriture);
+
+		// THEN
+		verify(comptabiliteDao).updateEcritureComptable(ecriture);
+		verify(transactionManager).commitMyERP(transactionStatus);
+		verify(transactionManager).rollbackMyERP(null);
+	}
+
+	// =============== deleteEcritureComptable(Integer) ===============
+
+	@Test
+	public void deleteEcritureComptable_deleteEcritureComptable() {
+		// GIVEN
+		ComptabiliteManagerImpl manager = new ComptabiliteManagerImpl();
+		TransactionManager transactionManager = Mockito.mock(TransactionManager.class);
+		TransactionStatus transactionStatus = Mockito.mock(TransactionStatus.class);
+		DaoProxy daoProxy = Mockito.mock(DaoProxy.class);
+		ComptabiliteDao comptabiliteDao = Mockito.mock(ComptabiliteDao.class);
+
+		ReflectionTestUtils.setField(AbstractBusinessManager.class, "transactionManager", transactionManager);
+		when(transactionManager.beginTransactionMyERP()).thenReturn(transactionStatus);
+		ReflectionTestUtils.setField(AbstractBusinessManager.class, "daoProxy", daoProxy);
+		when(daoProxy.getComptabiliteDao()).thenReturn(comptabiliteDao);
+
+		// WHEN
+		manager.deleteEcritureComptable(1);
+
+		// THEN
+		verify(comptabiliteDao).deleteEcritureComptable(1);
+		verify(transactionManager).commitMyERP(transactionStatus);
+		verify(transactionManager).rollbackMyERP(null);
+	}
+
+	// =============== insertSequenceEcritureComptable(SequenceEcritureComptable)
+	// ===============
+
+	@Test
+	public void insertSequenceEcritureComptable_insertSequenceEcritureComptable() {
+		// GIVEN
+		ComptabiliteManagerImpl manager = new ComptabiliteManagerImpl();
+		SequenceEcritureComptable sequence = new SequenceEcritureComptable();
+		TransactionManager transactionManager = Mockito.mock(TransactionManager.class);
+		TransactionStatus transactionStatus = Mockito.mock(TransactionStatus.class);
+		DaoProxy daoProxy = Mockito.mock(DaoProxy.class);
+		ComptabiliteDao comptabiliteDao = Mockito.mock(ComptabiliteDao.class);
+
+		ReflectionTestUtils.setField(AbstractBusinessManager.class, "transactionManager", transactionManager);
+		when(transactionManager.beginTransactionMyERP()).thenReturn(transactionStatus);
+		ReflectionTestUtils.setField(AbstractBusinessManager.class, "daoProxy", daoProxy);
+		when(daoProxy.getComptabiliteDao()).thenReturn(comptabiliteDao);
+
+		// WHEN
+		manager.insertSequenceEcritureComptable(sequence);
+
+		// THEN
+		verify(comptabiliteDao).insertSequenceEcritureComptable(sequence);
+		verify(transactionManager).commitMyERP(transactionStatus);
+		verify(transactionManager).rollbackMyERP(null);
+	}
+
+	// =============== updateSequenceEcritureComptable(SequenceEcritureComptable)
+	// ===============
+
+	@Test
+	public void updateSequenceEcritureComptable_updateSequenceEcritureComptable() {
+		// GIVEN
+		ComptabiliteManagerImpl manager = new ComptabiliteManagerImpl();
+		SequenceEcritureComptable sequence = new SequenceEcritureComptable();
+		TransactionManager transactionManager = Mockito.mock(TransactionManager.class);
+		TransactionStatus transactionStatus = Mockito.mock(TransactionStatus.class);
+		DaoProxy daoProxy = Mockito.mock(DaoProxy.class);
+		ComptabiliteDao comptabiliteDao = Mockito.mock(ComptabiliteDao.class);
+
+		ReflectionTestUtils.setField(AbstractBusinessManager.class, "transactionManager", transactionManager);
+		when(transactionManager.beginTransactionMyERP()).thenReturn(transactionStatus);
+		ReflectionTestUtils.setField(AbstractBusinessManager.class, "daoProxy", daoProxy);
+		when(daoProxy.getComptabiliteDao()).thenReturn(comptabiliteDao);
+
+		// WHEN
+		manager.updateSequenceEcritureComptable(sequence);
+
+		// THEN
+		verify(comptabiliteDao).updateSequenceEcritureComptable(sequence);
+		verify(transactionManager).commitMyERP(transactionStatus);
+		verify(transactionManager).rollbackMyERP(null);
+	}
+
 }

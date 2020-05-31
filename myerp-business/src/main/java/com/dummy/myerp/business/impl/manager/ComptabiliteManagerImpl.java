@@ -431,7 +431,6 @@ public class ComptabiliteManagerImpl extends AbstractBusinessManager implements 
 	@Override
 	public void updateEcritureComptable(EcritureComptable pEcritureComptable) throws FunctionalException {
 		LOGGER.trace(new EntreeMessage());
-		LOGGER.debug(new DebugMessage("EcritureComptable pEcritureComptable", pEcritureComptable));
 		TransactionStatus vTS = getTransactionManager().beginTransactionMyERP();
 		try {
 			getDaoProxy().getComptabiliteDao().updateEcritureComptable(pEcritureComptable);
