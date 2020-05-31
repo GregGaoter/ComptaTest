@@ -948,6 +948,28 @@ public class ComptabiliteManagerImplTest extends BusinessTestCase {
 		assertThat(actualListEcritureComptable).isEqualTo(expectedListEcritureComptable);
 	}
 
+	// ==================== getListSequenceEcritureComptable() ====================
+
+	@Test
+	public void getListSequenceEcritureComptable_returnsListSequenceEcritureComptable() {
+		// GIVEN
+		ComptabiliteManagerImpl comptabiliteManagerImpl = new ComptabiliteManagerImpl();
+		DaoProxy daoProxy = Mockito.mock(DaoProxy.class);
+		ComptabiliteDao comptabiliteDao = Mockito.mock(ComptabiliteDao.class);
+		List<SequenceEcritureComptable> expectedListSequenceEcritureComptable = new ArrayList<>();
+
+		ReflectionTestUtils.setField(AbstractBusinessManager.class, "daoProxy", daoProxy);
+		when(daoProxy.getComptabiliteDao()).thenReturn(comptabiliteDao);
+		when(comptabiliteDao.getListSequenceEcritureComptable()).thenReturn(expectedListSequenceEcritureComptable);
+
+		// WHEN
+		List<SequenceEcritureComptable> actualListSequenceEcritureComptable = comptabiliteManagerImpl
+				.getListSequenceEcritureComptable();
+
+		// THEN
+		assertThat(actualListSequenceEcritureComptable).isEqualTo(expectedListSequenceEcritureComptable);
+	}
+
 	// =============== insertEcritureComptable(EcritureComptable) ===============
 
 	@Test
