@@ -2,7 +2,6 @@ package com.dummy.myerp.business.impl;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
-import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
 import org.springframework.test.util.ReflectionTestUtils;
@@ -12,9 +11,8 @@ import com.dummy.myerp.consumer.dao.contrat.DaoProxy;
 
 public class AbstractBusinessManagerTest {
 
-	// ==================== configure ====================
+	// ========== configure(BusinessProxy, DaoProxy, TransactionManager) ==========
 
-	@Disabled
 	@Test
 	public void configure_businessProxyAndDaoProxyAndTransactionManager_setsBusinessProxyAndDaoProxyAndTransactionManager() {
 		// GIVEN
@@ -26,7 +24,11 @@ public class AbstractBusinessManagerTest {
 		AbstractBusinessManager.configure(businessProxy, daoProxy, transactionManager);
 
 		// THEN
-		assertThat(ReflectionTestUtils.invokeGetterMethod(null, "")).isEqualTo(1970);
+		assertThat(ReflectionTestUtils.getField(AbstractBusinessManager.class, "businessProxy"))
+				.isEqualTo(businessProxy);
+		assertThat(ReflectionTestUtils.getField(AbstractBusinessManager.class, "daoProxy")).isEqualTo(daoProxy);
+		assertThat(ReflectionTestUtils.getField(AbstractBusinessManager.class, "transactionManager"))
+				.isEqualTo(transactionManager);
 	}
 
 }
