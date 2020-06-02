@@ -51,6 +51,14 @@ public class ComptabiliteDaoImpl extends AbstractDbConsumer implements Comptabil
 	 * {@link CompteComptableRM}
 	 */
 	private CompteComptableRM compteComptableRM;
+	/**
+	 * {@link JournalComptableRM}
+	 */
+	private JournalComptableRM journalComptableRM;
+	/**
+	 * {@link SequenceEcritureComptableRM}
+	 */
+	private SequenceEcritureComptableRM sequenceEcritureComptableRM;
 
 	// ==================== Constructeurs ====================
 
@@ -89,6 +97,20 @@ public class ComptabiliteDaoImpl extends AbstractDbConsumer implements Comptabil
 	 */
 	public void initCompteComptableRM() {
 		compteComptableRM = new CompteComptableRM();
+	}
+
+	/**
+	 * Initialise le {@link RowMapper} de {@link JournalComptable}
+	 */
+	public void initJournalComptableRM() {
+		journalComptableRM = new JournalComptableRM();
+	}
+
+	/**
+	 * Initialise le {@link RowMapper} de {@link SequenceEcritureComptableRM}
+	 */
+	public void initSequenceEcritureComptableRM() {
+		sequenceEcritureComptableRM = new SequenceEcritureComptableRM();
 	}
 
 	/** Requête SQL pour avoir la liste des comptes comptables */
@@ -132,10 +154,10 @@ public class ComptabiliteDaoImpl extends AbstractDbConsumer implements Comptabil
 	@Override
 	public List<JournalComptable> getListJournalComptable() {
 		LOGGER.trace(new EntreeMessage());
-		JdbcTemplate vJdbcTemplate = new JdbcTemplate(this.getDataSource(DataSourcesEnum.MYERP));
-		JournalComptableRM vRM = new JournalComptableRM();
+		initJdbcTemplate(DataSourcesEnum.MYERP);
+		initJournalComptableRM();
 		LOGGER.debug(new DebugMessage("SQLgetListJournalComptable", SQLgetListJournalComptable));
-		List<JournalComptable> vList = vJdbcTemplate.query(SQLgetListJournalComptable, vRM);
+		List<JournalComptable> vList = jdbcTemplate.query(SQLgetListJournalComptable, journalComptableRM);
 		LOGGER.trace(new SortieMessage());
 		return vList;
 	}
@@ -160,10 +182,11 @@ public class ComptabiliteDaoImpl extends AbstractDbConsumer implements Comptabil
 	@Override
 	public List<SequenceEcritureComptable> getListSequenceEcritureComptable() {
 		LOGGER.trace(new EntreeMessage());
-		JdbcTemplate vJdbcTemplate = new JdbcTemplate(this.getDataSource(DataSourcesEnum.MYERP));
-		SequenceEcritureComptableRM vRM = new SequenceEcritureComptableRM();
+		initJdbcTemplate(DataSourcesEnum.MYERP);
+		initSequenceEcritureComptableRM();
 		LOGGER.debug(new DebugMessage("SQLgetListSequenceEcritureComptable", SQLgetListSequenceEcritureComptable));
-		List<SequenceEcritureComptable> vList = vJdbcTemplate.query(SQLgetListSequenceEcritureComptable, vRM);
+		List<SequenceEcritureComptable> vList = jdbcTemplate.query(SQLgetListSequenceEcritureComptable,
+				sequenceEcritureComptableRM);
 		LOGGER.trace(new SortieMessage());
 		return vList;
 	}
