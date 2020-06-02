@@ -3,10 +3,13 @@ package com.dummy.myerp.consumer.dao.impl.db.dao;
 import java.sql.Types;
 import java.util.List;
 
+import javax.sql.DataSource;
+
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.jdbc.core.JdbcTemplate;
+import org.springframework.jdbc.core.RowMapper;
 import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
 import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate;
 
@@ -38,7 +41,19 @@ public class ComptabiliteDaoImpl extends AbstractDbConsumer implements Comptabil
 	/** Logger Log4j pour la classe */
 	private static final Logger LOGGER = LogManager.getLogger(ComptabiliteDaoImpl.class);
 
+	// ==================== Attributs ====================
+
+	/**
+	 * {@link JdbcTemplate}
+	 */
+	private JdbcTemplate jdbcTemplate;
+	/**
+	 * {@link CompteComptableRM}
+	 */
+	private CompteComptableRM compteComptableRM;
+
 	// ==================== Constructeurs ====================
+
 	/** Instance unique de la classe (design pattern Singleton) */
 	private static final ComptabiliteDaoImpl INSTANCE = new ComptabiliteDaoImpl();
 
@@ -59,6 +74,23 @@ public class ComptabiliteDaoImpl extends AbstractDbConsumer implements Comptabil
 	}
 
 	// ==================== Méthodes ====================
+
+	/**
+	 * Initialise le {@link JdbcTemplate}.
+	 * 
+	 * @param dataSourcesEnum {@link DataSource} utilisée.
+	 */
+	public void initJdbcTemplate(DataSourcesEnum dataSourcesEnum) {
+		jdbcTemplate = new JdbcTemplate(getDataSource(dataSourcesEnum));
+	}
+
+	/**
+	 * Initialise le {@link RowMapper} de {@link CompteComptable}
+	 */
+	public void initCompteComptableRM() {
+		compteComptableRM = new CompteComptableRM();
+	}
+
 	/** Requête SQL pour avoir la liste des comptes comptables */
 	private static String SQLgetListCompteComptable;
 
@@ -76,10 +108,10 @@ public class ComptabiliteDaoImpl extends AbstractDbConsumer implements Comptabil
 	@Override
 	public List<CompteComptable> getListCompteComptable() {
 		LOGGER.trace(new EntreeMessage());
-		JdbcTemplate vJdbcTemplate = new JdbcTemplate(this.getDataSource(DataSourcesEnum.MYERP));
-		CompteComptableRM vRM = new CompteComptableRM();
+		initJdbcTemplate(DataSourcesEnum.MYERP);
+		initCompteComptableRM();
 		LOGGER.debug(new DebugMessage("SQLgetListCompteComptable", SQLgetListCompteComptable));
-		List<CompteComptable> vList = vJdbcTemplate.query(SQLgetListCompteComptable, vRM);
+		List<CompteComptable> vList = jdbcTemplate.query(SQLgetListCompteComptable, compteComptableRM);
 		LOGGER.trace(new SortieMessage());
 		return vList;
 	}
