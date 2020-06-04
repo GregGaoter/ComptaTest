@@ -321,14 +321,15 @@ public class ComptabiliteDaoImpl extends AbstractDbConsumer implements Comptabil
 	public EcritureComptable getEcritureComptable(Integer pId) throws NotFoundException {
 		LOGGER.trace(new EntreeMessage());
 		LOGGER.debug(new DebugMessage("Integer pId", pId));
-		NamedParameterJdbcTemplate vJdbcTemplate = new NamedParameterJdbcTemplate(getDataSource(DataSourcesEnum.MYERP));
-		MapSqlParameterSource vSqlParams = new MapSqlParameterSource();
-		vSqlParams.addValue("id", pId);
-		EcritureComptableRM vRM = new EcritureComptableRM();
+		initNamedParameterJdbcTemplate(DataSourcesEnum.MYERP);
+		initMapSqlParameterSource();
+		mapSqlParameterSource.addValue("id", pId);
+		initEcritureComptableRM();
 		EcritureComptable vBean;
 		LOGGER.debug(new DebugMessage("SQLgetEcritureComptable", SQLgetEcritureComptable));
 		try {
-			vBean = vJdbcTemplate.queryForObject(SQLgetEcritureComptable, vSqlParams, vRM);
+			vBean = namedParameterJdbcTemplate.queryForObject(SQLgetEcritureComptable, mapSqlParameterSource,
+					ecritureComptableRM);
 		} catch (EmptyResultDataAccessException vEx) {
 			LOGGER.error(new ErrorMessage(vEx));
 			NotFoundException notFoundException = new NotFoundException("EcritureComptable non trouvée : id=" + pId);

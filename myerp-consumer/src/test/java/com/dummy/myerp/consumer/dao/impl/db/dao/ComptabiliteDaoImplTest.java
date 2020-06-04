@@ -1,6 +1,7 @@
 package com.dummy.myerp.consumer.dao.impl.db.dao;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.Mockito.doNothing;
@@ -16,6 +17,7 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.Spy;
 import org.mockito.junit.jupiter.MockitoExtension;
+import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
 import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate;
@@ -30,6 +32,7 @@ import com.dummy.myerp.model.bean.comptabilite.CompteComptable;
 import com.dummy.myerp.model.bean.comptabilite.EcritureComptable;
 import com.dummy.myerp.model.bean.comptabilite.JournalComptable;
 import com.dummy.myerp.model.bean.comptabilite.SequenceEcritureComptable;
+import com.dummy.myerp.technical.exception.NotFoundException;
 
 @ExtendWith(MockitoExtension.class)
 public class ComptabiliteDaoImplTest {
@@ -156,6 +159,45 @@ public class ComptabiliteDaoImplTest {
 
 		// THEN
 		assertThat(actualListEcritureComptable).isEqualTo(expectedListEcritureComptable);
+	}
+
+	// === getEcritureComptable(Integer) ===
+
+	@Test
+	public void getEcritureComptable_returnsEcritureComptable() throws NotFoundException {
+		// GIVEN
+		EcritureComptable expectedEcritureComptable = new EcritureComptable();
+		ReflectionTestUtils.setField(ComptabiliteDaoImpl.class, "SQLgetEcritureComptable", "");
+		doNothing().when(comptabiliteDaoImpl).initNamedParameterJdbcTemplate(any(DataSourcesEnum.class));
+		doNothing().when(comptabiliteDaoImpl).initMapSqlParameterSource();
+		doNothing().when(comptabiliteDaoImpl).initEcritureComptableRM();
+		when(namedParameterJdbcTemplate.queryForObject(anyString(), any(MapSqlParameterSource.class),
+				any(EcritureComptableRM.class))).thenReturn(expectedEcritureComptable);
+
+		// WHEN
+		EcritureComptable actualEcritureComptable = comptabiliteDaoImpl.getEcritureComptable(1);
+
+		// THEN
+		assertThat(actualEcritureComptable).isEqualTo(expectedEcritureComptable);
+	}
+
+	@Test
+	public void getEcritureComptable_throwsNotFoundException() {
+		// GIVEN
+		ReflectionTestUtils.setField(ComptabiliteDaoImpl.class, "SQLgetEcritureComptable", "");
+		doNothing().when(comptabiliteDaoImpl).initNamedParameterJdbcTemplate(any(DataSourcesEnum.class));
+		doNothing().when(comptabiliteDaoImpl).initMapSqlParameterSource();
+		doNothing().when(comptabiliteDaoImpl).initEcritureComptableRM();
+		when(namedParameterJdbcTemplate.queryForObject(anyString(), any(MapSqlParameterSource.class),
+				any(EcritureComptableRM.class))).thenThrow(EmptyResultDataAccessException.class);
+
+		// WHEN
+		Exception exception = assertThrows(NotFoundException.class, () -> {
+			comptabiliteDaoImpl.getEcritureComptable(1);
+		});
+
+		// THEN
+		assertThat(exception.getMessage()).isEqualTo("EcritureComptable non trouvée : id=1");
 	}
 
 }
