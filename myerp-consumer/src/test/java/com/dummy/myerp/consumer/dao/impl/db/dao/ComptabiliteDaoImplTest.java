@@ -200,4 +200,43 @@ public class ComptabiliteDaoImplTest {
 		assertThat(exception.getMessage()).isEqualTo("EcritureComptable non trouvée : id=1");
 	}
 
+	// === getEcritureComptableByRef(String) ===
+
+	@Test
+	public void getEcritureComptableByRef_returnsEcritureComptable() throws NotFoundException {
+		// GIVEN
+		EcritureComptable expectedEcritureComptable = new EcritureComptable();
+		ReflectionTestUtils.setField(ComptabiliteDaoImpl.class, "SQLgetEcritureComptableByRef", "");
+		doNothing().when(comptabiliteDaoImpl).initNamedParameterJdbcTemplate(any(DataSourcesEnum.class));
+		doNothing().when(comptabiliteDaoImpl).initMapSqlParameterSource();
+		doNothing().when(comptabiliteDaoImpl).initEcritureComptableRM();
+		when(namedParameterJdbcTemplate.queryForObject(anyString(), any(MapSqlParameterSource.class),
+				any(EcritureComptableRM.class))).thenReturn(expectedEcritureComptable);
+
+		// WHEN
+		EcritureComptable actualEcritureComptable = comptabiliteDaoImpl.getEcritureComptableByRef("");
+
+		// THEN
+		assertThat(actualEcritureComptable).isEqualTo(expectedEcritureComptable);
+	}
+
+	@Test
+	public void getEcritureComptableByRef_throwsNotFoundException() {
+		// GIVEN
+		ReflectionTestUtils.setField(ComptabiliteDaoImpl.class, "SQLgetEcritureComptableByRef", "");
+		doNothing().when(comptabiliteDaoImpl).initNamedParameterJdbcTemplate(any(DataSourcesEnum.class));
+		doNothing().when(comptabiliteDaoImpl).initMapSqlParameterSource();
+		doNothing().when(comptabiliteDaoImpl).initEcritureComptableRM();
+		when(namedParameterJdbcTemplate.queryForObject(anyString(), any(MapSqlParameterSource.class),
+				any(EcritureComptableRM.class))).thenThrow(EmptyResultDataAccessException.class);
+
+		// WHEN
+		Exception exception = assertThrows(NotFoundException.class, () -> {
+			comptabiliteDaoImpl.getEcritureComptableByRef("ref");
+		});
+
+		// THEN
+		assertThat(exception.getMessage()).isEqualTo("EcritureComptable non trouvée : reference=ref");
+	}
+
 }
