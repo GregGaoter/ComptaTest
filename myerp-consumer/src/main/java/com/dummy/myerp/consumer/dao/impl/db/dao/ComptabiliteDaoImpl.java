@@ -71,6 +71,10 @@ public class ComptabiliteDaoImpl extends AbstractDbConsumer implements Comptabil
 	 * {@link EcritureComptableRM}
 	 */
 	private EcritureComptableRM ecritureComptableRM;
+	/**
+	 * {@link LigneEcritureComptableRM}
+	 */
+	private LigneEcritureComptableRM ligneEcritureComptableRM;
 
 	// ==================== Constructeurs ====================
 
@@ -146,6 +150,13 @@ public class ComptabiliteDaoImpl extends AbstractDbConsumer implements Comptabil
 	 */
 	public void initEcritureComptableRM() {
 		ecritureComptableRM = new EcritureComptableRM();
+	}
+
+	/**
+	 * Initialise le {@link RowMapper} de {@link LigneEcritureComptableRM}
+	 */
+	public void initLigneEcritureComptableRM() {
+		ligneEcritureComptableRM = new LigneEcritureComptableRM();
 	}
 
 	/** Requête SQL pour avoir la liste des comptes comptables */
@@ -405,13 +416,14 @@ public class ComptabiliteDaoImpl extends AbstractDbConsumer implements Comptabil
 	public void loadListLigneEcriture(EcritureComptable pEcritureComptable) {
 		LOGGER.trace(new EntreeMessage());
 		LOGGER.debug(new DebugMessage("EcritureComptable pEcritureComptable", pEcritureComptable));
-		NamedParameterJdbcTemplate vJdbcTemplate = new NamedParameterJdbcTemplate(getDataSource(DataSourcesEnum.MYERP));
-		MapSqlParameterSource vSqlParams = new MapSqlParameterSource();
+		initNamedParameterJdbcTemplate(DataSourcesEnum.MYERP);
+		initMapSqlParameterSource();
 		LOGGER.debug(new DebugMessage("pEcritureComptable.getId()", pEcritureComptable.getId()));
-		vSqlParams.addValue("ecriture_id", pEcritureComptable.getId());
-		LigneEcritureComptableRM vRM = new LigneEcritureComptableRM();
+		mapSqlParameterSource.addValue("ecriture_id", pEcritureComptable.getId());
+		initLigneEcritureComptableRM();
 		LOGGER.debug(new DebugMessage("SQLloadListLigneEcriture", SQLloadListLigneEcriture));
-		List<LigneEcritureComptable> vList = vJdbcTemplate.query(SQLloadListLigneEcriture, vSqlParams, vRM);
+		List<LigneEcritureComptable> vList = namedParameterJdbcTemplate.query(SQLloadListLigneEcriture,
+				mapSqlParameterSource, ligneEcritureComptableRM);
 		pEcritureComptable.getListLigneEcriture().clear();
 		pEcritureComptable.getListLigneEcriture().addAll(vList);
 		LOGGER.trace(new SortieMessage());
@@ -436,7 +448,6 @@ public class ComptabiliteDaoImpl extends AbstractDbConsumer implements Comptabil
 	@Override
 	public void insertEcritureComptable(EcritureComptable pEcritureComptable) {
 		LOGGER.trace(new EntreeMessage());
-		LOGGER.debug(new DebugMessage("EcritureComptable pEcritureComptable", pEcritureComptable));
 		// ===== Ecriture Comptable
 		NamedParameterJdbcTemplate vJdbcTemplate = new NamedParameterJdbcTemplate(getDataSource(DataSourcesEnum.MYERP));
 		MapSqlParameterSource vSqlParams = new MapSqlParameterSource();

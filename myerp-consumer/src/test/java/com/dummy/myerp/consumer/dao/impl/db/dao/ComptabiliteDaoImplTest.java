@@ -26,11 +26,13 @@ import org.springframework.test.util.ReflectionTestUtils;
 import com.dummy.myerp.consumer.dao.impl.db.rowmapper.comptabilite.CompteComptableRM;
 import com.dummy.myerp.consumer.dao.impl.db.rowmapper.comptabilite.EcritureComptableRM;
 import com.dummy.myerp.consumer.dao.impl.db.rowmapper.comptabilite.JournalComptableRM;
+import com.dummy.myerp.consumer.dao.impl.db.rowmapper.comptabilite.LigneEcritureComptableRM;
 import com.dummy.myerp.consumer.dao.impl.db.rowmapper.comptabilite.SequenceEcritureComptableRM;
 import com.dummy.myerp.consumer.db.DataSourcesEnum;
 import com.dummy.myerp.model.bean.comptabilite.CompteComptable;
 import com.dummy.myerp.model.bean.comptabilite.EcritureComptable;
 import com.dummy.myerp.model.bean.comptabilite.JournalComptable;
+import com.dummy.myerp.model.bean.comptabilite.LigneEcritureComptable;
 import com.dummy.myerp.model.bean.comptabilite.SequenceEcritureComptable;
 import com.dummy.myerp.technical.exception.NotFoundException;
 
@@ -54,6 +56,8 @@ public class ComptabiliteDaoImplTest {
 	private SequenceEcritureComptableRM sequenceEcritureComptableRM;
 	@Mock
 	private EcritureComptableRM ecritureComptableRM;
+	@Mock
+	private LigneEcritureComptableRM ligneEcritureComptableRM;
 
 	// === getListCompteComptable() ===
 
@@ -237,6 +241,27 @@ public class ComptabiliteDaoImplTest {
 
 		// THEN
 		assertThat(exception.getMessage()).isEqualTo("EcritureComptable non trouvée : reference=ref");
+	}
+
+	// === loadListLigneEcriture(EcritureComptable) ===
+
+	@Test
+	public void loadListLigneEcriture_loadsListLigneEcriture() {
+		// GIVEN
+		EcritureComptable ecriture = new EcritureComptable();
+		List<LigneEcritureComptable> listLigneEcritureComptable = new ArrayList<>();
+		ReflectionTestUtils.setField(ComptabiliteDaoImpl.class, "SQLloadListLigneEcriture", "");
+		doNothing().when(comptabiliteDaoImpl).initNamedParameterJdbcTemplate(any(DataSourcesEnum.class));
+		doNothing().when(comptabiliteDaoImpl).initMapSqlParameterSource();
+		doNothing().when(comptabiliteDaoImpl).initLigneEcritureComptableRM();
+		when(namedParameterJdbcTemplate.query(anyString(), any(MapSqlParameterSource.class),
+				any(LigneEcritureComptableRM.class))).thenReturn(listLigneEcritureComptable);
+
+		// WHEN
+		comptabiliteDaoImpl.loadListLigneEcriture(ecriture);
+
+		// THEN
+		assertThat(ecriture.getListLigneEcriture()).isEqualTo(listLigneEcritureComptable);
 	}
 
 }
