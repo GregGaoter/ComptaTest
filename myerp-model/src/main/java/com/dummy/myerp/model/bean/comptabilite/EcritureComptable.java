@@ -83,6 +83,13 @@ public class EcritureComptable {
 		this.reference = reference;
 	}
 
+	/**
+	 * Constructeur.
+	 */
+	public EcritureComptable(JournalComptable journal) {
+		this.journal = journal;
+	}
+
 	// ==================== Getters/Setters ====================
 	/**
 	 * Renvoie l'id de l'écriture comptable

@@ -5,6 +5,7 @@ import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.Mockito.doNothing;
+import static org.mockito.Mockito.doReturn;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
@@ -262,6 +263,27 @@ public class ComptabiliteDaoImplTest {
 
 		// THEN
 		assertThat(ecriture.getListLigneEcriture()).isEqualTo(listLigneEcritureComptable);
+	}
+
+	// === insertEcritureComptable(EcritureComptable) ===
+
+	@Test
+	public void insertEcritureComptable_inserstEcritureComptable(@Mock JournalComptable journal) {
+		// GIVEN
+		EcritureComptable ecriture = new EcritureComptable(journal);
+		ReflectionTestUtils.setField(ComptabiliteDaoImpl.class, "SQLinsertEcritureComptable", "");
+		doNothing().when(comptabiliteDaoImpl).initNamedParameterJdbcTemplate(any(DataSourcesEnum.class));
+		doNothing().when(comptabiliteDaoImpl).initMapSqlParameterSource();
+		doNothing().when(comptabiliteDaoImpl).insertListLigneEcritureComptable(any(EcritureComptable.class));
+		doReturn(1).when(comptabiliteDaoImpl).getSequenceValue(any(DataSourcesEnum.class), anyString());
+
+		// WHEN
+		comptabiliteDaoImpl.insertEcritureComptable(ecriture);
+
+		// THEN
+		verify(namedParameterJdbcTemplate).update("", mapSqlParameterSource);
+		assertThat(ecriture.getId()).isEqualTo(1);
+		verify(comptabiliteDaoImpl).insertListLigneEcritureComptable(ecriture);
 	}
 
 }

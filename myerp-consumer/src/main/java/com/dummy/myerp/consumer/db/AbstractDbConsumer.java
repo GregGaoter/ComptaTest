@@ -72,7 +72,7 @@ public abstract class AbstractDbConsumer {
 	}
 
 	/**
-	 * Renvoie le dernière valeur utilisé d'une séquence
+	 * Renvoie la dernière valeur utilisé d'une séquence
 	 *
 	 * <p>
 	 * <i><b>Attention : </b>Méthode spécifique au SGBD PostgreSQL</i>
@@ -83,14 +83,11 @@ public abstract class AbstractDbConsumer {
 	 * @param pSeqName       : Le nom de la séquence dont on veut récupérer la
 	 *                       valeur
 	 * @param pSeqValueClass : Classe de la valeur de la séquence
-	 * @return la dernière valeur de la séquence
+	 * @return La dernière valeur de la séquence
 	 */
 	protected <T> T queryGetSequenceValuePostgreSQL(DataSourcesEnum pDataSourcesId, String pSeqName,
 			Class<T> pSeqValueClass) {
 		LOGGER.trace(new EntreeMessage());
-		LOGGER.debug(new DebugMessage("DataSourcesEnum pDataSourcesId", pDataSourcesId));
-		LOGGER.debug(new DebugMessage("String pSeqName", pSeqName));
-		LOGGER.debug(new DebugMessage("Class<T> pSeqValueClass", pSeqValueClass));
 		JdbcTemplate vJdbcTemplate = new JdbcTemplate(getDataSource(pDataSourcesId));
 		String vSeqSQL = "SELECT last_value FROM " + pSeqName;
 		LOGGER.debug(new DebugMessage("vSeqSQL", vSeqSQL));
@@ -98,6 +95,17 @@ public abstract class AbstractDbConsumer {
 		LOGGER.debug(new DebugMessage("vSeqValue", vSeqValue));
 		LOGGER.trace(new SortieMessage());
 		return vSeqValue;
+	}
+
+	/**
+	 * Renvoie la dernière valeur utilisé d'une séquence de type Integer
+	 * 
+	 * @param pDataSourcesId L'identifiant de la {@link DataSource} à utiliser
+	 * @param pSeqName       Le nom de la séquence dont on veut récupérer la valeur
+	 * @return La dernière valeur de la séquence
+	 */
+	public Integer getSequenceValue(DataSourcesEnum pDataSourcesId, String pSeqName) {
+		return queryGetSequenceValuePostgreSQL(pDataSourcesId, pSeqName, Integer.class);
 	}
 
 	// ==================== Méthodes Static ====================

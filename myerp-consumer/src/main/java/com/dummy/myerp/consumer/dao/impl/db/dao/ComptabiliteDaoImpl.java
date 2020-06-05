@@ -449,24 +449,23 @@ public class ComptabiliteDaoImpl extends AbstractDbConsumer implements Comptabil
 	public void insertEcritureComptable(EcritureComptable pEcritureComptable) {
 		LOGGER.trace(new EntreeMessage());
 		// ===== Ecriture Comptable
-		NamedParameterJdbcTemplate vJdbcTemplate = new NamedParameterJdbcTemplate(getDataSource(DataSourcesEnum.MYERP));
-		MapSqlParameterSource vSqlParams = new MapSqlParameterSource();
+		initNamedParameterJdbcTemplate(DataSourcesEnum.MYERP);
+		initMapSqlParameterSource();
 		LOGGER.debug(new DebugMessage("pEcritureComptable.getJournal().getCode()",
 				pEcritureComptable.getJournal().getCode()));
-		vSqlParams.addValue("journal_code", pEcritureComptable.getJournal().getCode());
+		mapSqlParameterSource.addValue("journal_code", pEcritureComptable.getJournal().getCode());
 		LOGGER.debug(new DebugMessage("pEcritureComptable.getReference()", pEcritureComptable.getReference()));
-		vSqlParams.addValue("reference", pEcritureComptable.getReference());
+		mapSqlParameterSource.addValue("reference", pEcritureComptable.getReference());
 		LOGGER.debug(new DebugMessage("pEcritureComptable.getDate()", pEcritureComptable.getDate()));
-		vSqlParams.addValue("date", pEcritureComptable.getDate(), Types.DATE);
+		mapSqlParameterSource.addValue("date", pEcritureComptable.getDate(), Types.DATE);
 		LOGGER.debug(new DebugMessage("pEcritureComptable.getLibelle()", pEcritureComptable.getLibelle()));
-		vSqlParams.addValue("libelle", pEcritureComptable.getLibelle());
+		mapSqlParameterSource.addValue("libelle", pEcritureComptable.getLibelle());
 
 		LOGGER.debug(new DebugMessage("SQLinsertEcritureComptable", SQLinsertEcritureComptable));
-		vJdbcTemplate.update(SQLinsertEcritureComptable, vSqlParams);
+		namedParameterJdbcTemplate.update(SQLinsertEcritureComptable, mapSqlParameterSource);
 
 		// ----- Récupération de l'id
-		Integer vId = this.queryGetSequenceValuePostgreSQL(DataSourcesEnum.MYERP, "myerp.ecriture_comptable_id_seq",
-				Integer.class);
+		Integer vId = getSequenceValue(DataSourcesEnum.MYERP, "myerp.ecriture_comptable_id_seq");
 		LOGGER.debug(new DebugMessage("vId", vId));
 		pEcritureComptable.setId(vId);
 
