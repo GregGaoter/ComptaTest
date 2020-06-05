@@ -86,6 +86,14 @@ public class EcritureComptable {
 	/**
 	 * Constructeur.
 	 */
+	public EcritureComptable(Integer id, JournalComptable journal) {
+		this.id = id;
+		this.journal = journal;
+	}
+
+	/**
+	 * Constructeur.
+	 */
 	public EcritureComptable(JournalComptable journal) {
 		this.journal = journal;
 	}

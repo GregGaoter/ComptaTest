@@ -306,4 +306,25 @@ public class ComptabiliteDaoImplTest {
 		verify(namedParameterJdbcTemplate).update("", mapSqlParameterSource);
 	}
 
+	// === updateEcritureComptable(EcritureComptable) ===
+
+	@Test
+	public void updateEcritureComptable_updatesEcritureComptable(@Mock JournalComptable journal) {
+		// GIVEN
+		EcritureComptable ecriture = new EcritureComptable(1, journal);
+		ReflectionTestUtils.setField(ComptabiliteDaoImpl.class, "SQLupdateEcritureComptable", "");
+		doNothing().when(comptabiliteDaoImpl).initNamedParameterJdbcTemplate(any(DataSourcesEnum.class));
+		doNothing().when(comptabiliteDaoImpl).initMapSqlParameterSource();
+		doNothing().when(comptabiliteDaoImpl).deleteListLigneEcritureComptable(any(Integer.class));
+		doNothing().when(comptabiliteDaoImpl).insertListLigneEcritureComptable(any(EcritureComptable.class));
+
+		// WHEN
+		comptabiliteDaoImpl.updateEcritureComptable(ecriture);
+
+		// THEN
+		verify(namedParameterJdbcTemplate).update("", mapSqlParameterSource);
+		verify(comptabiliteDaoImpl).deleteListLigneEcritureComptable(1);
+		verify(comptabiliteDaoImpl).insertListLigneEcritureComptable(ecriture);
+	}
+
 }

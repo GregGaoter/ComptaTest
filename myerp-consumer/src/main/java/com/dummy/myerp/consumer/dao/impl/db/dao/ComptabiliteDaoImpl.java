@@ -535,24 +535,23 @@ public class ComptabiliteDaoImpl extends AbstractDbConsumer implements Comptabil
 	@Override
 	public void updateEcritureComptable(EcritureComptable pEcritureComptable) {
 		LOGGER.trace(new EntreeMessage());
-		LOGGER.debug(new DebugMessage("EcritureComptable pEcritureComptable", pEcritureComptable));
+
 		// ===== Ecriture Comptable
-		NamedParameterJdbcTemplate vJdbcTemplate = new NamedParameterJdbcTemplate(getDataSource(DataSourcesEnum.MYERP));
-		MapSqlParameterSource vSqlParams = new MapSqlParameterSource();
+		initNamedParameterJdbcTemplate(DataSourcesEnum.MYERP);
+		initMapSqlParameterSource();
 		LOGGER.debug(new DebugMessage("pEcritureComptable.getId()", pEcritureComptable.getId()));
-		vSqlParams.addValue("id", pEcritureComptable.getId());
+		mapSqlParameterSource.addValue("id", pEcritureComptable.getId());
 		LOGGER.debug(new DebugMessage("pEcritureComptable.getJournal().getCode()",
 				pEcritureComptable.getJournal().getCode()));
-		vSqlParams.addValue("journal_code", pEcritureComptable.getJournal().getCode());
+		mapSqlParameterSource.addValue("journal_code", pEcritureComptable.getJournal().getCode());
 		LOGGER.debug(new DebugMessage("pEcritureComptable.getReference()", pEcritureComptable.getReference()));
-		vSqlParams.addValue("reference", pEcritureComptable.getReference());
+		mapSqlParameterSource.addValue("reference", pEcritureComptable.getReference());
 		LOGGER.debug(new DebugMessage("pEcritureComptable.getDate()", pEcritureComptable.getDate()));
-		vSqlParams.addValue("date", pEcritureComptable.getDate(), Types.DATE);
+		mapSqlParameterSource.addValue("date", pEcritureComptable.getDate(), Types.DATE);
 		LOGGER.debug(new DebugMessage("pEcritureComptable.getLibelle()", pEcritureComptable.getLibelle()));
-		vSqlParams.addValue("libelle", pEcritureComptable.getLibelle());
-
+		mapSqlParameterSource.addValue("libelle", pEcritureComptable.getLibelle());
 		LOGGER.debug(new DebugMessage("SQLupdateEcritureComptable", SQLupdateEcritureComptable));
-		vJdbcTemplate.update(SQLupdateEcritureComptable, vSqlParams);
+		namedParameterJdbcTemplate.update(SQLupdateEcritureComptable, mapSqlParameterSource);
 
 		// ===== Liste des lignes d'écriture
 		this.deleteListLigneEcritureComptable(pEcritureComptable.getId());
