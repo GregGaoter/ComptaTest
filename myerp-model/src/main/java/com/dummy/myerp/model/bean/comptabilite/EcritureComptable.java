@@ -90,6 +90,14 @@ public class EcritureComptable {
 		this.journal = journal;
 	}
 
+	/**
+	 * Constructeur.
+	 */
+	public EcritureComptable(List<LigneEcritureComptable> listLigneEcriture) {
+		this.listLigneEcriture.clear();
+		this.listLigneEcriture.addAll(listLigneEcriture);
+	}
+
 	// ==================== Getters/Setters ====================
 	/**
 	 * Renvoie l'id de l'écriture comptable

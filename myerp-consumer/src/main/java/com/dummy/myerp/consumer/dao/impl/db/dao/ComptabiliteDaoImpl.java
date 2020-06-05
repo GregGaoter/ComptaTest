@@ -498,26 +498,21 @@ public class ComptabiliteDaoImpl extends AbstractDbConsumer implements Comptabil
 	 */
 	protected void insertListLigneEcritureComptable(EcritureComptable pEcritureComptable) {
 		LOGGER.trace(new EntreeMessage());
-		LOGGER.debug(new DebugMessage("EcritureComptable pEcritureComptable", pEcritureComptable));
-		NamedParameterJdbcTemplate vJdbcTemplate = new NamedParameterJdbcTemplate(getDataSource(DataSourcesEnum.MYERP));
-		MapSqlParameterSource vSqlParams = new MapSqlParameterSource();
+		initNamedParameterJdbcTemplate(DataSourcesEnum.MYERP);
+		initMapSqlParameterSource();
 		LOGGER.debug(new DebugMessage("pEcritureComptable.getId()", pEcritureComptable.getId()));
-		vSqlParams.addValue("ecriture_id", pEcritureComptable.getId());
-
+		mapSqlParameterSource.addValue("ecriture_id", pEcritureComptable.getId());
 		LOGGER.debug(new DebugMessage("SQLinsertListLigneEcritureComptable", SQLinsertListLigneEcritureComptable));
 		int vLigneId = 0;
 		for (LigneEcritureComptable vLigne : pEcritureComptable.getListLigneEcriture()) {
 			vLigneId++;
-			vSqlParams.addValue("ligne_id", vLigneId);
-			vSqlParams.addValue("compte_comptable_numero", vLigne.getCompteComptable().getNumero());
-			vSqlParams.addValue("libelle", vLigne.getLibelle());
-			vSqlParams.addValue("debit", vLigne.getDebit());
-
-			vSqlParams.addValue("credit", vLigne.getCredit());
-
-			vJdbcTemplate.update(SQLinsertListLigneEcritureComptable, vSqlParams);
+			mapSqlParameterSource.addValue("ligne_id", vLigneId);
+			mapSqlParameterSource.addValue("compte_comptable_numero", vLigne.getCompteComptable().getNumero());
+			mapSqlParameterSource.addValue("libelle", vLigne.getLibelle());
+			mapSqlParameterSource.addValue("debit", vLigne.getDebit());
+			mapSqlParameterSource.addValue("credit", vLigne.getCredit());
+			namedParameterJdbcTemplate.update(SQLinsertListLigneEcritureComptable, mapSqlParameterSource);
 		}
-		LOGGER.debug(new DebugMessage("vLigneId", vLigneId));
 		LOGGER.trace(new SortieMessage());
 	}
 

@@ -10,6 +10,7 @@ import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 import org.junit.jupiter.api.Test;
@@ -268,7 +269,7 @@ public class ComptabiliteDaoImplTest {
 	// === insertEcritureComptable(EcritureComptable) ===
 
 	@Test
-	public void insertEcritureComptable_inserstEcritureComptable(@Mock JournalComptable journal) {
+	public void insertEcritureComptable_insertsEcritureComptable(@Mock JournalComptable journal) {
 		// GIVEN
 		EcritureComptable ecriture = new EcritureComptable(journal);
 		ReflectionTestUtils.setField(ComptabiliteDaoImpl.class, "SQLinsertEcritureComptable", "");
@@ -284,6 +285,25 @@ public class ComptabiliteDaoImplTest {
 		verify(namedParameterJdbcTemplate).update("", mapSqlParameterSource);
 		assertThat(ecriture.getId()).isEqualTo(1);
 		verify(comptabiliteDaoImpl).insertListLigneEcritureComptable(ecriture);
+	}
+
+	// === insertListLigneEcritureComptable(EcritureComptable) ===
+
+	@Test
+	public void insertListLigneEcritureComptable_insertsListLigneEcritureComptable(
+			@Mock LigneEcritureComptable ligneEcritureComptable, @Mock CompteComptable compteComptable) {
+		// GIVEN
+		when(ligneEcritureComptable.getCompteComptable()).thenReturn(compteComptable);
+		EcritureComptable ecriture = new EcritureComptable(Arrays.asList(ligneEcritureComptable));
+		ReflectionTestUtils.setField(ComptabiliteDaoImpl.class, "SQLinsertListLigneEcritureComptable", "");
+		doNothing().when(comptabiliteDaoImpl).initNamedParameterJdbcTemplate(any(DataSourcesEnum.class));
+		doNothing().when(comptabiliteDaoImpl).initMapSqlParameterSource();
+
+		// WHEN
+		comptabiliteDaoImpl.insertListLigneEcritureComptable(ecriture);
+
+		// THEN
+		verify(namedParameterJdbcTemplate).update("", mapSqlParameterSource);
 	}
 
 }
