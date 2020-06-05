@@ -327,4 +327,22 @@ public class ComptabiliteDaoImplTest {
 		verify(comptabiliteDaoImpl).insertListLigneEcritureComptable(ecriture);
 	}
 
+	// === deleteEcritureComptable(Integer) ===
+
+	@Test
+	public void deleteEcritureComptable_deletesEcritureComptable() {
+		// GIVEN
+		ReflectionTestUtils.setField(ComptabiliteDaoImpl.class, "SQLdeleteEcritureComptable", "");
+		doNothing().when(comptabiliteDaoImpl).initNamedParameterJdbcTemplate(any(DataSourcesEnum.class));
+		doNothing().when(comptabiliteDaoImpl).initMapSqlParameterSource();
+		doNothing().when(comptabiliteDaoImpl).deleteListLigneEcritureComptable(any(Integer.class));
+
+		// WHEN
+		comptabiliteDaoImpl.deleteEcritureComptable(1);
+
+		// THEN
+		verify(comptabiliteDaoImpl).deleteListLigneEcritureComptable(1);
+		verify(namedParameterJdbcTemplate).update("", mapSqlParameterSource);
+	}
+
 }

@@ -583,11 +583,11 @@ public class ComptabiliteDaoImpl extends AbstractDbConsumer implements Comptabil
 		this.deleteListLigneEcritureComptable(pId);
 
 		// ===== Suppression de l'écriture
-		NamedParameterJdbcTemplate vJdbcTemplate = new NamedParameterJdbcTemplate(getDataSource(DataSourcesEnum.MYERP));
-		MapSqlParameterSource vSqlParams = new MapSqlParameterSource();
-		vSqlParams.addValue("id", pId);
+		initNamedParameterJdbcTemplate(DataSourcesEnum.MYERP);
+		initMapSqlParameterSource();
+		mapSqlParameterSource.addValue("id", pId);
 		LOGGER.debug(new DebugMessage("SQLdeleteEcritureComptable", SQLdeleteEcritureComptable));
-		vJdbcTemplate.update(SQLdeleteEcritureComptable, vSqlParams);
+		namedParameterJdbcTemplate.update(SQLdeleteEcritureComptable, mapSqlParameterSource);
 		LOGGER.trace(new SortieMessage());
 	}
 
