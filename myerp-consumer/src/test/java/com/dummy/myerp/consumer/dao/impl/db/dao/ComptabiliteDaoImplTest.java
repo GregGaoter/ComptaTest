@@ -345,4 +345,20 @@ public class ComptabiliteDaoImplTest {
 		verify(namedParameterJdbcTemplate).update("", mapSqlParameterSource);
 	}
 
+	// === deleteListLigneEcritureComptable(Integer) ===
+
+	@Test
+	public void deleteListLigneEcritureComptable_deletesListLigneEcritureComptable() {
+		// GIVEN
+		ReflectionTestUtils.setField(ComptabiliteDaoImpl.class, "SQLdeleteListLigneEcritureComptable", "");
+		doNothing().when(comptabiliteDaoImpl).initNamedParameterJdbcTemplate(any(DataSourcesEnum.class));
+		doNothing().when(comptabiliteDaoImpl).initMapSqlParameterSource();
+
+		// WHEN
+		comptabiliteDaoImpl.deleteListLigneEcritureComptable(1);
+
+		// THEN
+		verify(namedParameterJdbcTemplate).update("", mapSqlParameterSource);
+	}
+
 }
