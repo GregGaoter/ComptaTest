@@ -20,17 +20,32 @@ public class JournalComptableRM implements RowMapper<JournalComptable> {
 	/** Logger Log4j pour la classe */
 	private static final Logger LOGGER = LogManager.getLogger(JournalComptableRM.class);
 
+	/**
+	 * {@link JournalComptable}
+	 */
+	private JournalComptable journalComptable;
+
+	/**
+	 * Constructeur. Instancie le {@link JournalComptable}.
+	 */
+	public JournalComptableRM() {
+		journalComptable = new JournalComptable();
+		;
+	}
+
 	@Override
 	public JournalComptable mapRow(ResultSet pRS, int pRowNum) throws SQLException {
 		LOGGER.trace(new EntreeMessage());
-		LOGGER.debug(new DebugMessage("ResultSet pRS", pRS));
-		LOGGER.debug(new DebugMessage("int pRowNum", pRowNum));
-		JournalComptable vBean = new JournalComptable();
-		LOGGER.debug(new DebugMessage("(ResultSet) pRS.getString(\"code\")", pRS.getString("code")));
-		vBean.setCode(pRS.getString("code"));
-		LOGGER.debug(new DebugMessage("(ResultSet) pRS.getString(\"libelle\")", pRS.getString("libelle")));
-		vBean.setLibelle(pRS.getString("libelle"));
+		if (pRS == null) {
+			journalComptable = null;
+		} else {
+			LOGGER.debug(new DebugMessage("int pRowNum", pRowNum));
+			LOGGER.debug(new DebugMessage("(ResultSet) pRS.getString(\"code\")", pRS.getString("code")));
+			journalComptable.setCode(pRS.getString("code"));
+			LOGGER.debug(new DebugMessage("(ResultSet) pRS.getString(\"libelle\")", pRS.getString("libelle")));
+			journalComptable.setLibelle(pRS.getString("libelle"));
+		}
 		LOGGER.trace(new SortieMessage());
-		return vBean;
+		return journalComptable;
 	}
 }
