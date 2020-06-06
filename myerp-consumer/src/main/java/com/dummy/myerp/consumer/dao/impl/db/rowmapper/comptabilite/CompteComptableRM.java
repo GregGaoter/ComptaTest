@@ -20,17 +20,31 @@ public class CompteComptableRM implements RowMapper<CompteComptable> {
 	/** Logger Log4j pour la classe */
 	private static final Logger LOGGER = LogManager.getLogger(CompteComptableRM.class);
 
+	/**
+	 * {@link CompteComptable}
+	 */
+	private CompteComptable compteComptable;
+
+	/**
+	 * Constructeur. Instancie le {@link CompteComptable}.
+	 */
+	public CompteComptableRM() {
+		compteComptable = new CompteComptable();
+	}
+
 	@Override
 	public CompteComptable mapRow(ResultSet pRS, int pRowNum) throws SQLException {
 		LOGGER.trace(new EntreeMessage());
-		LOGGER.debug(new DebugMessage("ResultSet pRS", pRS));
-		LOGGER.debug(new DebugMessage("int pRowNum", pRowNum));
-		CompteComptable vBean = new CompteComptable();
-		LOGGER.debug(new DebugMessage("(ResultSet) pRS.getInt(\"numero\")", pRS.getInt("numero")));
-		vBean.setNumero(pRS.getInt("numero"));
-		LOGGER.debug(new DebugMessage("(ResultSet) pRS.getString(\"libelle\")", pRS.getString("libelle")));
-		vBean.setLibelle(pRS.getString("libelle"));
+		if (pRS == null) {
+			compteComptable = null;
+		} else {
+			LOGGER.debug(new DebugMessage("int pRowNum", pRowNum));
+			LOGGER.debug(new DebugMessage("(ResultSet) pRS.getInt(\"numero\")", pRS.getInt("numero")));
+			compteComptable.setNumero(pRS.getInt("numero"));
+			LOGGER.debug(new DebugMessage("(ResultSet) pRS.getString(\"libelle\")", pRS.getString("libelle")));
+			compteComptable.setLibelle(pRS.getString("libelle"));
+		}
 		LOGGER.trace(new SortieMessage());
-		return vBean;
+		return compteComptable;
 	}
 }
