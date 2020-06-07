@@ -41,13 +41,14 @@ public abstract class ResultSetHelper {
 	 */
 	public static Integer getInteger(ResultSet pRS, String pColName) throws SQLException {
 		LOGGER.trace(new EntreeMessage());
-		LOGGER.debug(new DebugMessage("ResultSet pRS", pRS));
 		LOGGER.debug(new DebugMessage("String pColName", pColName));
 		Integer vRetour = null;
+		if (pRS == null || pColName == null || pColName.isBlank() || pColName == "\n" || pColName == "\t") {
+			return vRetour;
+		}
 		int vInt = pRS.getInt(pColName);
 		LOGGER.debug(new DebugMessage("(ResultSet) pRS.getInt(pColName)", pRS.getInt(pColName)));
 		if (!pRS.wasNull()) {
-			// vRetour = new Integer(vInt);
 			vRetour = Integer.valueOf(vInt);
 		}
 		LOGGER.debug(new DebugMessage("vRetour", vRetour));
@@ -66,13 +67,14 @@ public abstract class ResultSetHelper {
 	 */
 	public static Long getLong(ResultSet pRS, String pColName) throws SQLException {
 		LOGGER.trace(new EntreeMessage());
-		LOGGER.debug(new DebugMessage("ResultSet pRS", pRS));
 		LOGGER.debug(new DebugMessage("String pColName", pColName));
 		Long vRetour = null;
+		if (pRS == null || pColName == null || pColName.isBlank()) {
+			return vRetour;
+		}
 		Long vLong = pRS.getLong(pColName);
 		LOGGER.debug(new DebugMessage("(ResultSet) pRS.getLong(pColName)", pRS.getLong(pColName)));
 		if (!pRS.wasNull()) {
-			// vRetour = new Long(vLong);
 			vRetour = vLong;
 		}
 		LOGGER.debug(new DebugMessage("vRetour", vRetour));
@@ -92,8 +94,10 @@ public abstract class ResultSetHelper {
 	 */
 	public static Date getDate(ResultSet pRS, String pColName) throws SQLException {
 		LOGGER.trace(new EntreeMessage());
-		LOGGER.debug(new DebugMessage("ResultSet pRS", pRS));
 		LOGGER.debug(new DebugMessage("String pColName", pColName));
+		if (pRS == null || pColName == null || pColName.isBlank()) {
+			return null;
+		}
 		Date vDate = pRS.getDate(pColName);
 		LOGGER.debug(new DebugMessage("(ResultSet) pRS.getDate(pColName)", pRS.getDate(pColName)));
 		if (vDate != null) {
