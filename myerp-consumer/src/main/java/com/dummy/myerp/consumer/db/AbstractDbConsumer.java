@@ -13,7 +13,6 @@ import com.dummy.myerp.consumer.ConsumerHelper;
 import com.dummy.myerp.consumer.dao.contrat.DaoProxy;
 import com.dummy.myerp.technical.log.message.DebugMessage;
 import com.dummy.myerp.technical.log.message.EntreeMessage;
-import com.dummy.myerp.technical.log.message.ErrorMessage;
 import com.dummy.myerp.technical.log.message.SortieMessage;
 
 /**
@@ -25,6 +24,10 @@ public abstract class AbstractDbConsumer {
 
 	/** Logger Log4j pour la classe */
 	private static final Logger LOGGER = LogManager.getLogger(AbstractDbConsumer.class);
+
+	// ==================== Attributs ====================
+
+	private JdbcTemplate jdbcTemplate;
 
 // ==================== Attributs Static ====================
 
@@ -51,6 +54,11 @@ public abstract class AbstractDbConsumer {
 	}
 
 	// ==================== Méthodes ====================
+
+	protected void createJdbcTemplate(DataSourcesEnum dataSourcesEnum) {
+		jdbcTemplate = new JdbcTemplate(getDataSource(dataSourcesEnum));
+	}
+
 	/**
 	 * Renvoie le {@link DataSource} associé demandée
 	 *
@@ -59,13 +67,12 @@ public abstract class AbstractDbConsumer {
 	 */
 	protected DataSource getDataSource(DataSourcesEnum pDataSourceId) {
 		LOGGER.trace(new EntreeMessage());
+		if (pDataSourceId == null) {
+			return null;
+		}
 		DataSource vRetour = AbstractDbConsumer.mapDataSource.get(pDataSourceId);
 		if (vRetour == null) {
-			try {
-				throw new UnsatisfiedLinkError("La DataSource suivante n'a pas été initialisée : " + pDataSourceId);
-			} catch (UnsatisfiedLinkError e) {
-				LOGGER.error(new ErrorMessage(e));
-			}
+			throw new UnsatisfiedLinkError("La DataSource suivante n'a pas été initialisée : " + pDataSourceId);
 		}
 		LOGGER.trace(new SortieMessage());
 		return vRetour;
@@ -88,10 +95,14 @@ public abstract class AbstractDbConsumer {
 	protected <T> T queryGetSequenceValuePostgreSQL(DataSourcesEnum pDataSourcesId, String pSeqName,
 			Class<T> pSeqValueClass) {
 		LOGGER.trace(new EntreeMessage());
-		JdbcTemplate vJdbcTemplate = new JdbcTemplate(getDataSource(pDataSourcesId));
+		if (pDataSourcesId == null || pSeqName == null || pSeqName.isBlank() || pSeqName == "\n" || pSeqName == "\t"
+				|| pSeqValueClass == null) {
+			return null;
+		}
+		createJdbcTemplate(pDataSourcesId);
 		String vSeqSQL = "SELECT last_value FROM " + pSeqName;
 		LOGGER.debug(new DebugMessage("vSeqSQL", vSeqSQL));
-		T vSeqValue = vJdbcTemplate.queryForObject(vSeqSQL, pSeqValueClass);
+		T vSeqValue = jdbcTemplate.queryForObject(vSeqSQL, pSeqValueClass);
 		LOGGER.debug(new DebugMessage("vSeqValue", vSeqValue));
 		LOGGER.trace(new SortieMessage());
 		return vSeqValue;
