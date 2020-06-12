@@ -32,7 +32,9 @@ Les tests d'intégration font l'objet de profils Maven spécifiques.
 
 ## Résultats SonarCloud
 
-![image-20200612121952459](C:\Users\gregg\AppData\Roaming\Typora\typora-user-images\image-20200612121952459.png)
+![Code coverage](https://github.com/GregGaoter/ComptaTest/blob/master/doc/code-coverage.jpg?raw=true)
+
+
 
 ## Organisation du répertoire
 
