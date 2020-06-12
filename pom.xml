@@ -87,9 +87,43 @@
 			</properties>
 		</profile>
 
+		<!-- Profile utilisé pour lancer les tests unitaires -->
+		<!-- <profile> <id>dev</id> <activation> <activeByDefault>true</activeByDefault> 
+			</activation> </profile> -->
+
 		<!-- Profile utilisé pour lancer les tests d'intégration de la couche Business -->
 		<profile>
 			<id>test-business</id>
+			<build>
+				<plugins>
+					<plugin>
+						<groupId>org.apache.maven.plugins</groupId>
+						<artifactId>maven-surefire-plugin</artifactId>
+						<configuration>
+							<skipTests>true</skipTests>
+						</configuration>
+					</plugin>
+					<!-- ===== Tests d'intégration ===== -->
+					<plugin>
+						<groupId>org.apache.maven.plugins</groupId>
+						<artifactId>maven-failsafe-plugin</artifactId>
+						<executions>
+							<execution>
+								<id>integration-tests</id>
+								<goals>
+									<goal>integration-test</goal>
+								</goals>
+							</execution>
+							<execution>
+								<id>verify</id>
+								<goals>
+									<goal>verify</goal>
+								</goals>
+							</execution>
+						</executions>
+					</plugin>
+				</plugins>
+			</build>
 		</profile>
 
 		<!-- Profile utilisé pour lancer les tests d'intégration de la couche Consumer -->
@@ -346,6 +380,13 @@
 						<reuseForks>false</reuseForks>
 						<forkCount>1</forkCount>
 					</configuration>
+				</plugin>
+
+				<!-- ===== Tests d'intégration ===== -->
+				<plugin>
+					<groupId>org.apache.maven.plugins</groupId>
+					<artifactId>maven-failsafe-plugin</artifactId>
+					<version>3.0.0-M4</version>
 				</plugin>
 
 				<!-- ===== "Filtrage/Parsing" des resources ===== -->

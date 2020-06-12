@@ -1,4 +1,4 @@
-package com.dummy.myerp.business.test;
+package com.dummy.myerp.testbusiness.business;
 
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 
@@ -7,12 +7,12 @@ import org.junit.jupiter.api.Test;
 /**
  * Classe de test de l'initialisation du contexte Spring
  */
-public class TestInitSpring extends BusinessTestCase {
+public class InitSpringIT extends BusinessTestCase {
 
 	/**
 	 * Constructeur.
 	 */
-	public TestInitSpring() {
+	public InitSpringIT() {
 		super();
 	}
 

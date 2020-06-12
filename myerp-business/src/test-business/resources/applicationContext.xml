@@ -4,6 +4,7 @@
 	xsi:schemaLocation="http://www.springframework.org/schema/beans
                            http://www.springframework.org/schema/beans/spring-beans-4.3.xsd">
 
+	<!-- ==================== Business-Proxy ==================== -->
 
 	<!-- BusinessProxy -->
 	<bean id="BusinessProxy"
@@ -11,21 +12,6 @@
 		scope="singleton" factory-method="getInstance">
 		<constructor-arg ref="DaoProxy" />
 		<constructor-arg ref="TransactionManager" />
-	</bean>
-	
-	<!-- AbstractBusinessManager -->
-	<bean
-		class="org.springframework.beans.factory.config.MethodInvokingFactoryBean">
-		<property name="targetClass"
-			value="com.dummy.myerp.business.impl.AbstractBusinessManager" />
-		<property name="targetMethod" value="configure" />
-		<property name="arguments">
-			<list>
-				<ref bean="BusinessProxy" />
-				<ref bean="DaoProxy" />
-				<ref bean="TransactionManager" />
-			</list>
-		</property>
 	</bean>
 
 

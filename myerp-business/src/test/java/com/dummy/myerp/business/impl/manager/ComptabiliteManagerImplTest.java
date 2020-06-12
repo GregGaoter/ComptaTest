@@ -35,7 +35,6 @@ import org.springframework.transaction.TransactionStatus;
 
 import com.dummy.myerp.business.impl.AbstractBusinessManager;
 import com.dummy.myerp.business.impl.TransactionManager;
-import com.dummy.myerp.business.test.BusinessTestCase;
 import com.dummy.myerp.consumer.dao.contrat.ComptabiliteDao;
 import com.dummy.myerp.consumer.dao.contrat.DaoProxy;
 import com.dummy.myerp.model.bean.comptabilite.CompteComptable;
@@ -47,7 +46,7 @@ import com.dummy.myerp.technical.exception.FunctionalException;
 import com.dummy.myerp.technical.exception.NotFoundException;
 
 @ExtendWith(MockitoExtension.class)
-public class ComptabiliteManagerImplTest extends BusinessTestCase {
+public class ComptabiliteManagerImplTest {
 
 	/*
 	 * @Mock private AbstractBusinessManager abstractBusinessManager;
