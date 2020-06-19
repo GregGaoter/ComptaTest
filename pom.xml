@@ -87,13 +87,10 @@
 			</properties>
 		</profile>
 
-		<!-- Profile utilisé pour lancer les tests unitaires -->
-		<!-- <profile> <id>dev</id> <activation> <activeByDefault>true</activeByDefault> 
-			</activation> </profile> -->
-
-		<!-- Profile utilisé pour lancer les tests d'intégration de la couche Business -->
+		<!-- Profile utilisé pour lancer uniquement les tests d'intégration de 
+			la couche Business -->
 		<profile>
-			<id>test-business</id>
+			<id>it-business</id>
 			<build>
 				<plugins>
 					<plugin>
@@ -103,6 +100,35 @@
 							<skipTests>true</skipTests>
 						</configuration>
 					</plugin>
+					<!-- ===== Tests d'intégration ===== -->
+					<plugin>
+						<groupId>org.apache.maven.plugins</groupId>
+						<artifactId>maven-failsafe-plugin</artifactId>
+						<executions>
+							<execution>
+								<id>integration-tests</id>
+								<goals>
+									<goal>integration-test</goal>
+								</goals>
+							</execution>
+							<execution>
+								<id>verify</id>
+								<goals>
+									<goal>verify</goal>
+								</goals>
+							</execution>
+						</executions>
+					</plugin>
+				</plugins>
+			</build>
+		</profile>
+
+		<!-- Profile utilisé pour lancer les tests unitaires et les tests d'intégration 
+			de la couche Business -->
+		<profile>
+			<id>test-it-business</id>
+			<build>
+				<plugins>
 					<!-- ===== Tests d'intégration ===== -->
 					<plugin>
 						<groupId>org.apache.maven.plugins</groupId>
@@ -287,6 +313,31 @@
 				<scope>compile</scope>
 			</dependency>
 
+
+			<!-- ===== Spring Object/Relational Mapping ===== -->
+			<dependency>
+				<groupId>org.springframework</groupId>
+				<artifactId>spring-orm</artifactId>
+				<version>5.2.7.RELEASE</version>
+			</dependency>
+
+
+			<!-- ===== Java Persistence API ===== -->
+			<dependency>
+				<groupId>javax.persistence</groupId>
+				<artifactId>javax.persistence-api</artifactId>
+				<version>2.2</version>
+			</dependency>
+
+
+			<!-- ===== Hibernate ORM ===== -->
+			<dependency>
+				<groupId>org.hibernate</groupId>
+				<artifactId>hibernate-core</artifactId>
+				<version>5.4.17.Final</version>
+			</dependency>
+
+
 			<!-- ===== Database ===== -->
 			<!-- DB Connection pool -->
 			<dependency>
@@ -300,6 +351,12 @@
 				<artifactId>postgresql</artifactId>
 				<version>9.4.1212</version>
 				<scope>runtime</scope>
+			</dependency>
+			<!-- H2 Database Engine -->
+			<dependency>
+				<groupId>com.h2database</groupId>
+				<artifactId>h2</artifactId>
+				<version>1.4.200</version>
 			</dependency>
 
 			<!-- ===== Test unitaires ===== -->
@@ -339,6 +396,12 @@
 				<artifactId>spring-test</artifactId>
 				<version>${spring.version}</version>
 				<scope>test</scope>
+			</dependency>
+			<!-- Spring Data JPA -->
+			<dependency>
+				<groupId>org.springframework.data</groupId>
+				<artifactId>spring-data-jpa</artifactId>
+				<version>2.3.1.RELEASE</version>
 			</dependency>
 		</dependencies>
 	</dependencyManagement>

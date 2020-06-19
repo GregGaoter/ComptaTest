@@ -32,6 +32,20 @@ public class SequenceEcritureComptable {
 		derniereValeur = pDerniereValeur;
 	}
 
+	/**
+	 * Constructeur
+	 *
+	 * @param pJournalCode    - Le code du journal comptable
+	 * @param pAnnee          - L'année de l'écriture comptable
+	 * @param pDerniereValeur - La dernière valeur utilisée pour les références
+	 *                        d'écriture comptable
+	 */
+	public SequenceEcritureComptable(String pJournalCode, Integer pAnnee, Integer pDerniereValeur) {
+		journal_code = pJournalCode;
+		annee = pAnnee;
+		derniereValeur = pDerniereValeur;
+	}
+
 	// ==================== Getters/Setters ====================
 	/**
 	 * Renvoie le code du journal dans lequel figure l'écriture comptable

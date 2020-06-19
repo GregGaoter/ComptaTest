@@ -22,7 +22,6 @@ public final class SpringRegistry {
 	/** Nom des fichiers de contexte de l'application */
 	// "classpath:/com/dummy/myerp/testbusiness/business/bootstrapContext.xml"
 	private static final String CONTEXT_APPLI_LOCATION = "classpath:/com/dummy/myerp/business/applicationContext.xml";
-	private static final String CONTEXT_CONSUMER_LOCATION = "classpath:/com/dummy/myerp/consumer/applicationContext.xml";
 
 	/** Le context spring de l'application */
 	private ApplicationContext contextAppli;
@@ -35,8 +34,7 @@ public final class SpringRegistry {
 	private SpringRegistry() {
 		super();
 		SpringRegistry.LOGGER.debug("[DEBUT] SpringRegistry() - Initialisation du contexte Spring");
-		this.contextAppli = new ClassPathXmlApplicationContext(SpringRegistry.CONTEXT_APPLI_LOCATION,
-				SpringRegistry.CONTEXT_CONSUMER_LOCATION);
+		this.contextAppli = new ClassPathXmlApplicationContext(SpringRegistry.CONTEXT_APPLI_LOCATION);
 		SpringRegistry.LOGGER.debug("[FIN] SpringRegistry() - Initialisation du contexte Spring");
 	}
 

@@ -12,7 +12,7 @@
 		<constructor-arg ref="DaoProxy" />
 		<constructor-arg ref="TransactionManager" />
 	</bean>
-	
+
 	<!-- AbstractBusinessManager -->
 	<bean
 		class="org.springframework.beans.factory.config.MethodInvokingFactoryBean">
@@ -31,4 +31,8 @@
 
 	<!-- ========== Transaction Managers ========== -->
 	<import resource="transactionContext.xml" />
+
+	<!-- ========== Contexte de la couche consumer ========== -->
+	<import
+		resource="classpath:/com/dummy/myerp/consumer/applicationContext.xml" />
 </beans>

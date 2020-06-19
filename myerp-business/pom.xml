@@ -72,6 +72,24 @@
 			<artifactId>spring-tx</artifactId>
 		</dependency>
 
+		<!-- ===== Spring Object/Relational Mapping ===== -->
+		<dependency>
+			<groupId>org.springframework</groupId>
+			<artifactId>spring-orm</artifactId>
+		</dependency>
+
+		<!-- ===== Java Persistence API ===== -->
+		<dependency>
+			<groupId>javax.persistence</groupId>
+			<artifactId>javax.persistence-api</artifactId>
+		</dependency>
+
+		<!-- ===== Hibernate ORM ===== -->
+		<dependency>
+			<groupId>org.hibernate</groupId>
+			<artifactId>hibernate-core</artifactId>
+		</dependency>
+
 		<!-- ===== JSR 380 - Bean validation ===== -->
 		<!-- interface -->
 		<dependency>
@@ -131,6 +149,11 @@
 			<artifactId>spring-test</artifactId>
 			<scope>test</scope>
 		</dependency>
+		<!-- Spring Data JPA -->
+		<dependency>
+			<groupId>org.springframework.data</groupId>
+			<artifactId>spring-data-jpa</artifactId>
+		</dependency>
 
 
 		<!-- ===== Database (pour les tests) ===== -->
@@ -146,6 +169,11 @@
 			<artifactId>postgresql</artifactId>
 			<scope>test</scope>
 		</dependency>
+		<!-- H2 Database Engine -->
+		<dependency>
+			<groupId>com.h2database</groupId>
+			<artifactId>h2</artifactId>
+		</dependency>
 	</dependencies>
 
 
@@ -153,9 +181,45 @@
 	<!-- Profiles -->
 	<!-- =============================================================== -->
 	<profiles>
-		<!-- Profile utilisé pour lancer les tests d'intégration de la couche Business -->
+		<!-- Profile utilisé pour lancer uniquement les tests d'intégration de 
+			la couche Business -->
 		<profile>
-			<id>test-business</id>
+			<id>it-business</id>
+			<build>
+				<plugins>
+					<!-- Ajout du répertoire src/test-business/java en tant que source de 
+						test du module -->
+					<plugin>
+						<groupId>org.codehaus.mojo</groupId>
+						<artifactId>build-helper-maven-plugin</artifactId>
+						<executions>
+							<execution>
+								<id>add-test-source</id>
+								<phase>generate-test-sources</phase>
+								<goals>
+									<goal>add-test-source</goal>
+								</goals>
+								<configuration>
+									<sources>
+										<source>src/test-business/java</source>
+									</sources>
+								</configuration>
+							</execution>
+						</executions>
+					</plugin>
+				</plugins>
+				<testResources>
+					<testResource>
+						<directory>src/test/resources</directory>
+					</testResource>
+				</testResources>
+			</build>
+		</profile>
+
+		<!-- Profile utilisé pour lancer les tests unitaires et les tests d'intégration 
+			de la couche Business -->
+		<profile>
+			<id>test-it-business</id>
 			<build>
 				<plugins>
 					<!-- Ajout du répertoire src/test-business/java en tant que source de 
