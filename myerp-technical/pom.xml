@@ -160,11 +160,11 @@
 	<!-- =============================================================== -->
 	<build>
 		<plugins>
-			<!-- ===== JaCoCo ===== -->
+<!-- 			===== JaCoCo ===== -->
 			<plugin>
 				<groupId>org.jacoco</groupId>
 				<artifactId>jacoco-maven-plugin</artifactId>
-				<executions>
+				<!-- <executions>
 					<execution>
 						<goals>
 							<goal>prepare-agent</goal>
@@ -177,7 +177,7 @@
 							<goal>report</goal>
 						</goals>
 					</execution>
-				</executions>
+				</executions> -->
 			</plugin>
 		</plugins>
 	</build>

@@ -219,7 +219,7 @@
 		<!-- Profile utilisé pour lancer les tests unitaires et les tests d'intégration 
 			de la couche Business -->
 		<profile>
-			<id>test-it-business</id>
+			<id>test-it</id>
 			<build>
 				<plugins>
 					<!-- Ajout du répertoire src/test-business/java en tant que source de 
@@ -262,7 +262,7 @@
 			<plugin>
 				<groupId>org.jacoco</groupId>
 				<artifactId>jacoco-maven-plugin</artifactId>
-				<executions>
+<!-- 				<executions>
 					<execution>
 						<goals>
 							<goal>prepare-agent</goal>
@@ -275,7 +275,7 @@
 							<goal>report</goal>
 						</goals>
 					</execution>
-				</executions>
+				</executions> -->
 			</plugin>
 		</plugins>
 	</build>
