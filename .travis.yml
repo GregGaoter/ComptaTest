@@ -16,7 +16,8 @@ addons:
 
 script:
   # the following command line builds the project, runs the tests with coverage and then execute the SonarCloud analysis
-  - mvn clean org.jacoco:jacoco-maven-plugin:prepare-agent install sonar:sonar -Dsonar.login=4b000c15eb49e902834b2f506a789f29dc91a32f -Dsonar.projectKey=GregGaoter_ComptaTest
+  #- mvn clean org.jacoco:jacoco-maven-plugin:prepare-agent install sonar:sonar -Dsonar.login=4b000c15eb49e902834b2f506a789f29dc91a32f -Dsonar.projectKey=GregGaoter_ComptaTest
+  - mvn clean test sonar:sonar -Dsonar.login=4b000c15eb49e902834b2f506a789f29dc91a32f -Dsonar.projectKey=GregGaoter_ComptaTest
   #- mvn clean verify sonar:sonar -Ptest-it-business -Dsonar.login=4b000c15eb49e902834b2f506a789f29dc91a32f -Dsonar.projectKey=GregGaoter_ComptaTest
   #- cd docker/dev
   #- docker-compose stop
