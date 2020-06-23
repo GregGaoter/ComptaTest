@@ -54,7 +54,7 @@ public class ComptabiliteManagerImplIT extends AbstractBusinessIt {
 		assertThat(listJournalComptable.size()).isEqualTo(4);
 	}
 
-	// ==================== getListEcritureComptable() ====================
+	// ==================== getListEcritureComptable() ==================== 
 
 	@Test
 	public void getListEcritureComptable_returnsListEcritureComptable() {
