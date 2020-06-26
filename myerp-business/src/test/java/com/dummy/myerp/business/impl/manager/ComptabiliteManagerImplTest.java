@@ -2,7 +2,6 @@ package com.dummy.myerp.business.impl.manager;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatCode;
-import static org.assertj.core.api.Assertions.assertThatNullPointerException;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyString;
@@ -13,7 +12,6 @@ import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
 import java.math.BigDecimal;
-import java.time.Instant;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Calendar;
@@ -55,35 +53,6 @@ public class ComptabiliteManagerImplTest {
 	 * 
 	 * private ComptabiliteManagerImpl manager = new ComptabiliteManagerImpl();
 	 */
-
-	// ==================== getYear ====================
-
-	@Test
-	public void getYear_dateNormale_returnsYear() {
-		// GIVEN
-		ComptabiliteManagerImpl comptabiliteManagerImpl = new ComptabiliteManagerImpl();
-		Date date = Date.from(Instant.EPOCH);
-
-		// WHEN
-		int actualYear = ReflectionTestUtils.invokeMethod(comptabiliteManagerImpl, "getYear", date);
-
-		// THEN
-		assertThat(actualYear).isEqualTo(1970);
-	}
-
-	@Test
-	public void getYear_dateNull_thrownsNullPointerException() {
-		// GIVEN
-		ComptabiliteManagerImpl comptabiliteManagerImpl = new ComptabiliteManagerImpl();
-		Date date = null;
-
-		// WHEN
-
-		// THEN
-		assertThatNullPointerException().isThrownBy(() -> {
-			ReflectionTestUtils.invokeMethod(comptabiliteManagerImpl, "getYear", date);
-		});
-	}
 
 	// ==================== addReference ====================
 

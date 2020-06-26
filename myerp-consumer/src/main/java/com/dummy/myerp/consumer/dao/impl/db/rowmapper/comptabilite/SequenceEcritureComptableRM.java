@@ -20,21 +20,10 @@ public class SequenceEcritureComptableRM implements RowMapper<SequenceEcritureCo
 	/** Logger Log4j pour la classe */
 	private static final Logger LOGGER = LogManager.getLogger(SequenceEcritureComptableRM.class);
 
-	/**
-	 * {@link SequenceEcritureComptable}
-	 */
-	private SequenceEcritureComptable sequenceEcritureComptable;
-
-	/**
-	 * Constructeur. Instancie le {@link SequenceEcritureComptable}.
-	 */
-	public SequenceEcritureComptableRM() {
-		sequenceEcritureComptable = new SequenceEcritureComptable();
-	}
-
 	@Override
 	public SequenceEcritureComptable mapRow(ResultSet pRS, int pRowNum) throws SQLException {
 		LOGGER.trace(new EntreeMessage());
+		SequenceEcritureComptable sequenceEcritureComptable = new SequenceEcritureComptable();
 		if (pRS == null) {
 			sequenceEcritureComptable = null;
 		} else {

@@ -24,21 +24,10 @@ public class LigneEcritureComptableRM implements RowMapper<LigneEcritureComptabl
 	/** CompteComptableDaoCache */
 	private final CompteComptableDaoCache compteComptableDaoCache = new CompteComptableDaoCache();
 
-	/**
-	 * {@link LigneEcritureComptable}
-	 */
-	private LigneEcritureComptable ligneEcritureComptable;
-
-	/**
-	 * Constructeur. Instancie {@link LigneEcritureComptable}.
-	 */
-	public LigneEcritureComptableRM() {
-		ligneEcritureComptable = new LigneEcritureComptable();
-	}
-
 	@Override
 	public LigneEcritureComptable mapRow(ResultSet pRS, int pRowNum) throws SQLException {
 		LOGGER.trace(new EntreeMessage());
+		LigneEcritureComptable ligneEcritureComptable = new LigneEcritureComptable();
 		if (pRS == null) {
 			ligneEcritureComptable = null;
 		} else {

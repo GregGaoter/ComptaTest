@@ -1,7 +1,6 @@
 package com.dummy.myerp.business.impl.manager;
 
 import java.math.BigDecimal;
-import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
 import java.util.Set;
@@ -17,6 +16,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.TransactionStatus;
 
 import com.dummy.myerp.business.contrat.manager.ComptabiliteManager;
+import com.dummy.myerp.business.helper.DateHelper;
 import com.dummy.myerp.business.impl.AbstractBusinessManager;
 import com.dummy.myerp.model.bean.comptabilite.CompteComptable;
 import com.dummy.myerp.model.bean.comptabilite.EcritureComptable;
@@ -106,13 +106,14 @@ public class ComptabiliteManagerImpl extends AbstractBusinessManager implements 
 			JournalComptable journal = pEcritureComptable.getJournal();
 			String codeJournal = journal.getCode();
 			Date dateEcriture = pEcritureComptable.getDate();
-			Integer anneeEcriture = Integer.valueOf(getYear(dateEcriture));
+			Integer anneeEcriture = Integer.valueOf(DateHelper.getAnnee(dateEcriture));
 			SequenceEcritureComptable sequence = new SequenceEcritureComptable();
 
 			// Dernière valeur de la séquence
 			String prochaineValeurSequence = "00001";
-			for (SequenceEcritureComptable seq : getListSequenceEcritureComptable()) {
-				if (seq.getJournalCode().equals(codeJournal) && seq.getAnnee().equals(anneeEcriture)) {
+			List<SequenceEcritureComptable> listSequenceEcritureComptable = getListSequenceEcritureComptable();
+			for (SequenceEcritureComptable seq : listSequenceEcritureComptable) {
+				if (seq.getJournalCode().equals(codeJournal) && seq.getAnnee().compareTo(anneeEcriture) == 0) {
 					prochaineValeurSequence = String.format("%05d", seq.getDerniereValeur() + 1);
 					sequence.setAnnee(seq.getAnnee());
 					sequence.setDerniereValeur(seq.getDerniereValeur() + 1);
@@ -137,18 +138,6 @@ public class ComptabiliteManagerImpl extends AbstractBusinessManager implements 
 		}
 
 		LOGGER.trace(new SortieMessage());
-	}
-
-	/**
-	 * Renvoie l'année d'une {@link Date}.
-	 * 
-	 * @param date Date
-	 * @return L'année de la {@link Date}.
-	 */
-	private int getYear(Date date) {
-		Calendar calendar = Calendar.getInstance();
-		calendar.setTime(date);
-		return calendar.get(Calendar.YEAR);
 	}
 
 	/**
@@ -294,8 +283,8 @@ public class ComptabiliteManagerImpl extends AbstractBusinessManager implements 
 	protected Integer getDerniereValeurNumeroSequence(EcritureComptable pEcritureComptable) {
 		Integer valeurSequence = null;
 		for (SequenceEcritureComptable seq : getListSequenceEcritureComptable()) {
-			if (seq.getJournalCode().equals(pEcritureComptable.getJournal().getCode())
-					&& seq.getAnnee().compareTo(Integer.valueOf(getYear(pEcritureComptable.getDate()))) == 0) {
+			if (seq.getJournalCode().equals(pEcritureComptable.getJournal().getCode()) && seq.getAnnee()
+					.compareTo(Integer.valueOf(DateHelper.getAnnee(pEcritureComptable.getDate()))) == 0) {
 				valeurSequence = seq.getDerniereValeur();
 				break;
 			}
@@ -329,7 +318,7 @@ public class ComptabiliteManagerImpl extends AbstractBusinessManager implements 
 		LOGGER.trace(new EntreeMessage());
 		String reference = pEcritureComptable.getReference();
 		String annee = reference.split("-|/")[1];
-		if (!annee.equals(String.valueOf(getYear(pEcritureComptable.getDate())))) {
+		if (!annee.equals(String.valueOf(DateHelper.getAnnee(pEcritureComptable.getDate())))) {
 			throw new FunctionalException("L'année de la référence ne correspond pas à l'année de l'écriture.");
 		}
 		LOGGER.trace(new SortieMessage());

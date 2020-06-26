@@ -9,7 +9,6 @@ import org.springframework.jdbc.core.RowMapper;
 
 import com.dummy.myerp.consumer.ConsumerHelper;
 import com.dummy.myerp.consumer.dao.impl.cache.JournalComptableDaoCache;
-import com.dummy.myerp.model.bean.comptabilite.CompteComptable;
 import com.dummy.myerp.model.bean.comptabilite.EcritureComptable;
 import com.dummy.myerp.technical.log.message.DebugMessage;
 import com.dummy.myerp.technical.log.message.EntreeMessage;
@@ -25,21 +24,11 @@ public class EcritureComptableRM implements RowMapper<EcritureComptable> {
 
 	/** JournalComptableDaoCache */
 	private final JournalComptableDaoCache journalComptableDaoCache = new JournalComptableDaoCache();
-	/**
-	 * {@link CompteComptable}
-	 */
-	private EcritureComptable ecritureComptable;
-
-	/**
-	 * Constructeur. Instancie {@link EcritureComptable}.
-	 */
-	public EcritureComptableRM() {
-		ecritureComptable = new EcritureComptable();
-	}
 
 	@Override
 	public EcritureComptable mapRow(ResultSet pRS, int pRowNum) throws SQLException {
 		LOGGER.trace(new EntreeMessage());
+		EcritureComptable ecritureComptable = new EcritureComptable();
 		if (pRS == null) {
 			ecritureComptable = null;
 		} else {

@@ -101,6 +101,26 @@ public class EcritureComptable {
 	/**
 	 * Constructeur.
 	 */
+	public EcritureComptable(JournalComptable journal, Date date, String libelle) {
+		this.journal = journal;
+		this.date = date;
+		this.libelle = libelle;
+	}
+
+	/**
+	 * Constructeur.
+	 */
+	public EcritureComptable(Integer id, JournalComptable journal, String reference, Date date, String libelle) {
+		this.id = id;
+		this.journal = journal;
+		this.reference = reference;
+		this.date = date;
+		this.libelle = libelle;
+	}
+
+	/**
+	 * Constructeur.
+	 */
 	public EcritureComptable(List<LigneEcritureComptable> listLigneEcriture) {
 		this.listLigneEcriture.clear();
 		this.listLigneEcriture.addAll(listLigneEcriture);

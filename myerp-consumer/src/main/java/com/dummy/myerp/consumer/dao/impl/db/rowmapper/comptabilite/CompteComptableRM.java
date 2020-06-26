@@ -20,21 +20,10 @@ public class CompteComptableRM implements RowMapper<CompteComptable> {
 	/** Logger Log4j pour la classe */
 	private static final Logger LOGGER = LogManager.getLogger(CompteComptableRM.class);
 
-	/**
-	 * {@link CompteComptable}
-	 */
-	private CompteComptable compteComptable;
-
-	/**
-	 * Constructeur. Instancie le {@link CompteComptable}.
-	 */
-	public CompteComptableRM() {
-		compteComptable = new CompteComptable();
-	}
-
 	@Override
 	public CompteComptable mapRow(ResultSet pRS, int pRowNum) throws SQLException {
 		LOGGER.trace(new EntreeMessage());
+		CompteComptable compteComptable = new CompteComptable();
 		if (pRS == null) {
 			compteComptable = null;
 		} else {

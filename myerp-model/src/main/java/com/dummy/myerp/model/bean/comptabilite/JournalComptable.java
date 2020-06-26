@@ -42,6 +42,15 @@ public class JournalComptable {
 	/**
 	 * Constructeur.
 	 *
+	 * @param pCode - Code du journal comptable
+	 */
+	public JournalComptable(String pCode) {
+		code = pCode;
+	}
+
+	/**
+	 * Constructeur.
+	 *
 	 * @param pCode    - Code du journal comptable
 	 * @param pLibelle - Libellé du journal comptable
 	 */
