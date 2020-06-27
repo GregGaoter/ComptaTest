@@ -45,10 +45,11 @@ public class LigneEcritureComptableRMTest {
 		ligneEcritureComptableRM = null;
 	}
 
-	// === LigneEcritureComptableRM() ===
+	// === initLigneEcritureComptable() ===
 
 	@Test
-	public void LigneEcritureComptableRM_createsLigneEcritureComptable() {
+	public void initLigneEcritureComptable_createsLigneEcritureComptable() {
+		ReflectionTestUtils.invokeMethod(ligneEcritureComptableRM, "initLigneEcritureComptable");
 		LigneEcritureComptable ligneEcritureComptable = (LigneEcritureComptable) ReflectionTestUtils
 				.getField(ligneEcritureComptableRM, "ligneEcritureComptable");
 		assertThat(ligneEcritureComptable).isNotNull();

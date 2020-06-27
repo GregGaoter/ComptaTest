@@ -36,10 +36,11 @@ public class CompteComptableRMTest {
 		compteComptableRM = null;
 	}
 
-	// === CompteComptableRM() ===
+	// === initCompteComptable() ===
 
 	@Test
-	public void CompteComptableRM_createsCompteComptable() {
+	public void initCompteComptable_createsLigneEcritureComptable() {
+		ReflectionTestUtils.invokeMethod(compteComptableRM, "initCompteComptable");
 		CompteComptable compteComptable = (CompteComptable) ReflectionTestUtils.getField(compteComptableRM,
 				"compteComptable");
 		assertThat(compteComptable).isNotNull();

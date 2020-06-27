@@ -36,10 +36,11 @@ public class SequenceEcritureComptableRMTest {
 		sequenceEcritureComptableRM = null;
 	}
 
-	// === SequenceEcritureComptableRM() ===
+	// === initSequenceEcritureComptable() ===
 
 	@Test
-	public void SequenceEcritureComptableRM_createsSequenceEcritureComptable() {
+	public void initSequenceEcritureComptable_createsSequenceEcritureComptable() {
+		ReflectionTestUtils.invokeMethod(sequenceEcritureComptableRM, "initSequenceEcritureComptable");
 		SequenceEcritureComptable sequenceEcritureComptable = (SequenceEcritureComptable) ReflectionTestUtils
 				.getField(sequenceEcritureComptableRM, "sequenceEcritureComptable");
 		assertThat(sequenceEcritureComptable).isNotNull();

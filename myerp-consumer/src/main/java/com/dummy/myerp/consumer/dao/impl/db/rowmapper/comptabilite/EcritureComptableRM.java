@@ -25,10 +25,22 @@ public class EcritureComptableRM implements RowMapper<EcritureComptable> {
 	/** JournalComptableDaoCache */
 	private final JournalComptableDaoCache journalComptableDaoCache = new JournalComptableDaoCache();
 
+	/**
+	 * {@link EcritureComptable}
+	 */
+	private EcritureComptable ecritureComptable;
+
+	/**
+	 * Initialise une {@link EcritureComptable}.
+	 */
+	private void initEcritureComptable() {
+		ecritureComptable = new EcritureComptable();
+	}
+
 	@Override
 	public EcritureComptable mapRow(ResultSet pRS, int pRowNum) throws SQLException {
 		LOGGER.trace(new EntreeMessage());
-		EcritureComptable ecritureComptable = new EcritureComptable();
+		initEcritureComptable();
 		if (pRS == null) {
 			ecritureComptable = null;
 		} else {

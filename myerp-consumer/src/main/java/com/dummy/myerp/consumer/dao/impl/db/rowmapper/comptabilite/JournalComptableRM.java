@@ -20,10 +20,19 @@ public class JournalComptableRM implements RowMapper<JournalComptable> {
 	/** Logger Log4j pour la classe */
 	private static final Logger LOGGER = LogManager.getLogger(JournalComptableRM.class);
 
+	/**
+	 * {@link JournalComptable}.
+	 */
+	private JournalComptable journalComptable;
+
+	private void initJournalComptable() {
+		journalComptable = new JournalComptable();
+	}
+
 	@Override
 	public JournalComptable mapRow(ResultSet pRS, int pRowNum) throws SQLException {
 		LOGGER.trace(new EntreeMessage());
-		JournalComptable journalComptable = new JournalComptable();
+		initJournalComptable();
 		if (pRS == null) {
 			journalComptable = null;
 		} else {

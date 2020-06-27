@@ -33,10 +33,11 @@ public class JournalComptableRMTest {
 		journalComptableRM = null;
 	}
 
-	// === JournalComptableRM() ===
+	// === initJournalComptable() ===
 
 	@Test
-	public void JournalComptableRM_createsJournalComptable() {
+	public void initJournalComptable_createsJournalComptable() {
+		ReflectionTestUtils.invokeMethod(journalComptableRM, "initJournalComptable");
 		JournalComptable journalComptable = (JournalComptable) ReflectionTestUtils.getField(journalComptableRM,
 				"journalComptable");
 		assertThat(journalComptable).isNotNull();

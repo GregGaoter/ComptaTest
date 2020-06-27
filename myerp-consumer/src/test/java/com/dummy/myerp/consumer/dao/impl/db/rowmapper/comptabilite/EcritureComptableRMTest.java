@@ -52,10 +52,11 @@ public class EcritureComptableRMTest {
 		ecritureComptableRM = null;
 	}
 
-	// === EcritureComptableRM() ===
+	// === initEcritureComptable() ===
 
 	@Test
-	public void EcritureComptableRM_createsEcritureComptable() {
+	public void initEcritureComptable_createsEcritureComptable() {
+		ReflectionTestUtils.invokeMethod(ecritureComptableRM, "initEcritureComptable");
 		EcritureComptable ecritureComptable = (EcritureComptable) ReflectionTestUtils.getField(ecritureComptableRM,
 				"ecritureComptable");
 		assertThat(ecritureComptable).isNotNull();
