@@ -122,8 +122,19 @@ public class EcritureComptable {
 	 * Constructeur.
 	 */
 	public EcritureComptable(List<LigneEcritureComptable> listLigneEcriture) {
-		this.listLigneEcriture.clear();
-		this.listLigneEcriture.addAll(listLigneEcriture);
+		setListLigneEcriture(listLigneEcriture);
+	}
+
+	/**
+	 * Constructeur.
+	 */
+	public EcritureComptable(JournalComptable journal, String reference, Date date, String libelle,
+			List<LigneEcritureComptable> listLigneEcriture) {
+		this.journal = journal;
+		this.reference = reference;
+		this.date = date;
+		this.libelle = libelle;
+		setListLigneEcriture(listLigneEcriture);
 	}
 
 	// ==================== Getters/Setters ====================
@@ -233,7 +244,9 @@ public class EcritureComptable {
 	 */
 	public void setListLigneEcriture(List<LigneEcritureComptable> listLigneEcriture) {
 		this.listLigneEcriture.clear();
-		this.listLigneEcriture.addAll(listLigneEcriture);
+		if (listLigneEcriture != null && !listLigneEcriture.isEmpty()) {
+			this.listLigneEcriture.addAll(listLigneEcriture);
+		}
 	}
 
 	/**
