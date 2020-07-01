@@ -78,6 +78,24 @@
 			<artifactId>spring-orm</artifactId>
 		</dependency>
 
+		<!-- ===== Spring AOP ===== -->
+		<dependency>
+			<groupId>org.springframework</groupId>
+			<artifactId>spring-aop</artifactId>
+		</dependency>
+
+		<!-- ===== AspectJ ===== -->
+		<!-- AspectJ runtime -->
+		<dependency>
+			<groupId>org.aspectj</groupId>
+			<artifactId>aspectjrt</artifactId>
+		</dependency>
+		<!-- AspectJ weaver -->
+		<dependency>
+			<groupId>org.aspectj</groupId>
+			<artifactId>aspectjweaver</artifactId>
+		</dependency>
+
 		<!-- ===== Java Persistence API ===== -->
 		<dependency>
 			<groupId>javax.persistence</groupId>
@@ -290,6 +308,20 @@
 							<sources>
 								<source>src/test-business/java</source>
 							</sources>
+						</configuration>
+					</execution>
+					<execution>
+						<id>add-test-resource</id>
+						<phase>generate-test-resources</phase>
+						<goals>
+							<goal>add-test-resource</goal>
+						</goals>
+						<configuration>
+							<resources>
+								<resource>
+									<directory>src/main/resources</directory>
+								</resource>
+							</resources>
 						</configuration>
 					</execution>
 				</executions>

@@ -4,9 +4,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatCode;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 
-import java.io.File;
 import java.math.BigDecimal;
-import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Comparator;
@@ -22,8 +20,6 @@ import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.Arguments;
 import org.junit.jupiter.params.provider.MethodSource;
 import org.springframework.test.util.ReflectionTestUtils;
-import org.testcontainers.containers.DockerComposeContainer;
-import org.testcontainers.junit.jupiter.Testcontainers;
 
 import com.dummy.myerp.business.helper.DateHelper;
 import com.dummy.myerp.business.impl.manager.ComptabiliteManagerImpl;
@@ -33,17 +29,9 @@ import com.dummy.myerp.model.bean.comptabilite.JournalComptable;
 import com.dummy.myerp.model.bean.comptabilite.LigneEcritureComptable;
 import com.dummy.myerp.model.bean.comptabilite.SequenceEcritureComptable;
 
-@Testcontainers
 public class ComptabiliteManagerImplIT extends AbstractBusinessIt {
 
 	private ComptabiliteManagerImpl comptabiliteManagerImpl;
-
-	private final Path projectPath = Path.of("").toAbsolutePath();
-
-	// @Container
-	private DockerComposeContainer<?> dockerEnvironment = new DockerComposeContainer<>(
-			new File(projectPath.getParent().toFile(), "docker/dev/docker-compose.yml"))
-					.withExposedService("myerp.db_1", 5432);
 
 	@BeforeEach
 	public void init() {
@@ -260,6 +248,291 @@ public class ComptabiliteManagerImplIT extends AbstractBusinessIt {
 		// THEN
 		assertThat(exception.getCause().getMessage())
 				.isEqualTo("L'écriture comptable ne respecte pas les règles de gestion.");
+	}
+
+	// ===== checkEcritureComptableUnitRG2(EcritureComptable) =====
+
+	@Test
+	public void checkEcritureComptableUnitRG2_withEcritureComptableEquilibree_doesNotThrowAnyException() {
+		// GIVEN
+		JournalComptable journal = new JournalComptable("BQ", "Banque");
+		Date date = DateHelper.getDate(1, 7, 2020);
+		List<LigneEcritureComptable> listLigneEcriture = Arrays.asList(
+				new LigneEcritureComptable(new CompteComptable(), "lec1", BigDecimal.ONE, null),
+				new LigneEcritureComptable(new CompteComptable(), "lec2", null, BigDecimal.ONE));
+		EcritureComptable ecriture = new EcritureComptable(journal, "BQ-2020/00001", date,
+				"Test intégration checkEcritureComptableUnitRG2.", listLigneEcriture);
+
+		// WHEN
+
+		// THEN
+		assertThatCode(() -> ReflectionTestUtils.invokeMethod(comptabiliteManagerImpl, "checkEcritureComptableUnitRG2",
+				ecriture)).doesNotThrowAnyException();
+	}
+
+	@Test
+	public void checkEcritureComptableUnitRG2_withEcritureComptableNonEquilibree_throwsFunctionalException() {
+		// GIVEN
+		JournalComptable journal = new JournalComptable("BQ", "Banque");
+		Date date = DateHelper.getDate(1, 7, 2020);
+		List<LigneEcritureComptable> listLigneEcriture = Arrays.asList(
+				new LigneEcritureComptable(new CompteComptable(), "lec1", BigDecimal.ZERO, null),
+				new LigneEcritureComptable(new CompteComptable(), "lec2", null, BigDecimal.ONE));
+		EcritureComptable ecriture = new EcritureComptable(journal, "BQ-2020/00001", date,
+				"Test intégration checkEcritureComptableUnitRG2.", listLigneEcriture);
+
+		// WHEN
+		Exception exception = assertThrows(RuntimeException.class, () -> {
+			ReflectionTestUtils.invokeMethod(comptabiliteManagerImpl, "checkEcritureComptableUnitRG2", ecriture);
+		});
+
+		// THEN
+		assertThat(exception.getCause().getMessage()).isEqualTo("L'écriture comptable n'est pas équilibrée.");
+	}
+
+	// ===== checkEcritureComptableUnitRG3(EcritureComptable) =====
+
+	@Test
+	public void checkEcritureComptableUnitRG3_withEcritureComptableValid_doesNotThrowAnyException() {
+		// GIVEN
+		JournalComptable journal = new JournalComptable("BQ", "Banque");
+		Date date = DateHelper.getDate(1, 7, 2020);
+		List<LigneEcritureComptable> listLigneEcriture = Arrays.asList(
+				new LigneEcritureComptable(new CompteComptable(), "lec1", BigDecimal.ONE, null),
+				new LigneEcritureComptable(new CompteComptable(), "lec2", null, BigDecimal.ONE));
+		EcritureComptable ecriture = new EcritureComptable(journal, "BQ-2020/00001", date,
+				"Test intégration checkEcritureComptableUnitRG2.", listLigneEcriture);
+
+		// WHEN
+
+		// THEN
+		assertThatCode(() -> ReflectionTestUtils.invokeMethod(comptabiliteManagerImpl, "checkEcritureComptableUnitRG3",
+				ecriture)).doesNotThrowAnyException();
+	}
+
+	@Test
+	public void checkEcritureComptableUnitRG3_withUneLigneEcriture_throwsFunctionalException() {
+		// GIVEN
+		JournalComptable journal = new JournalComptable("BQ", "Banque");
+		Date date = DateHelper.getDate(1, 7, 2020);
+		List<LigneEcritureComptable> listLigneEcriture = Arrays
+				.asList(new LigneEcritureComptable(new CompteComptable(), "lec1", BigDecimal.ZERO, BigDecimal.ZERO));
+		EcritureComptable ecriture = new EcritureComptable(journal, "BQ-2020/00001", date,
+				"Test intégration checkEcritureComptableUnitRG2.", listLigneEcriture);
+
+		// WHEN
+		Exception exception = assertThrows(RuntimeException.class, () -> {
+			ReflectionTestUtils.invokeMethod(comptabiliteManagerImpl, "checkEcritureComptableUnitRG3", ecriture);
+		});
+
+		// THEN
+		assertThat(exception.getCause().getMessage()).isEqualTo(
+				"L'écriture comptable doit avoir au moins deux lignes : une ligne au débit et une ligne au crédit.");
+	}
+
+	@Test
+	public void checkEcritureComptableUnitRG3_withNbDebitInfZero_throwsFunctionalException() {
+		// GIVEN
+		JournalComptable journal = new JournalComptable("BQ", "Banque");
+		Date date = DateHelper.getDate(1, 7, 2020);
+		List<LigneEcritureComptable> listLigneEcriture = Arrays.asList(
+				new LigneEcritureComptable(new CompteComptable(), "lec1", null, null),
+				new LigneEcritureComptable(new CompteComptable(), "lec2", null, BigDecimal.ONE));
+		EcritureComptable ecriture = new EcritureComptable(journal, "BQ-2020/00001", date,
+				"Test intégration checkEcritureComptableUnitRG2.", listLigneEcriture);
+
+		// WHEN
+		Exception exception = assertThrows(RuntimeException.class, () -> {
+			ReflectionTestUtils.invokeMethod(comptabiliteManagerImpl, "checkEcritureComptableUnitRG3", ecriture);
+		});
+
+		// THEN
+		assertThat(exception.getCause().getMessage()).isEqualTo(
+				"L'écriture comptable doit avoir au moins deux lignes : une ligne au débit et une ligne au crédit.");
+	}
+
+	@Test
+	public void checkEcritureComptableUnitRG3_withNbCreditInfZero_throwsFunctionalException() {
+		// GIVEN
+		JournalComptable journal = new JournalComptable("BQ", "Banque");
+		Date date = DateHelper.getDate(1, 7, 2020);
+		List<LigneEcritureComptable> listLigneEcriture = Arrays.asList(
+				new LigneEcritureComptable(new CompteComptable(), "lec1", BigDecimal.ONE, null),
+				new LigneEcritureComptable(new CompteComptable(), "lec2", null, null));
+		EcritureComptable ecriture = new EcritureComptable(journal, "BQ-2020/00001", date,
+				"Test intégration checkEcritureComptableUnitRG2.", listLigneEcriture);
+
+		// WHEN
+		Exception exception = assertThrows(RuntimeException.class, () -> {
+			ReflectionTestUtils.invokeMethod(comptabiliteManagerImpl, "checkEcritureComptableUnitRG3", ecriture);
+		});
+
+		// THEN
+		assertThat(exception.getCause().getMessage()).isEqualTo(
+				"L'écriture comptable doit avoir au moins deux lignes : une ligne au débit et une ligne au crédit.");
+	}
+
+	// ===== getDerniereValeurNumeroSequence(EcritureComptable) =====
+
+	private static Stream<Arguments> getDerniereValeurNumeroSequence_returnsDerniereValeurNumeroSequence() {
+		return Stream.of(Arguments.of("BQ", 2016), Arguments.of("OC", 2016), Arguments.of("BQ", 2020));
+	}
+
+	@ParameterizedTest
+	@MethodSource
+	public void getDerniereValeurNumeroSequence_returnsDerniereValeurNumeroSequence(String journalCode, int annee) {
+		dockerEnvironment.start();
+		// GIVEN
+		JournalComptable journal = new JournalComptable(journalCode, "Banque");
+		Date date = DateHelper.getDate(1, 7, annee);
+		List<LigneEcritureComptable> listLigneEcriture = Arrays.asList(
+				new LigneEcritureComptable(new CompteComptable(), "lec1", BigDecimal.ONE, null),
+				new LigneEcritureComptable(new CompteComptable(), "lec2", null, BigDecimal.ONE));
+		EcritureComptable ecriture = new EcritureComptable(journal, "BQ-2020/00001", date,
+				"Test intégration getDerniereValeurNumeroSequence.", listLigneEcriture);
+
+		// WHEN
+		Integer derniereValeurNumeroSequenceActual = ReflectionTestUtils.invokeMethod(comptabiliteManagerImpl,
+				"getDerniereValeurNumeroSequence", ecriture);
+
+		// THEN
+		if (journalCode.equals("BQ") && annee == 2016) {
+			assertThat(derniereValeurNumeroSequenceActual).isEqualByComparingTo(51);
+		} else {
+			assertThat(derniereValeurNumeroSequenceActual).isNull();
+		}
+		dockerEnvironment.stop();
+	}
+
+	// ===== checkEcritureComptableReferenceFormatValid(EcritureComptable) =====
+
+	@Test
+	public void checkEcritureComptableReferenceFormatValid_withReferenceValid_doesNotThrowAnyException() {
+		// GIVEN
+		JournalComptable journal = new JournalComptable("BQ", "Banque");
+		Date date = DateHelper.getDate(1, 7, 2020);
+		List<LigneEcritureComptable> listLigneEcriture = Arrays.asList(
+				new LigneEcritureComptable(new CompteComptable(), "lec1", BigDecimal.ONE, null),
+				new LigneEcritureComptable(new CompteComptable(), "lec2", null, BigDecimal.ONE));
+		EcritureComptable ecriture = new EcritureComptable(journal, "BQ-2020/00001", date,
+				"Test intégration checkEcritureComptableReferenceFormatValid.", listLigneEcriture);
+
+		// WHEN
+
+		// THEN
+		assertThatCode(() -> ReflectionTestUtils.invokeMethod(comptabiliteManagerImpl,
+				"checkEcritureComptableReferenceFormatValid", ecriture)).doesNotThrowAnyException();
+	}
+
+	private static Stream<String> checkEcritureComptableReferenceFormatValid_withReferenceNonValid_throwsException() {
+		return Stream.of("XXXXXX-2020/00001", "BQ-20/00001", "BQ-2020/0001");
+	}
+
+	@ParameterizedTest
+	@MethodSource
+	public void checkEcritureComptableReferenceFormatValid_withReferenceNonValid_throwsException(String reference) {
+		// GIVEN
+		JournalComptable journal = new JournalComptable("BQ", "Banque");
+		Date date = DateHelper.getDate(1, 7, 2020);
+		List<LigneEcritureComptable> listLigneEcriture = Arrays.asList(
+				new LigneEcritureComptable(new CompteComptable(), "lec1", BigDecimal.ONE, null),
+				new LigneEcritureComptable(new CompteComptable(), "lec2", null, null));
+		EcritureComptable ecriture = new EcritureComptable(journal, reference, date,
+				"Test intégration checkEcritureComptableReferenceFormatValid.", listLigneEcriture);
+
+		// WHEN
+		Exception exception = assertThrows(RuntimeException.class, () -> {
+			ReflectionTestUtils.invokeMethod(comptabiliteManagerImpl, "checkEcritureComptableReferenceFormatValid",
+					ecriture);
+		});
+
+		// THEN
+		assertThat(exception.getCause().getMessage()).isEqualTo("Le format de la référence est invalide.");
+	}
+
+	// ===== checkEcritureComptableReferenceAnneeValid(EcritureComptable) =====
+
+	@Test
+	public void checkEcritureComptableReferenceAnneeValid_withAnneeValid_doesNotThrowAnyException() {
+		// GIVEN
+		JournalComptable journal = new JournalComptable("BQ", "Banque");
+		Date date = DateHelper.getDate(1, 7, 2020);
+		List<LigneEcritureComptable> listLigneEcriture = Arrays.asList(
+				new LigneEcritureComptable(new CompteComptable(), "lec1", BigDecimal.ONE, null),
+				new LigneEcritureComptable(new CompteComptable(), "lec2", null, BigDecimal.ONE));
+		EcritureComptable ecriture = new EcritureComptable(journal, "BQ-2020/00001", date, "Libellé",
+				listLigneEcriture);
+
+		// WHEN
+
+		// THEN
+		assertThatCode(() -> ReflectionTestUtils.invokeMethod(comptabiliteManagerImpl,
+				"checkEcritureComptableReferenceAnneeValid", ecriture)).doesNotThrowAnyException();
+	}
+
+	@Test
+	public void checkEcritureComptableReferenceAnneeValid_withAnneeNonValid_throwsException() {
+		// GIVEN
+		JournalComptable journal = new JournalComptable("BQ", "Banque");
+		Date date = DateHelper.getDate(1, 7, 2016);
+		List<LigneEcritureComptable> listLigneEcriture = Arrays.asList(
+				new LigneEcritureComptable(new CompteComptable(), "lec1", BigDecimal.ONE, null),
+				new LigneEcritureComptable(new CompteComptable(), "lec2", null, null));
+		EcritureComptable ecriture = new EcritureComptable(journal, "BQ-2020/00001", date, "Libellé",
+				listLigneEcriture);
+
+		// WHEN
+		Exception exception = assertThrows(RuntimeException.class, () -> {
+			ReflectionTestUtils.invokeMethod(comptabiliteManagerImpl, "checkEcritureComptableReferenceAnneeValid",
+					ecriture);
+		});
+
+		// THEN
+		assertThat(exception.getCause().getMessage())
+				.isEqualTo("L'année de la référence ne correspond pas à l'année de l'écriture.");
+	}
+
+	// ===== checkEcritureComptableReferenceCodeJournalValid(EcritureComptable)
+	// =====
+
+	@Test
+	public void checkEcritureComptableReferenceCodeJournalValid_withCodeJournalValid_doesNotThrowAnyException() {
+		// GIVEN
+		JournalComptable journal = new JournalComptable("BQ", "Banque");
+		Date date = DateHelper.getDate(1, 7, 2020);
+		List<LigneEcritureComptable> listLigneEcriture = Arrays.asList(
+				new LigneEcritureComptable(new CompteComptable(), "lec1", BigDecimal.ONE, null),
+				new LigneEcritureComptable(new CompteComptable(), "lec2", null, BigDecimal.ONE));
+		EcritureComptable ecriture = new EcritureComptable(journal, "BQ-2020/00001", date, "Libellé",
+				listLigneEcriture);
+
+		// WHEN
+
+		// THEN
+		assertThatCode(() -> ReflectionTestUtils.invokeMethod(comptabiliteManagerImpl,
+				"checkEcritureComptableReferenceCodeJournalValid", ecriture)).doesNotThrowAnyException();
+	}
+
+	@Test
+	public void checkEcritureComptableReferenceCodeJournalValid_withCodeJournalNonValid_throwsException() {
+		// GIVEN
+		JournalComptable journal = new JournalComptable("OC", "Banque");
+		Date date = DateHelper.getDate(1, 7, 2020);
+		List<LigneEcritureComptable> listLigneEcriture = Arrays.asList(
+				new LigneEcritureComptable(new CompteComptable(), "lec1", BigDecimal.ONE, null),
+				new LigneEcritureComptable(new CompteComptable(), "lec2", null, null));
+		EcritureComptable ecriture = new EcritureComptable(journal, "BQ-2020/00001", date, "Libellé",
+				listLigneEcriture);
+
+		// WHEN
+		Exception exception = assertThrows(RuntimeException.class, () -> {
+			ReflectionTestUtils.invokeMethod(comptabiliteManagerImpl, "checkEcritureComptableReferenceCodeJournalValid",
+					ecriture);
+		});
+
+		// THEN
+		assertThat(exception.getCause().getMessage())
+				.isEqualTo("Le code journal de la référence ne correspond pas au code journal de l'écriture.");
 	}
 
 }
