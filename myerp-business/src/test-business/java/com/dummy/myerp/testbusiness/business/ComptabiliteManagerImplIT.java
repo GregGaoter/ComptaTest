@@ -28,10 +28,32 @@ import com.dummy.myerp.model.bean.comptabilite.EcritureComptable;
 import com.dummy.myerp.model.bean.comptabilite.JournalComptable;
 import com.dummy.myerp.model.bean.comptabilite.LigneEcritureComptable;
 import com.dummy.myerp.model.bean.comptabilite.SequenceEcritureComptable;
+import com.dummy.myerp.technical.exception.FunctionalException;
 
 public class ComptabiliteManagerImplIT extends AbstractBusinessIt {
 
 	private ComptabiliteManagerImpl comptabiliteManagerImpl;
+
+	private Comparator<EcritureComptable> comparatorEcritureComptable = new Comparator<EcritureComptable>() {
+		@Override
+		public int compare(EcritureComptable ec1, EcritureComptable ec2) {
+			int compareId = ec1.getId().compareTo(ec2.getId());
+			int compareJournal = ec1.getJournal().getCode().equals(ec2.getJournal().getCode()) ? 0 : 1;
+			int compareReference = ec1.getReference().equals(ec2.getReference()) ? 0 : 1;
+			int compareDate = ec1.getDate().compareTo(ec2.getDate());
+			int compareLibelle = ec1.getLibelle().equals(ec2.getLibelle()) ? 0 : 1;
+			boolean zeroQ = compareId == 0 && compareJournal == 0 && compareReference == 0 && compareDate == 0
+					&& compareLibelle == 0;
+			int somme = compareId + compareJournal + compareReference + compareDate + compareLibelle;
+			if (zeroQ) {
+				return 0;
+			} else if (somme > 0) {
+				return 1;
+			} else {
+				return -1;
+			}
+		}
+	};
 
 	@BeforeEach
 	public void init() {
@@ -108,26 +130,8 @@ public class ComptabiliteManagerImplIT extends AbstractBusinessIt {
 		List<EcritureComptable> listEcritureComptableActual = comptabiliteManagerImpl.getListEcritureComptable();
 
 		// THEN
-		assertThat(listEcritureComptableActual).usingElementComparator(new Comparator<EcritureComptable>() {
-			@Override
-			public int compare(EcritureComptable ec1, EcritureComptable ec2) {
-				int compareId = ec1.getId().compareTo(ec2.getId());
-				int compareJournal = ec1.getJournal().getCode().equals(ec2.getJournal().getCode()) ? 0 : 1;
-				int compareReference = ec1.getReference().equals(ec2.getReference()) ? 0 : 1;
-				int compareDate = ec1.getDate().compareTo(ec2.getDate());
-				int compareLibelle = ec1.getLibelle().equals(ec2.getLibelle()) ? 0 : 1;
-				boolean zeroQ = compareId == 0 && compareJournal == 0 && compareReference == 0 && compareDate == 0
-						&& compareLibelle == 0;
-				int somme = compareId + compareJournal + compareReference + compareDate + compareLibelle;
-				if (zeroQ) {
-					return 0;
-				} else if (somme > 0) {
-					return 1;
-				} else {
-					return -1;
-				}
-			}
-		}).containsAll(listEcritureComptableExpected);
+		assertThat(listEcritureComptableActual).usingElementComparator(comparatorEcritureComptable)
+				.containsAll(listEcritureComptableExpected);
 		dockerEnvironment.stop();
 	}
 
@@ -533,6 +537,272 @@ public class ComptabiliteManagerImplIT extends AbstractBusinessIt {
 		// THEN
 		assertThat(exception.getCause().getMessage())
 				.isEqualTo("Le code journal de la référence ne correspond pas au code journal de l'écriture.");
+	}
+
+	// ===== checkEcritureComptableReferenceNumeroSequenceValid(EcritureComptable)
+	// =====
+
+	@Test
+	public void checkEcritureComptableReferenceNumeroSequenceValid_withNumeroValid_doesNotThrowAnyException() {
+		dockerEnvironment.start();
+		// GIVEN
+		JournalComptable journal = new JournalComptable("BQ", "Banque");
+		Date date = DateHelper.getDate(2, 7, 2016);
+		List<LigneEcritureComptable> listLigneEcriture = Arrays.asList(
+				new LigneEcritureComptable(new CompteComptable(), "lec1", BigDecimal.ONE, null),
+				new LigneEcritureComptable(new CompteComptable(), "lec2", null, BigDecimal.ONE));
+		EcritureComptable ecriture = new EcritureComptable(journal, "BQ-2016/00017", date, "Libellé",
+				listLigneEcriture);
+
+		// WHEN
+
+		// THEN
+		assertThatCode(() -> ReflectionTestUtils.invokeMethod(comptabiliteManagerImpl,
+				"checkEcritureComptableReferenceNumeroSequenceValid", ecriture)).doesNotThrowAnyException();
+		dockerEnvironment.stop();
+	}
+
+	@Test
+	public void checkEcritureComptableReferenceNumeroSequenceValid_withNumeroNonValid_throwsException() {
+		dockerEnvironment.start();
+		// GIVEN
+		JournalComptable journal = new JournalComptable("BQ", "Banque");
+		Date date = DateHelper.getDate(2, 7, 2016);
+		List<LigneEcritureComptable> listLigneEcriture = Arrays.asList(
+				new LigneEcritureComptable(new CompteComptable(), "lec1", BigDecimal.ONE, null),
+				new LigneEcritureComptable(new CompteComptable(), "lec2", null, BigDecimal.ONE));
+		EcritureComptable ecriture = new EcritureComptable(journal, "BQ-2016/00100", date, "Libellé",
+				listLigneEcriture);
+
+		// WHEN
+		Exception exception = assertThrows(RuntimeException.class, () -> {
+			ReflectionTestUtils.invokeMethod(comptabiliteManagerImpl,
+					"checkEcritureComptableReferenceNumeroSequenceValid", ecriture);
+		});
+
+		// THEN
+		assertThat(exception.getCause().getMessage())
+				.isEqualTo("Le numéro de séquence de la référence n'est pas valide.");
+		dockerEnvironment.stop();
+	}
+
+	@Test
+	public void checkEcritureComptableReferenceNumeroSequenceValid_withSequenceNull_throwsException() {
+		dockerEnvironment.start();
+		// GIVEN
+		JournalComptable journal = new JournalComptable("OC", "Banque");
+		Date date = DateHelper.getDate(2, 7, 2020);
+		List<LigneEcritureComptable> listLigneEcriture = Arrays.asList(
+				new LigneEcritureComptable(new CompteComptable(), "lec1", BigDecimal.ONE, null),
+				new LigneEcritureComptable(new CompteComptable(), "lec2", null, BigDecimal.ONE));
+		EcritureComptable ecriture = new EcritureComptable(journal, "OC-2020/00001", date, "Libellé",
+				listLigneEcriture);
+
+		// WHEN
+		Exception exception = assertThrows(RuntimeException.class, () -> {
+			ReflectionTestUtils.invokeMethod(comptabiliteManagerImpl,
+					"checkEcritureComptableReferenceNumeroSequenceValid", ecriture);
+		});
+
+		// THEN
+		assertThat(exception.getCause().getMessage())
+				.isEqualTo("Le numéro de séquence de la référence n'est pas valide.");
+		dockerEnvironment.stop();
+	}
+
+	// = checkEcritureComptableContext(EcritureComptable) =
+
+	@Test
+	public void checkEcritureComptableContext_withReferenceUnique_doesNotThrowAnyException() {
+		dockerEnvironment.start();
+		// GIVEN
+		JournalComptable journal = new JournalComptable("BQ", "Banque");
+		Date date = DateHelper.getDate(2, 7, 2020);
+		List<LigneEcritureComptable> listLigneEcriture = Arrays.asList(
+				new LigneEcritureComptable(new CompteComptable(), "lec1", BigDecimal.ONE, null),
+				new LigneEcritureComptable(new CompteComptable(), "lec2", null, BigDecimal.ONE));
+		EcritureComptable ecriture = new EcritureComptable(journal, "BQ-2020/00001", date, "Libellé",
+				listLigneEcriture);
+
+		// WHEN
+
+		// THEN
+		assertThatCode(() -> ReflectionTestUtils.invokeMethod(comptabiliteManagerImpl, "checkEcritureComptableContext",
+				ecriture)).doesNotThrowAnyException();
+		dockerEnvironment.stop();
+	}
+
+	private static Stream<Integer> checkEcritureComptableContext_withReferenceNonUnique_throwsException() {
+		return Stream.of(null, -10);
+	}
+
+	@ParameterizedTest
+	@MethodSource
+	public void checkEcritureComptableContext_withReferenceNonUnique_throwsException(Integer id) {
+		dockerEnvironment.start();
+		// GIVEN
+		JournalComptable journal = new JournalComptable("BQ", "Banque");
+		Date date = DateHelper.getDate(2, 7, 2016);
+		List<LigneEcritureComptable> listLigneEcriture = Arrays.asList(
+				new LigneEcritureComptable(new CompteComptable(), "lec1", BigDecimal.ONE, null),
+				new LigneEcritureComptable(new CompteComptable(), "lec2", null, BigDecimal.ONE));
+		EcritureComptable ecriture = new EcritureComptable(journal, "BQ-2016/00003", date, "Libellé",
+				listLigneEcriture);
+		ecriture.setId(id);
+
+		// WHEN
+		Exception exception = assertThrows(RuntimeException.class, () -> {
+			ReflectionTestUtils.invokeMethod(comptabiliteManagerImpl, "checkEcritureComptableContext", ecriture);
+		});
+
+		// THEN
+		assertThat(exception.getCause().getMessage())
+				.isEqualTo("Une autre écriture comptable existe déjà avec la même référence.");
+		dockerEnvironment.stop();
+	}
+
+	// = insertEcritureComptable(EcritureComptable) =
+
+	// Bug détecté avec ce test : manque une vigule entre debit et credit dans la
+	// requête SQL
+	@Test
+	public void insertEcritureComptable_insertEcritureComptable() throws FunctionalException {
+		dockerEnvironment.start();
+		// GIVEN
+		JournalComptable journal = new JournalComptable("BQ", "Banque");
+		Date date = DateHelper.getDate(2, 7, 2016);
+		List<LigneEcritureComptable> listLigneEcriture = Arrays.asList(
+				new LigneEcritureComptable(new CompteComptable(512, "Banque"), "lec1", BigDecimal.ONE, null),
+				new LigneEcritureComptable(new CompteComptable(512, "Banque"), "lec2", null, BigDecimal.ONE));
+		EcritureComptable ecriture = new EcritureComptable(journal, "BQ-2016/00006", date, "Libellé",
+				listLigneEcriture);
+		List<EcritureComptable> listEcritureComptableExpected = Arrays.asList(
+				new EcritureComptable(-1, new JournalComptable("AC"), "AC-2016/00001", DateHelper.getDate(31, 12, 2016),
+						"Cartouches d’imprimante"),
+				new EcritureComptable(-2, new JournalComptable("VE"), "VE-2016/00002", DateHelper.getDate(30, 12, 2016),
+						"TMA Appli Xxx"),
+				new EcritureComptable(-3, new JournalComptable("BQ"), "BQ-2016/00003", DateHelper.getDate(29, 12, 2016),
+						"Paiement Facture F110001"),
+				new EcritureComptable(-4, new JournalComptable("VE"), "VE-2016/00004", DateHelper.getDate(28, 12, 2016),
+						"TMA Appli Yyy"),
+				new EcritureComptable(-5, new JournalComptable("BQ"), "BQ-2016/00005", DateHelper.getDate(27, 12, 2016),
+						"Paiement Facture C110002"),
+				ecriture);
+
+		// WHEN
+		comptabiliteManagerImpl.insertEcritureComptable(ecriture);
+		List<EcritureComptable> listEcritureComptableActual = comptabiliteManagerImpl.getListEcritureComptable();
+
+		// THEN
+		assertThat(listEcritureComptableActual).usingElementComparator(comparatorEcritureComptable)
+				.containsAll(listEcritureComptableExpected);
+		dockerEnvironment.stop();
+	}
+
+	// = updateEcritureComptable(EcritureComptable) =
+
+	@Test
+	public void updateEcritureComptable_updateEcritureComptable() throws FunctionalException {
+		dockerEnvironment.start();
+		// GIVEN
+		JournalComptable journal = new JournalComptable("BQ", "Banque");
+		Date date = DateHelper.getDate(29, 12, 2016);
+		List<LigneEcritureComptable> listLigneEcriture = Arrays.asList(
+				new LigneEcritureComptable(new CompteComptable(512, "Banque"), "lec1", BigDecimal.ONE, null),
+				new LigneEcritureComptable(new CompteComptable(512, "Banque"), "lec2", null, BigDecimal.ONE));
+		EcritureComptable ecriture = new EcritureComptable(journal, "BQ-2016/00003", date, "Libellé",
+				listLigneEcriture);
+		ecriture.setId(-3);
+		List<EcritureComptable> listEcritureComptableExpected = Arrays.asList(
+				new EcritureComptable(-1, new JournalComptable("AC"), "AC-2016/00001", DateHelper.getDate(31, 12, 2016),
+						"Cartouches d’imprimante"),
+				new EcritureComptable(-2, new JournalComptable("VE"), "VE-2016/00002", DateHelper.getDate(30, 12, 2016),
+						"TMA Appli Xxx"),
+				new EcritureComptable(-3, new JournalComptable("BQ"), "BQ-2016/00003", DateHelper.getDate(29, 12, 2016),
+						"Libellé"),
+				new EcritureComptable(-4, new JournalComptable("VE"), "VE-2016/00004", DateHelper.getDate(28, 12, 2016),
+						"TMA Appli Yyy"),
+				new EcritureComptable(-5, new JournalComptable("BQ"), "BQ-2016/00005", DateHelper.getDate(27, 12, 2016),
+						"Paiement Facture C110002"));
+
+		// WHEN
+		comptabiliteManagerImpl.updateEcritureComptable(ecriture);
+		List<EcritureComptable> listEcritureComptableActual = comptabiliteManagerImpl.getListEcritureComptable();
+
+		// THEN
+		assertThat(listEcritureComptableActual).usingElementComparator(comparatorEcritureComptable)
+				.containsAll(listEcritureComptableExpected);
+		dockerEnvironment.stop();
+	}
+
+	// = deleteEcritureComptable(Integer) =
+
+	@Test
+	public void deleteEcritureComptable_deleteEcritureComptable() {
+		dockerEnvironment.start();
+		// GIVEN
+		List<EcritureComptable> listEcritureComptableExpected = Arrays.asList(
+				new EcritureComptable(-1, new JournalComptable("AC"), "AC-2016/00001", DateHelper.getDate(31, 12, 2016),
+						"Cartouches d’imprimante"),
+				new EcritureComptable(-2, new JournalComptable("VE"), "VE-2016/00002", DateHelper.getDate(30, 12, 2016),
+						"TMA Appli Xxx"),
+				new EcritureComptable(-4, new JournalComptable("VE"), "VE-2016/00004", DateHelper.getDate(28, 12, 2016),
+						"TMA Appli Yyy"),
+				new EcritureComptable(-5, new JournalComptable("BQ"), "BQ-2016/00005", DateHelper.getDate(27, 12, 2016),
+						"Paiement Facture C110002"));
+
+		// WHEN
+		comptabiliteManagerImpl.deleteEcritureComptable(-3);
+		List<EcritureComptable> listEcritureComptableActual = comptabiliteManagerImpl.getListEcritureComptable();
+
+		// THEN
+		assertThat(listEcritureComptableActual).usingElementComparator(comparatorEcritureComptable)
+				.containsAll(listEcritureComptableExpected);
+		dockerEnvironment.stop();
+	}
+
+	// = insertSequenceEcritureComptable(SequenceEcritureComptable) =
+
+	@Test
+	public void insertSequenceEcritureComptable_insertSequenceEcritureComptable() {
+		dockerEnvironment.start();
+		// GIVEN
+		SequenceEcritureComptable sequence = new SequenceEcritureComptable("BQ", 2020, 1);
+		List<SequenceEcritureComptable> listSequenceEcritureComptableExpected = Arrays.asList(
+				new SequenceEcritureComptable("AC", 2016, 40), new SequenceEcritureComptable("VE", 2016, 41),
+				new SequenceEcritureComptable("BQ", 2016, 51), new SequenceEcritureComptable("OD", 2016, 88), sequence);
+
+		// WHEN
+		comptabiliteManagerImpl.insertSequenceEcritureComptable(sequence);
+		List<SequenceEcritureComptable> listSequenceEcritureComptableActual = comptabiliteManagerImpl
+				.getListSequenceEcritureComptable();
+
+		// THEN
+		assertThat(listSequenceEcritureComptableActual).usingFieldByFieldElementComparator()
+				.containsAll(listSequenceEcritureComptableExpected);
+		dockerEnvironment.stop();
+	}
+
+	// = updateSequenceEcritureComptable(SequenceEcritureComptable) =
+
+	@Test
+	public void updateSequenceEcritureComptable_updateSequenceEcritureComptable() {
+		dockerEnvironment.start();
+		// GIVEN
+		SequenceEcritureComptable sequence = new SequenceEcritureComptable("BQ", 2016, 52);
+		List<SequenceEcritureComptable> listSequenceEcritureComptableExpected = Arrays.asList(
+				new SequenceEcritureComptable("AC", 2016, 40), new SequenceEcritureComptable("VE", 2016, 41),
+				new SequenceEcritureComptable("BQ", 2016, 52), new SequenceEcritureComptable("OD", 2016, 88));
+
+		// WHEN
+		comptabiliteManagerImpl.updateSequenceEcritureComptable(sequence);
+		List<SequenceEcritureComptable> listSequenceEcritureComptableActual = comptabiliteManagerImpl
+				.getListSequenceEcritureComptable();
+
+		// THEN
+		assertThat(listSequenceEcritureComptableActual).usingFieldByFieldElementComparator()
+				.containsAll(listSequenceEcritureComptableExpected);
+		dockerEnvironment.stop();
 	}
 
 }
