@@ -47,6 +47,12 @@
 		<property name="comptabiliteDao" ref="ComptabiliteDaoImpl" />
 	</bean>
 
+	<!-- ComptabiliteDaoImpl -->
+	<bean id="ComptabiliteDaoImpl"
+		class="com.dummy.myerp.consumer.dao.impl.db.dao.ComptabiliteDaoImpl"
+		factory-method="getInstance">
+	</bean>
+
 
 	<!-- ==================== Databases ==================== -->
 	<bean id="dataSourceMYERP"
