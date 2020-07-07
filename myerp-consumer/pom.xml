@@ -156,6 +156,12 @@
 			<artifactId>postgresql</artifactId>
 			<scope>test</scope>
 		</dependency>
+
+		<!-- ===== javatuples ===== -->
+		<dependency>
+			<groupId>org.javatuples</groupId>
+			<artifactId>javatuples</artifactId>
+		</dependency>
 	</dependencies>
 
 

@@ -405,6 +405,13 @@
 				<artifactId>junit-jupiter</artifactId>
 				<version>${testcontainers.version}</version>
 			</dependency>
+
+			<!-- ===== javatuples ===== -->
+			<dependency>
+				<groupId>org.javatuples</groupId>
+				<artifactId>javatuples</artifactId>
+				<version>1.2</version>
+			</dependency>
 		</dependencies>
 	</dependencyManagement>
 
