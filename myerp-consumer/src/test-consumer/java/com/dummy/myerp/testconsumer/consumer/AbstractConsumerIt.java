@@ -3,6 +3,7 @@ package com.dummy.myerp.testconsumer.consumer;
 import java.io.File;
 import java.math.BigDecimal;
 import java.nio.file.Path;
+import java.util.Comparator;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -35,6 +36,27 @@ public abstract class AbstractConsumerIt {
 	protected static Map<Pair<Integer, Integer>, LigneEcritureComptable> mapLigneEcritureExpected = new HashMap<>(13);
 	protected static Map<Pair<String, Integer>, SequenceEcritureComptable> mapSequenceEcritureExpected = new HashMap<>(
 			4);
+
+	protected Comparator<EcritureComptable> comparatorEcritureComptable = new Comparator<EcritureComptable>() {
+		@Override
+		public int compare(EcritureComptable ec1, EcritureComptable ec2) {
+			int compareId = ec1.getId().compareTo(ec2.getId());
+			int compareJournal = ec1.getJournal().getCode().equals(ec2.getJournal().getCode()) ? 0 : 1;
+			int compareReference = ec1.getReference().equals(ec2.getReference()) ? 0 : 1;
+			int compareDate = ec1.getDate().compareTo(ec2.getDate());
+			int compareLibelle = ec1.getLibelle().equals(ec2.getLibelle()) ? 0 : 1;
+			boolean zeroQ = compareId == 0 && compareJournal == 0 && compareReference == 0 && compareDate == 0
+					&& compareLibelle == 0;
+			int somme = compareId + compareJournal + compareReference + compareDate + compareLibelle;
+			if (zeroQ) {
+				return 0;
+			} else if (somme > 0) {
+				return 1;
+			} else {
+				return -1;
+			}
+		}
+	};
 
 	protected static void initDbExpected() {
 		initMapCompteExpected();
