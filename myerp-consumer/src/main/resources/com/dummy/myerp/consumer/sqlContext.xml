@@ -17,6 +17,11 @@
 				SELECT * FROM myerp.compte_comptable
 			</value>
 		</property>
+		<property name="SQLgetListLigneEcritureComptable">
+			<value>
+				SELECT * FROM myerp.ligne_ecriture_comptable
+			</value>
+		</property>
 		<property name="SQLgetListJournalComptable">
 			<value>
 				SELECT * FROM myerp.journal_comptable

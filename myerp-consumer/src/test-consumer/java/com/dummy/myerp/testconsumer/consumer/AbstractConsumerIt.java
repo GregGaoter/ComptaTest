@@ -23,6 +23,12 @@ import com.dummy.myerp.model.bean.comptabilite.SequenceEcritureComptable;
 @Testcontainers
 public abstract class AbstractConsumerIt {
 
+	private final static int NB_COMPTES = 7;
+	private final static int NB_JOURNAUX = 4;
+	private final static int NB_ECRITURES = 5;
+	private final static int NB_LIGNES_ECRITURES = 13;
+	private final static int NB_SEQUENCES_ECRITURES = 4;
+
 	private final Path projectPath = Path.of("").toAbsolutePath();
 
 	// @Container
@@ -30,21 +36,22 @@ public abstract class AbstractConsumerIt {
 			new File(projectPath.getParent().toFile(), "docker/dev/docker-compose.yml"))
 					.withExposedService("myerp.db_1", 5432);
 
-	protected static Map<Integer, CompteComptable> mapCompteExpected = new HashMap<>(7);
-	protected static Map<String, JournalComptable> mapJournalExpected = new HashMap<>(4);
-	protected static Map<Integer, EcritureComptable> mapEcritureExpected = new HashMap<>(5);
-	protected static Map<Pair<Integer, Integer>, LigneEcritureComptable> mapLigneEcritureExpected = new HashMap<>(13);
-	protected static Map<Pair<String, Integer>, SequenceEcritureComptable> mapSequenceEcritureExpected = new HashMap<>(
-			4);
+	protected final static Map<Integer, CompteComptable> mapCompteExpected = new HashMap<>(NB_COMPTES);
+	protected final static Map<String, JournalComptable> mapJournalExpected = new HashMap<>(NB_JOURNAUX);
+	protected final static Map<Integer, EcritureComptable> mapEcritureExpected = new HashMap<>(NB_ECRITURES);
+	protected final static Map<Pair<Integer, Integer>, LigneEcritureComptable> mapLigneEcritureExpected = new HashMap<>(
+			NB_LIGNES_ECRITURES);
+	protected final static Map<Pair<String, Integer>, SequenceEcritureComptable> mapSequenceEcritureExpected = new HashMap<>(
+			NB_SEQUENCES_ECRITURES);
 
-	protected Comparator<EcritureComptable> comparatorEcritureComptable = new Comparator<EcritureComptable>() {
+	protected Comparator<EcritureComptable> comparatorEcriture = new Comparator<EcritureComptable>() {
 		@Override
-		public int compare(EcritureComptable ec1, EcritureComptable ec2) {
-			int compareId = ec1.getId().compareTo(ec2.getId());
-			int compareJournal = ec1.getJournal().getCode().equals(ec2.getJournal().getCode()) ? 0 : 1;
-			int compareReference = ec1.getReference().equals(ec2.getReference()) ? 0 : 1;
-			int compareDate = ec1.getDate().compareTo(ec2.getDate());
-			int compareLibelle = ec1.getLibelle().equals(ec2.getLibelle()) ? 0 : 1;
+		public int compare(EcritureComptable e1, EcritureComptable e2) {
+			int compareId = comparer(e1.getId(), e2.getId());
+			int compareJournal = comparer(e1.getJournal().getCode(), e2.getJournal().getCode());
+			int compareReference = comparer(e1.getReference(), e2.getReference());
+			int compareDate = comparer(e1.getDate(), e2.getDate());
+			int compareLibelle = comparer(e1.getLibelle(), e2.getLibelle());
 			boolean zeroQ = compareId == 0 && compareJournal == 0 && compareReference == 0 && compareDate == 0
 					&& compareLibelle == 0;
 			int somme = compareId + compareJournal + compareReference + compareDate + compareLibelle;
@@ -57,6 +64,29 @@ public abstract class AbstractConsumerIt {
 			}
 		}
 	};
+
+	protected Comparator<LigneEcritureComptable> comparatorLigneEcriture = new Comparator<LigneEcritureComptable>() {
+		@Override
+		public int compare(LigneEcritureComptable le1, LigneEcritureComptable le2) {
+			int compareCompte = comparer(le1.getCompteComptable().getNumero(), le1.getCompteComptable().getNumero());
+			int compareLibelle = comparer(le1.getLibelle(), le2.getLibelle());
+			int compareDebit = comparer(le1.getDebit(), le2.getDebit());
+			int compareCredit = comparer(le1.getCredit(), le2.getCredit());
+			boolean zeroQ = compareCompte == 0 && compareLibelle == 0 && compareDebit == 0 && compareCredit == 0;
+			int somme = compareCompte + compareLibelle + compareDebit + compareCredit;
+			if (zeroQ) {
+				return 0;
+			} else if (somme > 0) {
+				return 1;
+			} else {
+				return -1;
+			}
+		}
+	};
+
+	private <T extends Comparable<T>> int comparer(T t1, T t2) {
+		return t1 == null && t2 == null ? 0 : (t1 != null && t2 != null ? t1.compareTo(t2) : 1);
+	}
 
 	protected static void initDbExpected() {
 		initMapCompteExpected();

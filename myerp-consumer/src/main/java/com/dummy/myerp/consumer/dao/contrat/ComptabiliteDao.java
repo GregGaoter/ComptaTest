@@ -8,6 +8,7 @@ import com.dummy.myerp.consumer.dao.impl.db.rowmapper.comptabilite.SequenceEcrit
 import com.dummy.myerp.model.bean.comptabilite.CompteComptable;
 import com.dummy.myerp.model.bean.comptabilite.EcritureComptable;
 import com.dummy.myerp.model.bean.comptabilite.JournalComptable;
+import com.dummy.myerp.model.bean.comptabilite.LigneEcritureComptable;
 import com.dummy.myerp.model.bean.comptabilite.SequenceEcritureComptable;
 import com.dummy.myerp.technical.exception.NotFoundException;
 
@@ -110,4 +111,12 @@ public interface ComptabiliteDao {
 	 *                                   à jour
 	 */
 	void updateSequenceEcritureComptable(SequenceEcritureComptable pSequenceEcritureComptable);
+
+	/**
+	 * {@inheritDoc}
+	 * 
+	 * @see JdbcTemplate
+	 * @see LigneEcritureComptableRM
+	 */
+	List<LigneEcritureComptable> getListLigneEcritureComptable();
 }

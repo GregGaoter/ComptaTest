@@ -92,6 +92,12 @@
 			<artifactId>javax.el</artifactId>
 		</dependency>
 
+		<!-- ===== Apache Commons ===== -->
+		<dependency>
+			<groupId>org.apache.commons</groupId>
+			<artifactId>commons-lang3</artifactId>
+		</dependency>
+
 
 		<!-- ===== Tests Dependencies ===== -->
 		<!-- JUnit 5 -->

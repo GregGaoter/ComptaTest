@@ -2,7 +2,9 @@ package com.dummy.myerp.testconsumer.consumer;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
+import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Collectors;
 
 import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.AfterAll;
@@ -15,6 +17,7 @@ import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
 import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate;
 import org.springframework.test.util.ReflectionTestUtils;
 
+import com.dummy.myerp.consumer.DateHelper;
 import com.dummy.myerp.consumer.dao.impl.db.dao.ComptabiliteDaoImpl;
 import com.dummy.myerp.consumer.dao.impl.db.rowmapper.comptabilite.CompteComptableRM;
 import com.dummy.myerp.consumer.dao.impl.db.rowmapper.comptabilite.EcritureComptableRM;
@@ -25,6 +28,7 @@ import com.dummy.myerp.consumer.db.DataSourcesEnum;
 import com.dummy.myerp.model.bean.comptabilite.CompteComptable;
 import com.dummy.myerp.model.bean.comptabilite.EcritureComptable;
 import com.dummy.myerp.model.bean.comptabilite.JournalComptable;
+import com.dummy.myerp.model.bean.comptabilite.LigneEcritureComptable;
 import com.dummy.myerp.model.bean.comptabilite.SequenceEcritureComptable;
 import com.dummy.myerp.technical.exception.NotFoundException;
 
@@ -283,7 +287,7 @@ public class ComptabiliteDaoImplIT extends AbstractConsumerIt {
 			List<EcritureComptable> listeEcritureActual = comptabiliteDaoImpl.getListEcritureComptable();
 
 			// THEN
-			assertThat(listeEcritureActual).usingElementComparator(comparatorEcritureComptable)
+			assertThat(listeEcritureActual).usingElementComparator(comparatorEcriture)
 					.containsAll(mapEcritureExpected.values());
 		} finally {
 			dockerEnvironment.stop();
@@ -303,7 +307,126 @@ public class ComptabiliteDaoImplIT extends AbstractConsumerIt {
 			EcritureComptable ecritureActual = comptabiliteDaoImpl.getEcritureComptable(-3);
 
 			// THEN
-			assertThat(ecritureActual).usingComparator(comparatorEcritureComptable).isEqualTo(ecritureExpected);
+			assertThat(ecritureActual).usingComparator(comparatorEcriture).isEqualTo(ecritureExpected);
+		} finally {
+			dockerEnvironment.stop();
+		}
+	}
+
+	// === getEcritureComptableByRef(String) ===
+
+	@Test
+	public void getEcritureComptableByRef_withRefValid_returnsEcritureComptable() throws NotFoundException {
+		dockerEnvironment.start();
+		try {
+			// GIVEN
+			EcritureComptable ecritureExpected = mapEcritureExpected.get(-3);
+
+			// WHEN
+			EcritureComptable ecritureActual = comptabiliteDaoImpl.getEcritureComptableByRef("BQ-2016/00003");
+
+			// THEN
+			assertThat(ecritureActual).usingComparator(comparatorEcriture).isEqualTo(ecritureExpected);
+		} finally {
+			dockerEnvironment.stop();
+		}
+	}
+
+	// === loadListLigneEcriture(EcritureComptable) ===
+
+	@Test
+	public void loadListLigneEcriture_withEcritureValid_loadsListLigneEcriture() {
+		dockerEnvironment.start();
+		try {
+			// GIVEN
+			EcritureComptable ecriture = mapEcritureExpected.get(-3);
+			List<LigneEcritureComptable> listeLigneEcritureExpected = getListeLigneEcriture(-3);
+
+			// WHEN
+			comptabiliteDaoImpl.loadListLigneEcriture(ecriture);
+
+			// THEN
+			assertThat(ecriture.getListLigneEcriture()).usingElementComparator(comparatorLigneEcriture)
+					.containsAll(listeLigneEcritureExpected);
+		} finally {
+			dockerEnvironment.stop();
+		}
+	}
+
+	/**
+	 * @return
+	 */
+	private List<LigneEcritureComptable> getListeLigneEcriture(Integer ecritureId) {
+		return mapLigneEcritureExpected.entrySet().stream()
+				.filter(entry -> entry.getKey().toList().get(0).equals(ecritureId)).map(entry -> entry.getValue())
+				.collect(Collectors.toList());
+	}
+
+	// === insertEcritureComptable(EcritureComptable) ===
+
+	@Test
+	public void insertEcritureComptable_withEcritureValid_insertsEcritureComptable() {
+		dockerEnvironment.start();
+		try {
+			// GIVEN
+			EcritureComptable ecriture = new EcritureComptable(mapJournalExpected.get("BQ"), null,
+					DateHelper.getDate(10, 7, 2020), "Libellé écriture");
+
+			// WHEN
+			comptabiliteDaoImpl.insertEcritureComptable(ecriture);
+			List<EcritureComptable> listeEcritureActual = comptabiliteDaoImpl.getListEcritureComptable();
+
+			// THEN
+			assertThat(listeEcritureActual).usingElementComparator(comparatorEcriture).contains(ecriture);
+		} finally {
+			dockerEnvironment.stop();
+		}
+	}
+
+	// === updateEcritureComptable(EcritureComptable) ===
+
+	@Test
+	public void updateEcritureComptable_updatesEcritureComptable() {
+		dockerEnvironment.start();
+		try {
+			// GIVEN
+			EcritureComptable ecritureExpected = mapEcritureExpected.get(-3);
+			EcritureComptable ecritureToUpdate = new EcritureComptable(ecritureExpected.getId(),
+					ecritureExpected.getJournal(), ecritureExpected.getReference(), ecritureExpected.getDate(),
+					"New libellé");
+
+			// WHEN
+			comptabiliteDaoImpl.updateEcritureComptable(ecritureToUpdate);
+			List<EcritureComptable> listeEcritureActual = comptabiliteDaoImpl.getListEcritureComptable();
+
+			// THEN
+			assertThat(listeEcritureActual).usingElementComparator(comparatorEcriture).contains(ecritureToUpdate);
+		} finally {
+			dockerEnvironment.stop();
+		}
+	}
+
+	// === deleteEcritureComptable(Integer) ===
+
+	@Test
+	public void deleteEcritureComptable_deletesEcritureComptable() {
+		dockerEnvironment.start();
+		try {
+			// GIVEN
+			List<EcritureComptable> listeEcritureExpected = new ArrayList<>(4);
+			mapEcritureExpected.values().stream().forEach(ecriture -> {
+				if (ecriture.getId().compareTo(-3) != 0) {
+					listeEcritureExpected.add(ecriture);
+				}
+			});
+
+			// WHEN
+			comptabiliteDaoImpl.deleteEcritureComptable(-3);
+			List<EcritureComptable> listeEcritureActual = comptabiliteDaoImpl.getListEcritureComptable();
+
+			// THEN
+			assertThat(listeEcritureActual).usingElementComparator(comparatorEcriture)
+					.containsAll(listeEcritureExpected);
 		} finally {
 			dockerEnvironment.stop();
 		}

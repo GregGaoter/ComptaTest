@@ -184,6 +184,35 @@ public class ComptabiliteDaoImpl extends AbstractDbConsumer implements Comptabil
 		return vList;
 	}
 
+	/** Requête SQL pour avoir la liste des lignes d'écriture comptables */
+	private static String SQLgetListLigneEcritureComptable;
+
+	/**
+	 * Initialise la requête SQL pour avoir la liste des lignes d'écriture
+	 * comptables
+	 */
+	public void setSQLgetListLigneEcritureComptable(String pSQLgetListLigneEcritureComptable) {
+		SQLgetListLigneEcritureComptable = pSQLgetListLigneEcritureComptable;
+	}
+
+	/**
+	 * {@inheritDoc}
+	 * 
+	 * @see JdbcTemplate
+	 * @see LigneEcritureComptableRM
+	 */
+	@Override
+	public List<LigneEcritureComptable> getListLigneEcritureComptable() {
+		LOGGER.trace(new EntreeMessage());
+		initJdbcTemplate(DataSourcesEnum.MYERP);
+		initLigneEcritureComptableRM();
+		LOGGER.debug(new DebugMessage("SQLgetListLigneEcritureComptable", SQLgetListLigneEcritureComptable));
+		List<LigneEcritureComptable> vList = jdbcTemplate.query(SQLgetListLigneEcritureComptable,
+				ligneEcritureComptableRM);
+		LOGGER.trace(new SortieMessage());
+		return vList;
+	}
+
 	/** Requête SQL pour avoir la liste des journaux comptables */
 	private static String SQLgetListJournalComptable;
 

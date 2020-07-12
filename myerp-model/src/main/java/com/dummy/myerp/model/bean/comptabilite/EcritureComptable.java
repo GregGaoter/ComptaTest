@@ -137,6 +137,29 @@ public class EcritureComptable {
 		setListLigneEcriture(listLigneEcriture);
 	}
 
+	/**
+	 * Constructeur.
+	 */
+	public EcritureComptable(Integer id, JournalComptable journal, String reference, Date date, String libelle,
+			List<LigneEcritureComptable> listLigneEcriture) {
+		this.id = id;
+		this.journal = journal;
+		this.reference = reference;
+		this.date = date;
+		this.libelle = libelle;
+		setListLigneEcriture(listLigneEcriture);
+	}
+
+	/**
+	 * Constructeur.
+	 */
+	public EcritureComptable(JournalComptable journal, String reference, Date date, String libelle) {
+		this.journal = journal;
+		this.reference = reference;
+		this.date = date;
+		this.libelle = libelle;
+	}
+
 	// ==================== Getters/Setters ====================
 	/**
 	 * Renvoie l'id de l'écriture comptable
