@@ -156,8 +156,8 @@
 				<groupId>org.apache.maven.plugins</groupId>
 				<artifactId>maven-failsafe-plugin</artifactId>
 			</plugin>
-			<!-- Ajout du répertoire src/test-business/java en tant que source de 
-				test du module -->
+			<!-- Ajout du répertoire src/test-model/java en tant que source de test 
+				du module -->
 			<plugin>
 				<groupId>org.codehaus.mojo</groupId>
 				<artifactId>build-helper-maven-plugin</artifactId>
@@ -170,7 +170,7 @@
 						</goals>
 						<configuration>
 							<sources>
-								<source>src/test-business/java</source>
+								<source>src/test-model/java</source>
 							</sources>
 						</configuration>
 					</execution>
