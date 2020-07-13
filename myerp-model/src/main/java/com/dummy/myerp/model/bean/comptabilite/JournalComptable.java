@@ -16,7 +16,7 @@ import com.dummy.myerp.technical.log.message.SortieMessage;
 /**
  * Bean représentant un Journal Comptable
  */
-public class JournalComptable {
+public class JournalComptable implements Bean<JournalComptable> {
 
 	/** Logger Log4j pour la classe */
 	private static final Logger LOGGER = LogManager.getLogger(JournalComptable.class);
@@ -136,5 +136,10 @@ public class JournalComptable {
 		LOGGER.debug(new DebugMessage("JournalComptable vRetour", vRetour));
 		LOGGER.trace(new SortieMessage());
 		return vRetour;
+	}
+
+	@Override
+	public JournalComptable deepCopy() {
+		return new JournalComptable(code, libelle);
 	}
 }

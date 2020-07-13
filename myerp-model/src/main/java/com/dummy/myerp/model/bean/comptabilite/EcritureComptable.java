@@ -1,5 +1,10 @@
 package com.dummy.myerp.model.bean.comptabilite;
 
+import static com.dummy.myerp.model.DateHelper.getAnnee;
+import static com.dummy.myerp.model.DateHelper.getJour;
+import static com.dummy.myerp.model.DateHelper.getMois;
+import static java.util.stream.Collectors.toList;
+
 import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.Date;
@@ -14,6 +19,7 @@ import org.apache.commons.lang3.StringUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
+import com.dummy.myerp.model.DateHelper;
 import com.dummy.myerp.technical.log.message.DebugMessage;
 import com.dummy.myerp.technical.log.message.EntreeMessage;
 import com.dummy.myerp.technical.log.message.SortieMessage;
@@ -21,7 +27,7 @@ import com.dummy.myerp.technical.log.message.SortieMessage;
 /**
  * Bean représentant une Écriture Comptable
  */
-public class EcritureComptable {
+public class EcritureComptable implements Bean<EcritureComptable> {
 
 	/** Logger Log4j pour la classe */
 	private static final Logger LOGGER = LogManager.getLogger(EcritureComptable.class);
@@ -345,6 +351,16 @@ public class EcritureComptable {
 				.append(this.getTotalCredit().toPlainString()).append(vSEP).append("listLigneEcriture=[\n")
 				.append(StringUtils.join(listLigneEcriture, "\n")).append("\n]").append("}");
 		return vStB.toString();
+	}
+
+	@Override
+	public EcritureComptable deepCopy() {
+		JournalComptable journal = this.journal != null ? this.journal.deepCopy() : null;
+		Date date = this.date != null ? DateHelper.getDate(getJour(this.date), getMois(this.date), getAnnee(this.date))
+				: null;
+		List<LigneEcritureComptable> listLigneEcriture = this.listLigneEcriture.stream()
+				.map(ligneEcriture -> ligneEcriture.deepCopy()).collect(toList());
+		return new EcritureComptable(id, journal, reference, date, libelle, listLigneEcriture);
 	}
 
 }

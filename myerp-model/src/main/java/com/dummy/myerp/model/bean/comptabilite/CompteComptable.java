@@ -16,7 +16,7 @@ import com.dummy.myerp.technical.log.message.SortieMessage;
 /**
  * Bean représentant un Compte Comptable
  */
-public class CompteComptable {
+public class CompteComptable implements Bean<CompteComptable> {
 
 	/** Logger Log4j pour la classe */
 	private static final Logger LOGGER = LogManager.getLogger(CompteComptable.class);
@@ -96,6 +96,11 @@ public class CompteComptable {
 	}
 
 	// ==================== Méthodes ====================
+	@Override
+	public CompteComptable deepCopy() {
+		return new CompteComptable(numero, libelle);
+	}
+
 	/**
 	 * {@inheritDoc}
 	 * 

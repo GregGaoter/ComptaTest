@@ -3,7 +3,7 @@ package com.dummy.myerp.model.bean.comptabilite;
 /**
  * Bean représentant une séquence pour les références d'écriture comptable
  */
-public class SequenceEcritureComptable {
+public class SequenceEcritureComptable implements Bean<SequenceEcritureComptable> {
 
 	// ==================== Attributs ====================
 	/** Le code du journal comptable */
@@ -116,5 +116,10 @@ public class SequenceEcritureComptable {
 		vStB.append("{").append("annee=").append(annee).append(vSEP).append("derniereValeur=").append(derniereValeur)
 				.append("}");
 		return vStB.toString();
+	}
+
+	@Override
+	public SequenceEcritureComptable deepCopy() {
+		return new SequenceEcritureComptable(journal_code, annee, derniereValeur);
 	}
 }

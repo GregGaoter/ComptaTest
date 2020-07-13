@@ -10,7 +10,7 @@ import com.dummy.myerp.model.validation.constraint.MontantComptable;
 /**
  * Bean représentant une Ligne d'écriture comptable.
  */
-public class LigneEcritureComptable {
+public class LigneEcritureComptable implements Bean<LigneEcritureComptable> {
 
 	// ==================== Attributs ====================
 	/** {@link CompteComptable} de la ligne d'écriture comptable */
@@ -139,5 +139,17 @@ public class LigneEcritureComptable {
 				.append(libelle).append('\'').append(vSEP).append("debit=").append(debit).append(vSEP).append("credit=")
 				.append(credit).append("}");
 		return vStB.toString();
+	}
+
+	@Override
+	public LigneEcritureComptable deepCopy() {
+		CompteComptable compte = this.compteComptable != null ? this.compteComptable.deepCopy() : null;
+		BigDecimal debit = this.debit != null
+				? BigDecimal.valueOf(this.debit.unscaledValue().longValue(), this.debit.scale())
+				: null;
+		BigDecimal credit = this.credit != null
+				? BigDecimal.valueOf(this.credit.unscaledValue().longValue(), this.credit.scale())
+				: null;
+		return new LigneEcritureComptable(compte, libelle, debit, credit);
 	}
 }
