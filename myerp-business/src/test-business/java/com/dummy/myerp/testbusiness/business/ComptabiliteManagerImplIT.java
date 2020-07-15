@@ -702,7 +702,7 @@ public class ComptabiliteManagerImplIT extends AbstractBusinessIt {
 	// = updateEcritureComptable(EcritureComptable) =
 
 	@Test
-	public void updateEcritureComptable_updateEcritureComptable() throws FunctionalException {
+	public void updateEcritureComptable_withEcritureValid_updateEcritureComptable() throws FunctionalException {
 		dockerEnvironment.start();
 		// GIVEN
 		JournalComptable journal = new JournalComptable("BQ", "Banque");
@@ -732,6 +732,30 @@ public class ComptabiliteManagerImplIT extends AbstractBusinessIt {
 		// THEN
 		assertThat(listEcritureComptableActual).usingElementComparator(comparatorEcritureComptable)
 				.containsAll(listEcritureComptableExpected);
+		dockerEnvironment.stop();
+	}
+
+	// = updateEcritureComptable(EcritureComptable) =
+
+	@Test
+	public void updateEcritureComptable_withEcritureNonValid_throwsFunctionalException() {
+		dockerEnvironment.start();
+		// GIVEN
+		JournalComptable journal = new JournalComptable("BQ", "Banque");
+		Date date = DateHelper.getDate(29, 12, 2016);
+		List<LigneEcritureComptable> listLigneEcriture = Arrays.asList(
+				new LigneEcritureComptable(new CompteComptable(512, "Banque"), "lec1", BigDecimal.ONE, null),
+				new LigneEcritureComptable(new CompteComptable(512, "Banque"), "lec2", null, BigDecimal.ONE));
+		EcritureComptable ecriture = new EcritureComptable(journal, "BQ-2016/0003", date, "Libellé", listLigneEcriture);
+		ecriture.setId(-3);
+
+		// WHEN
+		FunctionalException exception = assertThrows(FunctionalException.class, () -> {
+			comptabiliteManagerImpl.updateEcritureComptable(ecriture);
+		});
+
+		// THEN
+		assertThat(exception).isNotNull();
 		dockerEnvironment.stop();
 	}
 
