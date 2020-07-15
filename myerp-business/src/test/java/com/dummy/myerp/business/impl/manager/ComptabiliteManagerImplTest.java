@@ -970,7 +970,8 @@ public class ComptabiliteManagerImplTest {
 	@Test
 	public void updateEcritureComptable_updateEcritureComptable() throws FunctionalException {
 		// GIVEN
-		ComptabiliteManagerImpl manager = new ComptabiliteManagerImpl();
+		// ComptabiliteManagerImpl manager = new ComptabiliteManagerImpl();
+		ComptabiliteManagerImpl manager = Mockito.spy(new ComptabiliteManagerImpl());
 		EcritureComptable ecriture = new EcritureComptable();
 		TransactionManager transactionManager = Mockito.mock(TransactionManager.class);
 		TransactionStatus transactionStatus = Mockito.mock(TransactionStatus.class);
@@ -981,6 +982,7 @@ public class ComptabiliteManagerImplTest {
 		when(transactionManager.beginTransactionMyERP()).thenReturn(transactionStatus);
 		ReflectionTestUtils.setField(AbstractBusinessManager.class, "daoProxy", daoProxy);
 		when(daoProxy.getComptabiliteDao()).thenReturn(comptabiliteDao);
+		doNothing().when(manager).checkEcritureComptable(ecriture);
 
 		// WHEN
 		manager.updateEcritureComptable(ecriture);
