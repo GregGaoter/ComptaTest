@@ -89,40 +89,22 @@
 			</properties>
 		</profile>
 
-		<!-- Profile utilisé pour lancer uniquement les tests d'intégration de 
-			la couche Business -->
+		<!-- Profile utilisé pour lancer les tests unitaires et les tests d'intégration 
+			de la couche business -->
 		<profile>
-			<id>it-business</id>
-			<build>
-				<plugins>
-					<plugin>
-						<groupId>org.apache.maven.plugins</groupId>
-						<artifactId>maven-surefire-plugin</artifactId>
-						<configuration>
-							<skipTests>true</skipTests>
-						</configuration>
-					</plugin>
-				</plugins>
-			</build>
+			<id>test-it-business</id>
 		</profile>
 
 		<!-- Profile utilisé pour lancer les tests unitaires et les tests d'intégration 
-			de la couche Business -->
+			de la couche consumer -->
 		<profile>
-			<id>test-it</id>
-			<build>
-				<plugins>
-					<plugin>
-						<groupId>org.apache.maven.plugins</groupId>
-						<artifactId>maven-failsafe-plugin</artifactId>
-					</plugin>
-				</plugins>
-			</build>
+			<id>test-it-consumer</id>
 		</profile>
 
-		<!-- Profile utilisé pour lancer les tests d'intégration de la couche Consumer -->
+		<!-- Profile utilisé pour lancer les tests unitaires et les tests d'intégration 
+			de la couche model -->
 		<profile>
-			<id>test-consumer</id>
+			<id>test-it-model</id>
 		</profile>
 	</profiles>
 

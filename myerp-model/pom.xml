@@ -147,6 +147,112 @@
 
 
 	<!-- =============================================================== -->
+	<!-- Profiles -->
+	<!-- =============================================================== -->
+	<profiles>
+		<!-- Profile utilisé pour lancer les tests unitaires et les tests d'intégration 
+			de la couche business -->
+		<profile>
+			<id>test-it-business</id>
+			<build>
+				<plugins>
+					<plugin>
+						<groupId>org.apache.maven.plugins</groupId>
+						<artifactId>maven-surefire-plugin</artifactId>
+						<configuration>
+							<skipTests>true</skipTests>
+						</configuration>
+					</plugin>
+					<plugin>
+						<groupId>org.apache.maven.plugins</groupId>
+						<artifactId>maven-failsafe-plugin</artifactId>
+						<configuration>
+							<skipTests>true</skipTests>
+						</configuration>
+					</plugin>
+				</plugins>
+			</build>
+		</profile>
+		<!-- Profile utilisé pour lancer les tests unitaires et les tests d'intégration 
+			de la couche consumer -->
+		<profile>
+			<id>test-it-consumer</id>
+			<build>
+				<plugins>
+					<plugin>
+						<groupId>org.apache.maven.plugins</groupId>
+						<artifactId>maven-surefire-plugin</artifactId>
+						<configuration>
+							<skipTests>true</skipTests>
+						</configuration>
+					</plugin>
+					<plugin>
+						<groupId>org.apache.maven.plugins</groupId>
+						<artifactId>maven-failsafe-plugin</artifactId>
+						<configuration>
+							<skipTests>true</skipTests>
+						</configuration>
+					</plugin>
+				</plugins>
+			</build>
+		</profile>
+		<!-- Profile utilisé pour lancer les tests unitaires et les tests d'intégration 
+			de la couche model -->
+		<profile>
+			<id>test-it-model</id>
+			<build>
+				<plugins>
+					<!-- ===== Tests d'intégration ===== -->
+					<plugin>
+						<groupId>org.apache.maven.plugins</groupId>
+						<artifactId>maven-failsafe-plugin</artifactId>
+					</plugin>
+					<!-- Ajout du répertoire src/test-business/java en tant que source de 
+						test du module -->
+					<plugin>
+						<groupId>org.codehaus.mojo</groupId>
+						<artifactId>build-helper-maven-plugin</artifactId>
+						<executions>
+							<execution>
+								<id>add-test-source</id>
+								<phase>generate-test-sources</phase>
+								<goals>
+									<goal>add-test-source</goal>
+								</goals>
+								<configuration>
+									<sources>
+										<source>src/test-model/java</source>
+									</sources>
+								</configuration>
+							</execution>
+							<execution>
+								<id>add-test-resource</id>
+								<phase>generate-test-resources</phase>
+								<goals>
+									<goal>add-test-resource</goal>
+								</goals>
+								<configuration>
+									<resources>
+										<resource>
+											<directory>src/main/resources</directory>
+										</resource>
+									</resources>
+								</configuration>
+							</execution>
+						</executions>
+					</plugin>
+					<!-- ===== JaCoCo ===== -->
+					<plugin>
+						<groupId>org.jacoco</groupId>
+						<artifactId>jacoco-maven-plugin</artifactId>
+					</plugin>
+				</plugins>
+			</build>
+		</profile>
+	</profiles>
+
+
+	<!-- =============================================================== -->
 	<!-- Build -->
 	<!-- =============================================================== -->
 	<build>
