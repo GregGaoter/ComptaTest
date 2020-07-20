@@ -1,0 +1,257 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xmlns="http://maven.apache.org/POM/4.0.0"
+	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+	<modelVersion>4.0.0</modelVersion>
+
+	<!-- =============================================================== -->
+	<!-- Ce fichier est un extrait du fichier "myerp/pom.xml" qui synthétise 
+		les éléments d'automatisation des tests d'intégration du projet. -->
+	<!-- =============================================================== -->
+
+
+	<!-- =============================================================== -->
+	<!-- Properties -->
+	<!-- =============================================================== -->
+	<properties>
+
+		<!-- ===== Version properties ===== -->
+		<spring.version>5.2.5.RELEASE</spring.version>
+		<junit-jupiter-version>5.7.0-M1</junit-jupiter-version>
+		<testcontainers.version>1.14.3</testcontainers.version>
+		
+	</properties>
+
+
+	<!-- =============================================================== -->
+	<!-- Profiles -->
+	<!-- =============================================================== -->
+	<profiles>
+
+		<!-- Profile utilisé pour lancer les tests unitaires et les tests d'intégration 
+			de la couche business -->
+		<profile>
+			<id>test-it-business</id>
+		</profile>
+
+		<!-- Profile utilisé pour lancer les tests unitaires et les tests d'intégration 
+			de la couche consumer -->
+		<profile>
+			<id>test-it-consumer</id>
+		</profile>
+
+		<!-- Profile utilisé pour lancer les tests unitaires et les tests d'intégration 
+			de la couche model -->
+		<profile>
+			<id>test-it-model</id>
+		</profile>
+		
+	</profiles>
+
+
+	<!-- =============================================================== -->
+	<!-- Dependency managment -->
+	<!-- =============================================================== -->
+	<dependencyManagement>
+		<dependencies>
+
+			<!-- ===== Database ===== -->
+
+			<!-- JDBC Drivers : PostgreSQL -->
+			<dependency>
+				<groupId>org.postgresql</groupId>
+				<artifactId>postgresql</artifactId>
+				<version>9.4.1212</version>
+				<scope>runtime</scope>
+			</dependency>
+
+			<!-- ===== Test unitaires ===== -->
+			
+			<!-- JUnit 5 -->
+			<dependency>
+				<groupId>org.junit.jupiter</groupId>
+				<artifactId>junit-jupiter</artifactId>
+				<version>${junit-jupiter-version}</version>
+				<scope>test</scope>
+			</dependency>
+			<dependency>
+				<groupId>org.junit.jupiter</groupId>
+				<artifactId>junit-jupiter-api</artifactId>
+				<version>${junit-jupiter-version}</version>
+			</dependency>
+			
+			<!-- AssertJ -->
+			<dependency>
+				<groupId>org.assertj</groupId>
+				<artifactId>assertj-core</artifactId>
+				<version>3.15.0</version>
+				<scope>test</scope>
+			</dependency>
+			
+			<!-- Mockito -->
+			<dependency>
+				<groupId>org.mockito</groupId>
+				<artifactId>mockito-junit-jupiter</artifactId>
+				<version>3.3.3</version>
+			</dependency>
+			<dependency>
+				<groupId>org.mockito</groupId>
+				<artifactId>mockito-core</artifactId>
+				<version>3.2.4</version>
+			</dependency>
+			
+			<!-- Spring -->
+			<dependency>
+				<groupId>org.springframework</groupId>
+				<artifactId>spring-test</artifactId>
+				<version>${spring.version}</version>
+				<scope>test</scope>
+			</dependency>
+
+			<!-- ===== Testcontainers ===== -->
+			
+			<!-- Core -->
+			<dependency>
+				<groupId>org.testcontainers</groupId>
+				<artifactId>testcontainers</artifactId>
+				<version>${testcontainers.version}</version>
+			</dependency>
+			
+			<!-- JUnit Jupiter Extension -->
+			<dependency>
+				<groupId>org.testcontainers</groupId>
+				<artifactId>junit-jupiter</artifactId>
+				<version>${testcontainers.version}</version>
+			</dependency>
+
+		</dependencies>
+	</dependencyManagement>
+
+
+	<!-- =============================================================== -->
+	<!-- Build -->
+	<!-- =============================================================== -->
+	<build>
+	
+		<!-- =============================================================== -->
+		<!-- pluginManagement -->
+		<!-- =============================================================== -->
+		
+		<pluginManagement>
+			<plugins>
+
+				<!-- ===== Tests d'intégration ===== -->
+				<plugin>
+					<groupId>org.apache.maven.plugins</groupId>
+					<artifactId>maven-failsafe-plugin</artifactId>
+					<version>3.0.0-M4</version>
+					<configuration>
+						<argLine>${failsafe.jacoco.args}</argLine>
+					</configuration>
+					<executions>
+						<execution>
+							<id>integration-tests</id>
+							<goals>
+								<goal>integration-test</goal>
+								<goal>verify</goal>
+							</goals>
+						</execution>
+					</executions>
+				</plugin>
+
+				<!-- ===== Aide au constructions particulières ===== -->
+				
+				<!-- Ex : Ajout de répertoire de sources générées en tant que source 
+					d'un module -->
+				<plugin>
+					<groupId>org.codehaus.mojo</groupId>
+					<artifactId>build-helper-maven-plugin</artifactId>
+					<version>1.10</version>
+				</plugin>
+
+				<!-- ===== JaCoCo ===== -->
+				<plugin>
+					<groupId>org.jacoco</groupId>
+					<artifactId>jacoco-maven-plugin</artifactId>
+					<version>0.8.5</version>
+					<executions>
+						<execution>
+							<id>before-unit-test-execution</id>
+							<goals>
+								<goal>prepare-agent</goal>
+							</goals>
+							<configuration>
+								<destFile>${project.build.directory}/jacoco-output/jacoco-unit-tests.exec</destFile>
+								<propertyName>surefire.jacoco.args</propertyName>
+							</configuration>
+						</execution>
+						<execution>
+							<id>after-unit-test-execution</id>
+							<phase>test</phase>
+							<goals>
+								<goal>report</goal>
+							</goals>
+							<configuration>
+								<dataFile>${project.build.directory}/jacoco-output/jacoco-unit-tests.exec</dataFile>
+								<outputDirectory>${project.reporting.outputDirectory}/jacoco-unit-test-coverage-report</outputDirectory>
+							</configuration>
+						</execution>
+						<execution>
+							<id>before-integration-test-execution</id>
+							<phase>pre-integration-test</phase>
+							<goals>
+								<goal>prepare-agent</goal>
+							</goals>
+							<configuration>
+								<destFile>${project.build.directory}/jacoco-output/jacoco-integration-tests.exec</destFile>
+								<propertyName>failsafe.jacoco.args</propertyName>
+							</configuration>
+						</execution>
+						<execution>
+							<id>after-integration-test-execution</id>
+							<phase>post-integration-test</phase>
+							<goals>
+								<goal>report</goal>
+							</goals>
+							<configuration>
+								<dataFile>${project.build.directory}/jacoco-output/jacoco-integration-tests.exec</dataFile>
+								<outputDirectory>${project.reporting.outputDirectory}/jacoco-integration-test-coverage-report</outputDirectory>
+							</configuration>
+						</execution>
+						<execution>
+							<id>merge-unit-and-integration</id>
+							<phase>post-integration-test</phase>
+							<goals>
+								<goal>merge</goal>
+							</goals>
+							<configuration>
+								<fileSets>
+									<fileSet>
+										<directory>${project.build.directory}/jacoco-output/</directory>
+										<includes>
+											<include>*.exec</include>
+										</includes>
+									</fileSet>
+								</fileSets>
+								<destFile>${project.build.directory}/jacoco-output/merged.exec</destFile>
+							</configuration>
+						</execution>
+						<execution>
+							<id>create-merged-report</id>
+							<phase>post-integration-test</phase>
+							<goals>
+								<goal>report</goal>
+							</goals>
+							<configuration>
+								<dataFile>${project.build.directory}/jacoco-output/merged.exec</dataFile>
+								<outputDirectory>${project.reporting.outputDirectory}/jacoco-merged-test-coverage-report</outputDirectory>
+							</configuration>
+						</execution>
+					</executions>
+				</plugin>
+				
+			</plugins>
+		</pluginManagement>
+	</build>
+
+</project>

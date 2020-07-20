@@ -1,0 +1,136 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xmlns="http://maven.apache.org/POM/4.0.0"
+	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+	<modelVersion>4.0.0</modelVersion>
+
+	<!-- =============================================================== -->
+	<!-- Ce fichier est un extrait du fichier "myerp/pom.xml" qui synthétise 
+		les éléments d'automatisation des tests unitaires du projet. -->
+	<!-- =============================================================== -->
+
+
+	<!-- =============================================================== -->
+	<!-- Properties -->
+	<!-- =============================================================== -->
+	<properties>
+	
+		<!-- ===== Version properties ===== -->
+		<spring.version>5.2.5.RELEASE</spring.version>
+		<junit-jupiter-version>5.7.0-M1</junit-jupiter-version>
+		
+	</properties>
+
+
+	<!-- =============================================================== -->
+	<!-- Dependency managment -->
+	<!-- =============================================================== -->
+	<dependencyManagement>
+		<dependencies>
+		
+			<!-- ===== Test unitaires ===== -->
+			
+			<!-- JUnit 5 -->
+			<dependency>
+				<groupId>org.junit.jupiter</groupId>
+				<artifactId>junit-jupiter</artifactId>
+				<version>${junit-jupiter-version}</version>
+				<scope>test</scope>
+			</dependency>
+			<dependency>
+				<groupId>org.junit.jupiter</groupId>
+				<artifactId>junit-jupiter-api</artifactId>
+				<version>${junit-jupiter-version}</version>
+			</dependency>
+			
+			<!-- AssertJ -->
+			<dependency>
+				<groupId>org.assertj</groupId>
+				<artifactId>assertj-core</artifactId>
+				<version>3.15.0</version>
+				<scope>test</scope>
+			</dependency>
+			
+			<!-- Mockito -->
+			<dependency>
+				<groupId>org.mockito</groupId>
+				<artifactId>mockito-junit-jupiter</artifactId>
+				<version>3.3.3</version>
+			</dependency>
+			<dependency>
+				<groupId>org.mockito</groupId>
+				<artifactId>mockito-core</artifactId>
+				<version>3.2.4</version>
+			</dependency>
+			
+			<!-- Spring -->
+			<dependency>
+				<groupId>org.springframework</groupId>
+				<artifactId>spring-test</artifactId>
+				<version>${spring.version}</version>
+				<scope>test</scope>
+			</dependency>
+			
+		</dependencies>
+	</dependencyManagement>
+
+
+	<!-- =============================================================== -->
+	<!-- Build -->
+	<!-- =============================================================== -->
+	<build>
+	
+		<!-- =============================================================== -->
+		<!-- pluginManagement -->
+		<!-- =============================================================== -->
+		
+		<pluginManagement>
+			<plugins>
+			
+				<!-- ===== Compatibilité avec JUnit 5 ===== -->
+				<plugin>
+					<groupId>org.apache.maven.plugins</groupId>
+					<artifactId>maven-surefire-plugin</artifactId>
+					<version>2.22.2</version>
+					<configuration>
+						<reuseForks>false</reuseForks>
+						<forkCount>1</forkCount>
+						<argLine>${surefire.jacoco.args}</argLine>
+					</configuration>
+				</plugin>
+
+				<!-- ===== JaCoCo ===== -->
+				<plugin>
+					<groupId>org.jacoco</groupId>
+					<artifactId>jacoco-maven-plugin</artifactId>
+					<version>0.8.5</version>
+					<executions>
+						<execution>
+							<id>before-unit-test-execution</id>
+							<goals>
+								<goal>prepare-agent</goal>
+							</goals>
+							<configuration>
+								<destFile>${project.build.directory}/jacoco-output/jacoco-unit-tests.exec</destFile>
+								<propertyName>surefire.jacoco.args</propertyName>
+							</configuration>
+						</execution>
+						<execution>
+							<id>after-unit-test-execution</id>
+							<phase>test</phase>
+							<goals>
+								<goal>report</goal>
+							</goals>
+							<configuration>
+								<dataFile>${project.build.directory}/jacoco-output/jacoco-unit-tests.exec</dataFile>
+								<outputDirectory>${project.reporting.outputDirectory}/jacoco-unit-test-coverage-report</outputDirectory>
+							</configuration>
+						</execution>
+					</executions>
+				</plugin>
+				
+			</plugins>
+		</pluginManagement>
+	</build>
+
+</project>
