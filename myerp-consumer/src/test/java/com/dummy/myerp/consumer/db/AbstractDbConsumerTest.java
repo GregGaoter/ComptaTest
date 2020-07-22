@@ -101,15 +101,20 @@ public class AbstractDbConsumerTest {
 	private static Stream<Arguments> queryGetSequenceValuePostgreSQL_integerType_returnsInteger() {
 		DataSourcesEnum dataSourcesEnum = DataSourcesEnum.MYERP;
 		Integer excpectedSequence = 1;
-		return Stream.of(Arguments.of(dataSourcesEnum, "  ", null), Arguments.of(dataSourcesEnum,
+		return Stream.of(
+				Arguments.of(dataSourcesEnum, "  ", null), 
+				Arguments.of(dataSourcesEnum,
 				"xâkànrCoîVdBScxrËÀaïçÛoYùFmvAÊÎOâÀÔÿQÀÙÜHXDaRWfMSéÙyPÔÊbNÈvCDÂYïîÏnuMüCcépoqçpÊnIYgËeÎzqzXiçôzâëZtUcutFbWàuAidiùÿaPàdVUxvxÛqHgfeôVZHlvGKÊYfZLÂflCRifRôbèBÔsSÉWgChRÜAFLMÂtcJÙQIbÏÀiëWiVYNûàEüÀbéwDneTkrÙUÛêÎÿGàÈjDèëêÔtcYvSnûkÉékCzvZÉXdÛêîÿSgOjlBûâBêHbaéénÎËDPsJTdûOYslÏIFéoËLiquÛÉÊGySpïImuKüÊpbÇFrÎqCHdÊûTÀNERÀQùUÿOwîvkVxPcëoïjehÔSôUîHÜKÏLuëÉuuegcPQÛîÙMÀXzMÙVülÔRââOeôÛZYlDçÂçÊIùSüTKÊMïPËÈàikuJdroçwgèDqgÉvÎuvêèTàfÏGnsQëÛùeÉmBBühnÏzxQpÛÜfNhfUîÎsàreRcqGÇâéËvHÎUvÔXVZÀNfyéÊPrMZÂgaKwhBÇOûTEeÜûzêyylÏéFéHjËüXwüOpWugèËèVôwâÛWNBjKPaÛFIJÂÿNÎyWTGlJlmtDVÉxÿcESçxPTÀôgÔÂYfKaÙngpyÜÜùÇBïzNâpHJùÇXLGUSJjëQVIqLzlÔÜÔjËFkXbutxÈhUAÉqZsïXÙwÂjëkhûÈWÇEHutVçmésaÂîBbgsüwUyZÊÿËmzÜëÈPbgêAMLiDDeIÙPôïPCÏîVsiQÀAIhÔOyZcUÿSübjêîTÉÏÇÀêHEûçtïàèFAjrmStZjGÙGGüQoàÈbÈûehGèOYèïYMÈFnmüRkyRQJpsEÈÔLWJIÏùYôowcBëRxCXôàAGoÏÿmiEMôNûDXFaçiÇômÇîGplEJUrxEÙÇdOrKÎWKèBwÿàIÂÉfyÈmÊNëÇkLsÎYHCyTaÉTÿÉnrFîcOèâïFÂKDÿéCJëISèpâQAKêAÎRdMzûZËNHêBhünçÇOzùdôEîjÊêqtÀïhïÏËZsËxÏÈToLeLayrÈorbiWIWùÛùèRÛRqwLùwokTQqkqnVhJmlCKJQmÜpKeâDfëAÜAâÙjsOfvÂÙXMxWÎowPdtpEMÇàdÜûÂUÔzùCdêÜaAtLkaNçtlvhNcEXç",
-				excpectedSequence), Arguments.of(null, " ", null), Arguments.of(null, "\n", null),
+				excpectedSequence), 
+				Arguments.of(null, " ", null), 
+				Arguments.of(null, "\n", null),
 				Arguments.of(dataSourcesEnum, "compétitive", excpectedSequence),
-				Arguments.of(dataSourcesEnum, "\t", null), Arguments.of(null, null, null),
+				Arguments.of(dataSourcesEnum, "\t", null), 
+				Arguments.of(null, null, null),
 				Arguments.of(null, "", null));
 	}
 
-	@ParameterizedTest
+	@ParameterizedTest 
 	@MethodSource
 	public void queryGetSequenceValuePostgreSQL_integerType_returnsInteger(DataSourcesEnum dataSourcesEnum,
 			String seqName, Integer excpectedSequence) {

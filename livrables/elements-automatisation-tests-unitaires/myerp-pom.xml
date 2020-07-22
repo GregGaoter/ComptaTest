@@ -84,7 +84,7 @@
 		<!-- pluginManagement -->
 		<!-- =============================================================== -->
 		
-		<pluginManagement>
+		<pluginManagement> 
 			<plugins>
 			
 				<!-- ===== Compatibilité avec JUnit 5 ===== -->
